@@ -4,13 +4,14 @@ using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.Logging;
+using Serilog;
 
 namespace GeneralBot.Services
 {
     public class LogService
     {
-        private readonly ILogger _clientLogger;
-        private readonly ILogger _commandsLogger;
+        private readonly Microsoft.Extensions.Logging.ILogger _clientLogger;
+        private readonly Microsoft.Extensions.Logging.ILogger _commandsLogger;
 
         public LogService(DiscordSocketClient client, CommandService commandService, ILoggerFactory loggerFactory)
         {
@@ -25,6 +26,7 @@ namespace GeneralBot.Services
         private static ILoggerFactory ConfigureLogging(ILoggerFactory factory)
         {
             factory.AddConsole();
+            factory.AddFile($"Logs/{DateTime.UtcNow:MM-dd-yy}.txt");
             return factory;
         }
 
