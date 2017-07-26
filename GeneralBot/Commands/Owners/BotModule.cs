@@ -1,12 +1,8 @@
-using System;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using GeneralBot.Preconditions;
 using GeneralBot.Results;
-using GeneralBot.Services;
-using System;
-using Microsoft.Extensions.Caching.Memory;
 
 namespace GeneralBot.Commands.Admin
 {
@@ -16,15 +12,6 @@ namespace GeneralBot.Commands.Admin
     [RequireOwners]
     public class BotModule : ModuleBase<SocketCommandContext>
     {
-        public CacheHelper _cacheHelper;
-        public IMemoryCache _cache;
-
-        public BotModule(CacheHelper cacheHelper, IMemoryCache cache)
-        {
-            _cacheHelper = cacheHelper;
-            _cache = cache;
-        }
-
         [Command("username")]
         [Summary("Changes the bot's username.")]
         public async Task<RuntimeResult> ConfigUsername([Remainder] string username)
@@ -41,11 +28,6 @@ namespace GeneralBot.Commands.Admin
             return CommandRuntimeResult.FromSuccess($"Successfully changed game to {Format.Bold(game)}.");
         }
 
-        [Command("throw")]
-        public Task ThrowException()
-        {
-            throw new InvalidOperationException("This is a test error.");
-        }
 
         [Command("status")]
         [Summary("Changes the bot's status.")]
@@ -76,24 +58,28 @@ namespace GeneralBot.Commands.Admin
             }
         }
 
-        [Command("test")]
-        public async Task<RuntimeResult> Test(string key, string value)
-        {
-           return CommandRuntimeResult.FromSuccess((await _cacheHelper.TryGetValueSet<string, string>(key, value, TimeSpan.FromMinutes(1))));
-        }
+        //public IMemoryCache Cache { get; set; }
 
-        [Command("test2")]
-        public async Task<RuntimeResult> Test(string key)
-        {
-            if(_cache.TryGetValue(key, out string value))
-            {
-                return CommandRuntimeResult.FromSuccess(value);
-            }
-            else
-            {
-                return CommandRuntimeResult.FromError($"No value found for {key} in the cache!");
-            }
+        //public CacheHelper CacheHelper { get; set; }
 
-        }
+        //[Command("test")]
+        //public async Task<RuntimeResult> Test(string key, string value)
+        //{
+        //   return CommandRuntimeResult.FromSuccess((await _cacheHelper.TryGetValueSet<string, string>(key, value, TimeSpan.FromMinutes(1))));
+        //}
+
+        //[Command("test2")]
+        //public async Task<RuntimeResult> Test(string key)
+        //{
+        //    if(_cache.TryGetValue(key, out string value))
+        //    {
+        //        return CommandRuntimeResult.FromSuccess(value);
+        //    }
+        //    else
+        //    {
+        //        return CommandRuntimeResult.FromError($"No value found for {key} in the cache!");
+        //    }
+
+        //}
     }
 }

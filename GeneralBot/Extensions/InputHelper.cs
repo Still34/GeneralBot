@@ -12,7 +12,8 @@ namespace GeneralBot.Extensions
         {
             var random = new Random();
             var fields = typeof(Color).GetFields();
-            return (Color) fields[random.Next(0, fields.Length)].GetValue(null);
+            var color = (Color) fields[random.Next(0, fields.Length)].GetValue(null);
+            return color;
         }
     }
 }

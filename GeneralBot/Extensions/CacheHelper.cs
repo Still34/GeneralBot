@@ -1,21 +1,16 @@
-﻿using Microsoft.Extensions.Caching.Memory;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace GeneralBot.Services
 {
     public class CacheHelper
     {
-        private IMemoryCache _cache;
+        private readonly IMemoryCache _cache;
 
-        public CacheHelper(IMemoryCache cache)
-        {
-            _cache = cache;
-        }
+        public CacheHelper(IMemoryCache cache) => _cache = cache;
 
-        public async Task<T2> TryGetValueSet<T1, T2>(T1 key, T2 value, TimeSpan duration)
+        public Task<T2> TryGetValueSet<T1, T2>(T1 key, T2 value, TimeSpan duration)
         {
             T2 cacheEntry;
 
@@ -30,7 +25,7 @@ namespace GeneralBot.Services
                 _cache.Set(key, cacheEntry, cacheEntryOptions);
             }
 
-            return cacheEntry;
+            return Task.FromResult(cacheEntry);
         }
     }
 }

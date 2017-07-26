@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
@@ -36,6 +37,28 @@ namespace GeneralBot.Commands.User
                 }
                 .AddField("You asked...", input)
                 .AddField("The 8 ball says...", response);
+            await ReplyAsync("", embed: embed);
+            return CommandRuntimeResult.FromSuccess();
+        }
+
+        [Command("choose")]
+        [Alias("decide")]
+        [Summary("Can't decide? Ask the bot to choose it for you!")]
+        public async Task<RuntimeResult> Choose([Remainder] string input)
+        {
+            var regexParsed = Regex.Split(input, "or|;|,|and", RegexOptions.IgnoreCase);
+            if (regexParsed.Length == 0)
+                return CommandRuntimeResult.FromError("You need to supply more than one options!");
+            var embed = new EmbedBuilder
+            {
+                Author = new EmbedAuthorBuilder
+                {
+                    Name = "I think you should choose...",
+                    IconUrl = Context.Client.CurrentUser.GetAvatarUrlOrDefault()
+                },
+                Color = InputHelper.GetRandomColor(),
+                Description = regexParsed[Random.Next(0, regexParsed.Length)]
+            };
             await ReplyAsync("", embed: embed);
             return CommandRuntimeResult.FromSuccess();
         }
