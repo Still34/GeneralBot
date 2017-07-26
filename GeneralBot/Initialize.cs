@@ -40,6 +40,7 @@ namespace GeneralBot
             collection.AddSingleton<GuildConfigureService>();
             collection.AddSingleton<LatencyUpdatedHandler>();
             collection.AddSingleton(ConfigureSettings());
+            collection.AddMemoryCache();
             collection.AddLogging();
             var services = collection.BuildServiceProvider();
             await ConfigureServices(services);
