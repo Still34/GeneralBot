@@ -51,6 +51,7 @@ namespace GeneralBot
                 .AddSingleton<LoggingService>()
                 .AddLogging()
                 // Memory Cache
+                .AddSingleton<CacheHelper>()
                 .AddMemoryCache();
             var services = collection.BuildServiceProvider();
             await ConfigureServices(services);
