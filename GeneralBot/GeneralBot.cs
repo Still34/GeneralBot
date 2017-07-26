@@ -18,7 +18,7 @@ namespace GeneralBot
             _client = new DiscordSocketClient();
             _services = await Initialize.StartAsync(_client);
             var config = _services.GetRequiredService<ConfigModel>();
-            await _client.LoginAsync(TokenType.Bot, config.Token);
+            await _client.LoginAsync(TokenType.Bot, config.Credentials.Discord);
             await _client.StartAsync();
             await Task.Delay(-1);
         }
