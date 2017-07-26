@@ -44,10 +44,16 @@ namespace GeneralBot
                 await db.Database.MigrateAsync();
             }
             var services = collection.BuildServiceProvider();
+            await ConfigureServices(services);
+            return services;
+        }
+
+        private static async Task ConfigureServices(IServiceProvider services)
+        {
             services.GetRequiredService<LogService>();
             services.GetRequiredService<GuildConfigureService>();
+            services.GetRequiredService<LatencyUpdatedHandler>();
             await services.GetRequiredService<CommandHandler>().InitAsync();
-            return services;
         }
 
         private static ConfigModel ConfigureSettings()
