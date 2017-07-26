@@ -4,6 +4,8 @@ using System.Text;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using GeneralBot.Databases.Context;
+using GeneralBot.Models.Context;
 
 namespace GeneralBot.Commands
 {
@@ -14,6 +16,9 @@ namespace GeneralBot.Commands
         public ISocketMessageChannel Channel { get; }
         public SocketUser User { get; }
         public SocketUserMessage Message { get; }
+
+        public CoreContext CoreSettings { get; set; }
+        public UserContext UserSettings { get; set; }
 
         public CustomCommandContext(DiscordSocketClient client, SocketUserMessage msg, SocketUser user = null)
         {
