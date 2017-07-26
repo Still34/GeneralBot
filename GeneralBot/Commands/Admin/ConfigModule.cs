@@ -14,7 +14,7 @@ namespace GeneralBot.Commands.Admin
     [Remarks("Server settings for admins.")]
     [RequireContext(ContextType.Guild)]
     [RequireUserPermission(GuildPermission.Administrator)]
-    public class ConfigModule : ModuleBase<SocketCommandContext>
+    public class ConfigModule : ModuleBase<CustomCommandContext>
     {
         public CoreContext CoreSettings { get; set; }
 
