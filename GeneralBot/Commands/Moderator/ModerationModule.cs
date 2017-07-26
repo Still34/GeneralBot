@@ -17,7 +17,9 @@ namespace GeneralBot.Commands.Moderator
         [Command("kick")]
         [Summary("Kicks the selected user with specified reason, if any.")]
         [RequireBotPermission(GuildPermission.KickMembers)]
-        public async Task<RuntimeResult> KickUserAsync(SocketGuildUser user, [Remainder] string reason = null)
+        public async Task<RuntimeResult> KickUserAsync(
+            [RequireHierarchy] SocketGuildUser user,
+            [Remainder] string reason = null)
         {
             await user.KickAsync(reason);
             return CommandRuntimeResult.FromSuccess($"User {user} has been kicked from the server.");
@@ -27,7 +29,10 @@ namespace GeneralBot.Commands.Moderator
         [Priority(1)]
         [Summary("Bans the selected user with specified reason, if any.")]
         [RequireBotPermission(GuildPermission.BanMembers)]
-        public async Task<RuntimeResult> BanUserAsync(SocketGuildUser user, int days = 0, [Remainder] string reason = null)
+        public async Task<RuntimeResult> BanUserAsync(
+            [RequireHierarchy] SocketGuildUser user, 
+            int days = 0, 
+            [Remainder] string reason = null)
         {
             await Context.Guild.AddBanAsync(user, days, reason);
             return CommandRuntimeResult.FromSuccess($"User {user} has been banned from the server.");
@@ -37,9 +42,40 @@ namespace GeneralBot.Commands.Moderator
         [Priority(0)]
         [Summary("Bans the selected user with the specified ID and reason, if any.")]
         [RequireBotPermission(GuildPermission.BanMembers)]
-        public async Task<RuntimeResult> BanUserAsync(ulong userId, int days = 0, [Remainder] string reason = null)
+        public async Task<RuntimeResult> BanUserAsync(
+            [RequireHierarchy] ulong userId, 
+            int days = 0, 
+            [Remainder] string reason = null)
         {
             await Context.Guild.AddBanAsync(userId, days, reason);
+            return CommandRuntimeResult.FromSuccess($"User {userId} has been banned from the server.");
+        }
+
+        [Command("softban")]
+        [Priority(1)]
+        [Summary("Bans the user and then unbans. Useful for purging content for the targetted user.")]
+        [RequireBotPermission(GuildPermission.BanMembers)]
+        public async Task<RuntimeResult> SoftBanAsync(
+            [RequireHierarchy] SocketGuildUser user, 
+            int days = 0, 
+            [Remainder] string reason = null)
+        {
+            await Context.Guild.AddBanAsync(user, days, reason);
+            await Context.Guild.RemoveBanAsync(user);
+            return CommandRuntimeResult.FromSuccess($"User {user} has been banned from the server.");
+        }
+
+        [Command("softban")]
+        [Priority(0)]
+        [Summary("Bans the user and then unbans. Useful for purging content for the targetted user.")]
+        [RequireBotPermission(GuildPermission.BanMembers)]
+        public async Task<RuntimeResult> SoftBanAsync(
+            [RequireHierarchy] ulong userId, 
+            int days = 0, 
+            [Remainder] string reason = null)
+        {
+            await Context.Guild.AddBanAsync(userId, days, reason);
+            await Context.Guild.RemoveBanAsync(userId);
             return CommandRuntimeResult.FromSuccess($"User {userId} has been banned from the server.");
         }
     }
