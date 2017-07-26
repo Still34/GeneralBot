@@ -49,6 +49,7 @@ namespace GeneralBot
                 .AddSingleton(ConfigureSettings())
                 .AddSingleton(new Random())
                 // Memory Cache
+                .AddSingleton<CacheHelper>()
                 .AddMemoryCache();
             var services = collection.BuildServiceProvider();
             await ConfigureServices(services);

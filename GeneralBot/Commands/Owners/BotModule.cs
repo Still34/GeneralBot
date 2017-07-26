@@ -3,6 +3,9 @@ using Discord;
 using Discord.Commands;
 using GeneralBot.Preconditions;
 using GeneralBot.Results;
+using GeneralBot.Services;
+using System;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace GeneralBot.Commands.Admin
 {
@@ -12,6 +15,15 @@ namespace GeneralBot.Commands.Admin
     [RequireOwners]
     public class BotModule : ModuleBase<CustomCommandContext>
     {
+        public CacheHelper _cacheHelper;
+        public IMemoryCache _cache;
+
+        public BotModule(CacheHelper cacheHelper, IMemoryCache cache)
+        {
+            _cacheHelper = cacheHelper;
+            _cache = cache;
+        }
+
         [Command("username")]
         [Summary("Changes the bot's username.")]
         public async Task<RuntimeResult> ConfigUsername([Remainder] string username)
@@ -55,6 +67,26 @@ namespace GeneralBot.Commands.Admin
                 default:
                     return CommandRuntimeResult.FromError($"{Format.Bold(status)} is not a valid status.");
             }
+        }
+
+        [Command("test")]
+        public async Task<RuntimeResult> Test(string key, string value)
+        {
+           return CommandRuntimeResult.FromSuccess((await _cacheHelper.TryGetValueSet<string, string>(key, value, TimeSpan.FromMinutes(1))));
+        }
+
+        [Command("test2")]
+        public async Task<RuntimeResult> Test(string key)
+        {
+            if(_cache.TryGetValue(key, out string value))
+            {
+                return CommandRuntimeResult.FromSuccess(value);
+            }
+            else
+            {
+                return CommandRuntimeResult.FromError($"No value found for {key} in the cache!");
+            }
+
         }
     }
 }
