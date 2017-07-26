@@ -25,13 +25,17 @@ namespace GeneralBot.Commands.User
                 return CommandRuntimeResult.FromError("The 8ball responses are not yet set, contact the bot developers.");
             string response = Config.Commands.EightBall.Responses[Random.Next(0, responseCount)];
             var embed = new EmbedBuilder
-            {
-                Color = InputHelper.GetRandomColor(),
-                Title = "The Magic 8Ball",
-                ThumbnailUrl = Config.Commands.EightBall.Image
-            }
-            .AddField("You asked...", input)
-            .AddField("The 8 ball says...", response);
+                {
+                    Author = new EmbedAuthorBuilder
+                    {
+                        Name = "The Magic 8Ball",
+                        IconUrl = Context.Client.CurrentUser.GetAvatarUrlOrDefault()
+                    },
+                    Color = InputHelper.GetRandomColor(),
+                    ThumbnailUrl = Config.Commands.EightBall.Image
+                }
+                .AddField("You asked...", input)
+                .AddField("The 8 ball says...", response);
             await ReplyAsync("", embed: embed);
             return CommandRuntimeResult.FromSuccess();
         }
