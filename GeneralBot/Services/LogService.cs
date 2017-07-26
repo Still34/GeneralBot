@@ -3,15 +3,15 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using GeneralBot.Templates;
 using Microsoft.Extensions.Logging;
-using Serilog;
 
 namespace GeneralBot.Services
 {
     public class LogService
     {
-        private readonly Microsoft.Extensions.Logging.ILogger _clientLogger;
-        private readonly Microsoft.Extensions.Logging.ILogger _commandsLogger;
+        private readonly ILogger _clientLogger;
+        private readonly ILogger _commandsLogger;
 
         public LogService(DiscordSocketClient client, CommandService commandService, ILoggerFactory loggerFactory)
         {
@@ -26,7 +26,7 @@ namespace GeneralBot.Services
         private static ILoggerFactory ConfigureLogging(ILoggerFactory factory)
         {
             factory.AddConsole();
-            factory.AddFile($"Logs/{DateTime.UtcNow:MM-dd-yy}.txt");
+            factory.AddFile($"Logs/{DateTime.UtcNow:MM-dd-yy}.log");
             return factory;
         }
 
@@ -35,12 +35,15 @@ namespace GeneralBot.Services
             // Error messages for async commands
             if (message.Exception is CommandException command)
             {
-                var _ = command.Context.Channel.SendMessageAsync($"Error Occured: {command.Message}");
+                var _ = command.Context.Channel.SendMessageAsync("", embed: 
+                    EmbedTemplates
+                    .FromError("We ran into a problem when executing this command!\n\nDon't worry, this error has been reported.", "Uh oh...")
+                    .WithThumbnailUrl("https://cdn.discordapp.com/emojis/288727789241237504.png"));
             }
 
             _commandsLogger.Log(GetLogLevel(message.Severity), 0,
                 message,
-                message.Exception,
+                null,
                 (msg, ex) => message.ToString(prependTimestamp: false));
             return Task.CompletedTask;
         }

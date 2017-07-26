@@ -7,6 +7,7 @@ using Discord.Commands;
 using Discord.WebSocket;
 using GeneralBot.Databases.Context;
 using GeneralBot.Results;
+using GeneralBot.Services;
 using GeneralBot.Templates;
 
 namespace GeneralBot.Commands
@@ -16,43 +17,51 @@ namespace GeneralBot.Commands
         private readonly DiscordSocketClient _client;
         private readonly CommandService _commandService;
         private readonly CoreContext _coreSettings;
+        private readonly LogService _logService;
         private readonly IServiceProvider _services;
 
-        public CommandHandler(IServiceProvider services, DiscordSocketClient client, CommandService commandService, CoreContext settings)
+        public CommandHandler(IServiceProvider services, DiscordSocketClient client, CommandService commandService, CoreContext settings, LogService logService)
         {
             _services = services;
             _client = client;
             _commandService = commandService;
             _coreSettings = settings;
+            _logService = logService;
             _client.MessageReceived += CommandHandling;
             _commandService.CommandExecuted += OnCommandExecuted;
         }
 
-        private static async Task OnCommandExecuted(CommandInfo commandInfo, ICommandContext context, IResult result)
+        private async Task OnCommandExecuted(CommandInfo commandInfo, ICommandContext context, IResult result)
         {
             if (result is CommandRuntimeResult customResult)
             {
                 if (string.IsNullOrEmpty(customResult.Reason)) return;
                 var embed = new EmbedBuilder();
+                var severity = LogSeverity.Debug;
                 switch (customResult.Type)
                 {
                     case ResultType.Unknown:
                         break;
                     case ResultType.Info:
+                        severity = LogSeverity.Info;
                         embed = EmbedTemplates.FromInfo(customResult.Reason);
                         break;
                     case ResultType.Warning:
+                        severity = LogSeverity.Warning;
                         embed = EmbedTemplates.FromWarning(customResult.Reason);
                         break;
                     case ResultType.Error:
+                        severity = LogSeverity.Error;
                         embed = EmbedTemplates.FromError(customResult.Reason);
                         break;
                     case ResultType.Success:
+                        severity = LogSeverity.Verbose;
                         embed = EmbedTemplates.FromSuccess(customResult.Reason);
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
+                await _logService.Log($"{context.User} executed {commandInfo.Name} in {(context.Guild == null ? context.Channel.Name : $"{context.Channel.Name}/{context.Guild.Name}")}\nResult: {customResult.Reason}", severity);
                 await context.Channel.SendMessageAsync("", embed: embed);
             }
         }

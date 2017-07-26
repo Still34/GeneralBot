@@ -24,7 +24,7 @@ namespace GeneralBot.Commands.Admin
             dbEntry.Prefix = prefix;
             CoreSettings.Update(dbEntry);
             await CoreSettings.SaveChangesAsync();
-            return CommandRuntimeResult.FromSuccess($"Successfully changed prefix to {prefix}.");
+            return CommandRuntimeResult.FromSuccess($"Successfully changed prefix to {Format.Bold(prefix)}.");
         }
     }
 }
