@@ -14,6 +14,7 @@ namespace GeneralBot.Services
         public GuildConfigureService(DiscordSocketClient client, CoreContext coreSettings, LogService loggingService)
         {
             client.GuildAvailable += RegisterGuild;
+            client.JoinedGuild += RegisterGuild;
             client.LeftGuild += UnregisterGuild;
             _coreSettings = coreSettings;
             _loggingService = loggingService;
