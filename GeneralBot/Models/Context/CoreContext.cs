@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Discord;
 using Microsoft.EntityFrameworkCore;
 
 namespace GeneralBot.Databases.Context
@@ -20,5 +21,8 @@ namespace GeneralBot.Databases.Context
 
         [Required]
         public string Prefix { get; set; } = "!";
+
+        [Required]
+        public GuildPermission ModeratorPermission { get; set; } = GuildPermission.KickMembers;
     }
 }

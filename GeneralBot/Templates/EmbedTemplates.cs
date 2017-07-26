@@ -4,28 +4,28 @@ namespace GeneralBot.Templates
 {
     public static class EmbedTemplates
     {
-        public static EmbedBuilder FromInfo(string description, string title = "") => new EmbedBuilder
+        public static EmbedBuilder FromInfo(string description, string title = null) => new EmbedBuilder
         {
             Color = Color.Blue,
-            Title = title,
+            Title = title ?? "Information",
             Description = description
         };
-        public static EmbedBuilder FromError(string description, string title = "") => new EmbedBuilder
+        public static EmbedBuilder FromError(string description, string title = null) => new EmbedBuilder
         {
             Color = Color.Red,
-            Title = title,
+            Title = title ?? "Something happened...",
             Description = description
         };
-        public static EmbedBuilder FromSuccess(string description, string title = "") => new EmbedBuilder
+        public static EmbedBuilder FromSuccess(string description, string title = null) => new EmbedBuilder
         {
             Color = Color.Green,
-            Title = title,
+            Title = title ?? "Success!",
             Description = description
         };
-        public static EmbedBuilder FromWarning(string description, string title = "") => new EmbedBuilder
+        public static EmbedBuilder FromWarning(string description, string title = null) => new EmbedBuilder
         {
             Color = Color.Orange,
-            Title = title,
+            Title = title ?? "Warning",
             Description = description
         };
     }
