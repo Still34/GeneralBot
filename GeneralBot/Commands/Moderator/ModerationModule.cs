@@ -30,8 +30,8 @@ namespace GeneralBot.Commands.Moderator
         [Summary("Bans the selected user with specified reason, if any.")]
         [RequireBotPermission(GuildPermission.BanMembers)]
         public async Task<RuntimeResult> BanUserAsync(
-            [RequireHierarchy] SocketGuildUser user, 
-            int days = 0, 
+            [RequireHierarchy] SocketGuildUser user,
+            int days = 0,
             [Remainder] string reason = null)
         {
             await Context.Guild.AddBanAsync(user, days, reason);
@@ -43,8 +43,8 @@ namespace GeneralBot.Commands.Moderator
         [Summary("Bans the selected user with the specified ID and reason, if any.")]
         [RequireBotPermission(GuildPermission.BanMembers)]
         public async Task<RuntimeResult> BanUserAsync(
-            [RequireHierarchy] ulong userId, 
-            int days = 0, 
+            [RequireHierarchy] ulong userId,
+            int days = 0,
             [Remainder] string reason = null)
         {
             await Context.Guild.AddBanAsync(userId, days, reason);
@@ -56,8 +56,8 @@ namespace GeneralBot.Commands.Moderator
         [Summary("Bans the user and then unbans. Useful for purging content for the targetted user.")]
         [RequireBotPermission(GuildPermission.BanMembers)]
         public async Task<RuntimeResult> SoftBanAsync(
-            [RequireHierarchy] SocketGuildUser user, 
-            int days = 0, 
+            [RequireHierarchy] SocketGuildUser user,
+            int days = 0,
             [Remainder] string reason = null)
         {
             await Context.Guild.AddBanAsync(user, days, reason);
@@ -70,8 +70,8 @@ namespace GeneralBot.Commands.Moderator
         [Summary("Bans the user and then unbans. Useful for purging content for the targetted user.")]
         [RequireBotPermission(GuildPermission.BanMembers)]
         public async Task<RuntimeResult> SoftBanAsync(
-            [RequireHierarchy] ulong userId, 
-            int days = 0, 
+            [RequireHierarchy] ulong userId,
+            int days = 0,
             [Remainder] string reason = null)
         {
             await Context.Guild.AddBanAsync(userId, days, reason);

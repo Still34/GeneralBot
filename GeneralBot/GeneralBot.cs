@@ -2,10 +2,8 @@
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
-using GeneralBot.Commands;
 using GeneralBot.Models;
 using Microsoft.Extensions.DependencyInjection;
-using GeneralBot.Services;
 
 namespace GeneralBot
 {

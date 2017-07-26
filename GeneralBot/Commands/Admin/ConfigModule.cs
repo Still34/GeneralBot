@@ -3,10 +3,10 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using GeneralBot.Databases.Context;
+using GeneralBot.Preconditions;
 using GeneralBot.Results;
 using GeneralBot.Typereaders;
 using Humanizer;
-using GeneralBot.Preconditions;
 
 namespace GeneralBot.Commands.Admin
 {
@@ -53,10 +53,7 @@ namespace GeneralBot.Commands.Admin
         [Summary("Changes the bot's username.")]
         public async Task<RuntimeResult> ConfigUsername([Remainder] string username)
         {
-            await Context.Client.CurrentUser.ModifyAsync(x =>
-            {
-                x.Username = username;
-            });
+            await Context.Client.CurrentUser.ModifyAsync(x => { x.Username = username; });
             return CommandRuntimeResult.FromSuccess($"Successfully changed username to {Format.Bold(username)}.");
         }
 
@@ -72,7 +69,7 @@ namespace GeneralBot.Commands.Admin
         [Summary("Changes the bot's status.")]
         public async Task<RuntimeResult> ConfigStatus(string status)
         {
-            switch(status.ToLower())
+            switch (status.ToLower())
             {
                 case "online":
                     await Context.Client.SetStatusAsync(UserStatus.Online);

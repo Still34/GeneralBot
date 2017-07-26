@@ -35,10 +35,10 @@ namespace GeneralBot.Services
             // Error messages for async commands
             if (message.Exception is CommandException command)
             {
-                var _ = command.Context.Channel.SendMessageAsync("", embed: 
+                var _ = command.Context.Channel.SendMessageAsync("", embed:
                     EmbedTemplates
-                    .FromError("We ran into a problem when executing this command!\n\nDon't worry, this error has been reported.", "Uh oh...")
-                    .WithThumbnailUrl("https://cdn.discordapp.com/emojis/288727789241237504.png"));
+                        .FromError("We ran into a problem when executing this command!\n\nDon't worry, this error has been reported.", "Uh oh...")
+                        .WithThumbnailUrl("https://cdn.discordapp.com/emojis/288727789241237504.png"));
             }
 
             _commandsLogger.Log(GetLogLevel(message.Severity), 0,

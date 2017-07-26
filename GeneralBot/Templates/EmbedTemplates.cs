@@ -10,18 +10,21 @@ namespace GeneralBot.Templates
             Title = title ?? "Information",
             Description = description
         };
+
         public static EmbedBuilder FromError(string description, string title = null) => new EmbedBuilder
         {
             Color = Color.Red,
             Title = title ?? "Something happened...",
             Description = description
         };
+
         public static EmbedBuilder FromSuccess(string description, string title = null) => new EmbedBuilder
         {
             Color = Color.Green,
             Title = title ?? "Success!",
             Description = description
         };
+
         public static EmbedBuilder FromWarning(string description, string title = null) => new EmbedBuilder
         {
             Color = Color.Orange,
