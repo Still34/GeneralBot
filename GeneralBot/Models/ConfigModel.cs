@@ -10,7 +10,7 @@
     {
         public string Discord { get; set; } = "";
         public string TimezoneDb { get; set; } = "";
-        public string Imgur { get; set; } = "";
+        public (string clientId, string secret) Imgur { get; set; } = ("", "");
         public string DarkSky { get; set; } = "";
     }
 }
