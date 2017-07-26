@@ -9,6 +9,7 @@ using GeneralBot.Models;
 using GeneralBot.Models.Context;
 using GeneralBot.Services;
 using GeneralBot.Typereaders;
+using Geocoding.Google;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
@@ -32,22 +33,23 @@ namespace GeneralBot
             });
             commandSerivce.AddTypeReader<GuildPermissionTypeReader>(new GuildPermissionTypeReader());
             collection
-                // Database Contexts
-                .AddDbContext<CoreContext>()
-                .AddDbContext<UserContext>()
+                // Misc Services / Configs
+                .AddSingleton(ConfigureSettings())
+                .AddSingleton<GuildConfigureService>()
+                .AddSingleton<StatusConfigureService>()
+                .AddSingleton<GoogleGeocodingService>()
+                .AddSingleton(new Random())
                 // Discord Client
                 .AddSingleton(client)
                 // Discord Command Service
                 .AddSingleton(commandSerivce)
                 .AddSingleton<CommandHandler>()
+                // Database Contexts
+                .AddDbContext<CoreContext>()
+                .AddDbContext<UserContext>()
                 // Logging
                 .AddSingleton<LoggingService>()
                 .AddLogging()
-                // Misc Services / Configs
-                .AddSingleton<GuildConfigureService>()
-                .AddSingleton<StatusConfigureService>()
-                .AddSingleton(ConfigureSettings())
-                .AddSingleton(new Random())
                 // Memory Cache
                 .AddMemoryCache();
             var services = collection.BuildServiceProvider();
