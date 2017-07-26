@@ -4,6 +4,8 @@ using Discord;
 using Discord.Commands;
 using GeneralBot.Databases.Context;
 using GeneralBot.Results;
+using GeneralBot.Typereaders;
+using Humanizer;
 
 namespace GeneralBot.Commands.Admin
 {
@@ -25,6 +27,18 @@ namespace GeneralBot.Commands.Admin
             CoreSettings.Update(dbEntry);
             await CoreSettings.SaveChangesAsync();
             return CommandRuntimeResult.FromSuccess($"Successfully changed prefix to {Format.Bold(prefix)}.");
+        }
+
+        [Command("mod-perms")]
+        [Alias("mp")]
+        public async Task<RuntimeResult> ModeratorPermsSet(
+            [OverrideTypeReader(typeof(GuildPermissionTypeReader))] [Remainder] GuildPermission guildPermission)
+        {
+            var dbEntry = CoreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ?? new GuildSettings();
+            dbEntry.ModeratorPermission = guildPermission;
+            CoreSettings.Update(dbEntry);
+            await CoreSettings.SaveChangesAsync();
+            return CommandRuntimeResult.FromSuccess($"Successfully changed the required moderator permission to {Format.Bold(guildPermission.Humanize(LetterCasing.Title))}.");
         }
     }
 }

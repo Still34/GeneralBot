@@ -7,6 +7,7 @@ using GeneralBot.Commands;
 using GeneralBot.Databases.Context;
 using GeneralBot.Models;
 using GeneralBot.Services;
+using GeneralBot.Typereaders;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
@@ -29,6 +30,7 @@ namespace GeneralBot
             {
                 DefaultRunMode = RunMode.Async
             });
+            commandSerivce.AddTypeReader<GuildPermissionTypeReader>(new GuildPermissionTypeReader());
             collection.AddDbContext<CoreContext>();
             collection.AddSingleton(commandSerivce);
             collection.AddSingleton<CommandHandler>();
@@ -40,7 +42,11 @@ namespace GeneralBot
             {
                 await db.Database.MigrateAsync();
             }
-            return collection.BuildServiceProvider();
+            var services = collection.BuildServiceProvider();
+            services.GetRequiredService<LogService>();
+            services.GetRequiredService<GuildConfigureService>();
+            await services.GetRequiredService<CommandHandler>().InitAsync();
+            return services;
         }
 
         private static ConfigModel ConfigureSettings()
