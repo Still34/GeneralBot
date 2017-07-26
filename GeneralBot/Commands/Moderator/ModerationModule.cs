@@ -16,6 +16,7 @@ namespace GeneralBot.Commands.Moderator
     {
         [Command("kick")]
         [Summary("Kicks the selected user with specified reason, if any.")]
+        [RequireUserPermission(GuildPermission.KickMembers)]
         [RequireBotPermission(GuildPermission.KickMembers)]
         public async Task<RuntimeResult> KickUserAsync(
             [RequireHierarchy] SocketGuildUser user,
@@ -28,6 +29,7 @@ namespace GeneralBot.Commands.Moderator
         [Command("ban")]
         [Priority(1)]
         [Summary("Bans the selected user with specified reason, if any.")]
+        [RequireUserPermission(GuildPermission.BanMembers)]
         [RequireBotPermission(GuildPermission.BanMembers)]
         public async Task<RuntimeResult> BanUserAsync(
             [RequireHierarchy] SocketGuildUser user,
@@ -41,6 +43,7 @@ namespace GeneralBot.Commands.Moderator
         [Command("ban")]
         [Priority(0)]
         [Summary("Bans the selected user with the specified ID and reason, if any.")]
+        [RequireUserPermission(GuildPermission.BanMembers)]
         [RequireBotPermission(GuildPermission.BanMembers)]
         public async Task<RuntimeResult> BanUserAsync(
             [RequireHierarchy] ulong userId,
@@ -54,6 +57,7 @@ namespace GeneralBot.Commands.Moderator
         [Command("softban")]
         [Priority(1)]
         [Summary("Bans the user and then unbans. Useful for purging content for the targetted user.")]
+        [RequireUserPermission(GuildPermission.BanMembers)]
         [RequireBotPermission(GuildPermission.BanMembers)]
         public async Task<RuntimeResult> SoftBanAsync(
             [RequireHierarchy] SocketGuildUser user,
@@ -68,6 +72,7 @@ namespace GeneralBot.Commands.Moderator
         [Command("softban")]
         [Priority(0)]
         [Summary("Bans the user and then unbans. Useful for purging content for the targetted user.")]
+        [RequireUserPermission(GuildPermission.BanMembers)]
         [RequireBotPermission(GuildPermission.BanMembers)]
         public async Task<RuntimeResult> SoftBanAsync(
             [RequireHierarchy] ulong userId,
@@ -81,8 +86,8 @@ namespace GeneralBot.Commands.Moderator
 
         [Command("nickname")]
         [Summary("Changes the nickname for the targeted user.")]
-        [RequireUserPermission(GuildPermission.ManageNicknames)]
         [RequireBotPermission(GuildPermission.ManageNicknames)]
+        [RequireUserPermission(GuildPermission.ManageNicknames)]
         public async Task<RuntimeResult> NicknameChange([RequireHierarchy] SocketGuildUser user, [Remainder] string nickname)
         {
             await user.ModifyAsync(x => x.Nickname = nickname);
