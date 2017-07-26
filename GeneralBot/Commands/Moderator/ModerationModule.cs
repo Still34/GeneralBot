@@ -78,5 +78,15 @@ namespace GeneralBot.Commands.Moderator
             await Context.Guild.RemoveBanAsync(userId);
             return CommandRuntimeResult.FromSuccess($"User {userId} has been banned from the server.");
         }
+
+        [Command("nickname")]
+        [Summary("Changes the nickname for the targeted user.")]
+        [RequireUserPermission(GuildPermission.ManageNicknames)]
+        [RequireBotPermission(GuildPermission.ManageNicknames)]
+        public async Task<RuntimeResult> NicknameChange([RequireHierarchy] SocketGuildUser user, [Remainder] string nickname)
+        {
+            await user.ModifyAsync(x => x.Nickname = nickname);
+            return CommandRuntimeResult.FromSuccess($"Successfully changed {user}'s name to {nickname}.");
+        }
     }
 }

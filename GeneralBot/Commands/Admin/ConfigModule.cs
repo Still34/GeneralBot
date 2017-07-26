@@ -31,6 +31,7 @@ namespace GeneralBot.Commands.Admin
 
         [Command("mod-perms")]
         [Alias("mp")]
+        [Summary("Changes the required permission to use mod commands.")]
         public async Task<RuntimeResult> ModeratorPermsSet(
             [OverrideTypeReader(typeof(GuildPermissionTypeReader))] [Remainder] GuildPermission guildPermission)
         {
