@@ -6,7 +6,6 @@ using Discord.Commands;
 using Discord.WebSocket;
 using GeneralBot.Databases.Context;
 using GeneralBot.Models.Context;
-using GeneralBot.Services;
 
 namespace GeneralBot.Commands
 {
@@ -20,7 +19,6 @@ namespace GeneralBot.Commands
 
         public CoreContext CoreSettings { get; set; }
         public UserContext UserSettings { get; set; }
-        public LoggingService Logging { get; set; }
 
         public CustomCommandContext(DiscordSocketClient client, SocketUserMessage msg, SocketUser user = null)
         {
