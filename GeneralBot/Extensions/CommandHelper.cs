@@ -9,11 +9,6 @@ namespace GeneralBot.Extensions
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        public static string GetParamUsage(this ParameterInfo param)
-        {
-            char bracketFront = param.IsOptional ? '[' : '<';
-            char bracketBehind = param.IsOptional ? ']' : '>';
-            return $"{bracketFront}{param.Summary ?? param.Name}{bracketBehind}";
-        }
+        public static string GetParamUsage(this ParameterInfo param) => $"{(param.IsOptional ? '[' : '<')}{param.Summary ?? param.Name}{(param.IsOptional ? ']' : '>')}";
     }
 }

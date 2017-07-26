@@ -14,17 +14,18 @@ namespace GeneralBot.Commands.Admin
     [Remarks("Server settings for admins.")]
     [RequireContext(ContextType.Guild)]
     [RequireUserPermission(GuildPermission.Administrator)]
-    public class ConfigModule : ModuleBase<CustomCommandContext>
+    public class ConfigModule : ModuleBase<SocketCommandContext>
     {
+        public CoreContext CoreSettings { get; set; }
 
         [Command("prefix")]
         [Summary("Changes the command prefix.")]
         public async Task<RuntimeResult> ConfigPrefix(string prefix)
         {
-            var dbEntry = Context.CoreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ?? new GuildSettings();
+            var dbEntry = CoreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ?? new GuildSettings();
             dbEntry.Prefix = prefix;
-            Context.CoreSettings.Update(dbEntry);
-            await Context.CoreSettings.SaveChangesAsync();
+            CoreSettings.Update(dbEntry);
+            await CoreSettings.SaveChangesAsync();
             return CommandRuntimeResult.FromSuccess($"Successfully changed prefix to {Format.Bold(prefix)}.");
         }
 
@@ -34,10 +35,10 @@ namespace GeneralBot.Commands.Admin
         public async Task<RuntimeResult> ModeratorPermsSet(
             [OverrideTypeReader(typeof(GuildPermissionTypeReader))] [Remainder] GuildPermission guildPermission)
         {
-            var dbEntry = Context.CoreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ?? new GuildSettings();
+            var dbEntry = CoreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ?? new GuildSettings();
             dbEntry.ModeratorPermission = guildPermission;
-            Context.CoreSettings.Update(dbEntry);
-            await Context.CoreSettings.SaveChangesAsync();
+            CoreSettings.Update(dbEntry);
+            await CoreSettings.SaveChangesAsync();
             return CommandRuntimeResult.FromSuccess($"Successfully changed the required moderator permission to {Format.Bold(guildPermission.Humanize(LetterCasing.Title))}.");
         }
     }

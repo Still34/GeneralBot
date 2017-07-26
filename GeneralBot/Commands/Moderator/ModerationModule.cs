@@ -15,7 +15,7 @@ namespace GeneralBot.Commands.Moderator
     [Remarks("Comamnds used for server moderation.")]
     [RequireContext(ContextType.Guild)]
     [RequireModerator]
-    public class ModerationModule : ModuleBase<CustomCommandContext>
+    public class ModerationModule : ModuleBase<SocketCommandContext>
     {
         [Command("kick")]
         [Summary("Kicks the selected user with specified reason, if any.")]
@@ -103,7 +103,7 @@ namespace GeneralBot.Commands.Moderator
         [RequireBotPermission(GuildPermission.ManageMessages)]
         [RequireModerator]
         [Remarks("Clean messages that meet the criteria.")]
-        public class CleanModule : ModuleBase<CustomCommandContext>
+        public class CleanModule : ModuleBase<SocketCommandContext>
         {
             private const string MessagesNotFound = "Found 0 messages!";
 

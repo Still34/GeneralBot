@@ -10,7 +10,7 @@ namespace GeneralBot.Commands.Admin
     [Summary("Bot-specific Settings")]
     [Remarks("Bot settings for owners.")]
     [RequireOwners]
-    public class BotModule : ModuleBase<CustomCommandContext>
+    public class BotModule : ModuleBase<SocketCommandContext>
     {
         [Command("username")]
         [Summary("Changes the bot's username.")]
