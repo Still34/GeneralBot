@@ -6,6 +6,7 @@ using Discord.WebSocket;
 using GeneralBot.Commands;
 using GeneralBot.Databases.Context;
 using GeneralBot.Models;
+using GeneralBot.Models.Context;
 using GeneralBot.Services;
 using GeneralBot.Typereaders;
 using Microsoft.EntityFrameworkCore;
@@ -32,6 +33,7 @@ namespace GeneralBot
             });
             commandSerivce.AddTypeReader<GuildPermissionTypeReader>(new GuildPermissionTypeReader());
             collection.AddDbContext<CoreContext>();
+            collection.AddDbContext<UserContext>();
             collection.AddSingleton(commandSerivce);
             collection.AddSingleton<CommandHandler>();
             collection.AddSingleton<LogService>();
@@ -39,10 +41,6 @@ namespace GeneralBot
             collection.AddSingleton<LatencyUpdatedHandler>();
             collection.AddSingleton(ConfigureSettings());
             collection.AddLogging();
-            using (var db = new CoreContext())
-            {
-                await db.Database.MigrateAsync();
-            }
             var services = collection.BuildServiceProvider();
             await ConfigureServices(services);
             return services;
@@ -50,6 +48,8 @@ namespace GeneralBot
 
         private static async Task ConfigureServices(IServiceProvider services)
         {
+            await services.GetRequiredService<UserContext>().Database.MigrateAsync();
+            await services.GetRequiredService<CoreContext>().Database.MigrateAsync();
             services.GetRequiredService<LogService>();
             services.GetRequiredService<GuildConfigureService>();
             services.GetRequiredService<LatencyUpdatedHandler>();
