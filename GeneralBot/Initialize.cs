@@ -42,7 +42,7 @@ namespace GeneralBot
             return collection.BuildServiceProvider();
         }
 
-        private ConfigModel ConfigureSettings()
+        private static ConfigModel ConfigureSettings()
         {
             const string config = "config.json";
             if (!File.Exists(config))
