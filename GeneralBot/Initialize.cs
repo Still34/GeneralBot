@@ -34,6 +34,7 @@ namespace GeneralBot
             collection.AddSingleton<CommandHandler>();
             collection.AddSingleton<LogService>();
             collection.AddSingleton<GuildConfigureService>();
+            collection.AddSingleton<LatencyUpdatedHandler>();
             collection.AddSingleton(ConfigureSettings());
             collection.AddLogging();
             using (var db = new CoreContext())
