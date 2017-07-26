@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
@@ -13,7 +14,7 @@ namespace GeneralBot.Commands.Admin
     [Summary("Bot-specific Settings")]
     [Remarks("Bot settings for owners.")]
     [RequireOwners]
-    public class BotModule : ModuleBase<CustomCommandContext>
+    public class BotModule : ModuleBase<SocketCommandContext>
     {
         public CacheHelper _cacheHelper;
         public IMemoryCache _cache;
@@ -38,6 +39,12 @@ namespace GeneralBot.Commands.Admin
         {
             await Context.Client.SetGameAsync(game);
             return CommandRuntimeResult.FromSuccess($"Successfully changed game to {Format.Bold(game)}.");
+        }
+
+        [Command("throw")]
+        public Task ThrowException()
+        {
+            throw new InvalidOperationException("This is a test error.");
         }
 
         [Command("status")]
