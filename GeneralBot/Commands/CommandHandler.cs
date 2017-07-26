@@ -87,7 +87,7 @@ namespace GeneralBot.Commands
             }
             if (!msg.HasStringPrefix(prefix, ref argPos)) return;
 
-            var context = new SocketCommandContext(_client, msg);
+            var context = new CustomCommandContext(_client, msg);
             var result = await _commandService.ExecuteAsync(context, argPos, _services);
             if (!result.IsSuccess && result.Error != CommandError.UnknownCommand)
                 await context.Channel.SendMessageAsync("", embed: EmbedTemplates.FromError(result.ErrorReason));

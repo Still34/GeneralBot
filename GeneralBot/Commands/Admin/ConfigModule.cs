@@ -40,5 +40,11 @@ namespace GeneralBot.Commands.Admin
             await Context.CoreSettings.SaveChangesAsync();
             return CommandRuntimeResult.FromSuccess($"Successfully changed the required moderator permission to {Format.Bold(guildPermission.Humanize(LetterCasing.Title))}.");
         }
+
+        [Command("test")]
+        public async Task Test()
+        {
+            Context.Logging.Log("test", LogSeverity.Info);
+        }
     }
 }
