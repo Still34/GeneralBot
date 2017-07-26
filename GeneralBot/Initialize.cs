@@ -26,22 +26,30 @@ namespace GeneralBot
         private async Task<IServiceProvider> InitAsync(DiscordSocketClient client)
         {
             var collection = new ServiceCollection();
-            collection.AddSingleton(client);
             var commandSerivce = new CommandService(new CommandServiceConfig
             {
                 DefaultRunMode = RunMode.Async
             });
             commandSerivce.AddTypeReader<GuildPermissionTypeReader>(new GuildPermissionTypeReader());
-            collection.AddDbContext<CoreContext>();
-            collection.AddDbContext<UserContext>();
-            collection.AddSingleton(commandSerivce);
-            collection.AddSingleton<CommandHandler>();
-            collection.AddSingleton<LoggingService>();
-            collection.AddSingleton<GuildConfigureService>();
-            collection.AddSingleton<StatusConfigureService>();
-            collection.AddSingleton(ConfigureSettings());
-            collection.AddMemoryCache();
-            collection.AddLogging();
+            collection
+                // Database Contexts
+                .AddDbContext<CoreContext>()
+                .AddDbContext<UserContext>()
+                // Discord Client
+                .AddSingleton(client)
+                // Discord Command Service
+                .AddSingleton(commandSerivce)
+                .AddSingleton<CommandHandler>()
+                // Logging
+                .AddSingleton<LoggingService>()
+                .AddLogging()
+                // Misc Services / Configs
+                .AddSingleton<GuildConfigureService>()
+                .AddSingleton<StatusConfigureService>()
+                .AddSingleton(ConfigureSettings())
+                .AddSingleton(new Random())
+                // Memory Cache
+                .AddMemoryCache();
             var services = collection.BuildServiceProvider();
             await ConfigureServices(services);
             return services;
