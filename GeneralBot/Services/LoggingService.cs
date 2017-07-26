@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
@@ -32,19 +33,24 @@ namespace GeneralBot.Services
 
         private Task LogCommand(LogMessage message)
         {
-            // Error messages for async commands
+            var sb = new StringBuilder().AppendLine(message.ToString(prependTimestamp: false));
+
+            // Error messages for RunMode.Async commands
             if (message.Exception is CommandException command)
             {
+                long errorId = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+                sb.Append($"ID: {errorId}");
                 var _ = command.Context.Channel.SendMessageAsync("", embed:
                     EmbedTemplates
                         .FromError("We ran into a problem when executing this command!\n\nDon't worry, this error has been reported.", "Uh oh...")
+                        .AddInlineField("Error ID", errorId)
                         .WithThumbnailUrl("https://cdn.discordapp.com/emojis/288727789241237504.png"));
             }
 
             _commandsLogger.Log(GetLogLevel(message.Severity), 0,
                 message,
                 null,
-                (msg, ex) => message.ToString(prependTimestamp: false));
+                (msg, ex) => sb.ToString());
             return Task.CompletedTask;
         }
 
