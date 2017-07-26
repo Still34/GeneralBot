@@ -44,19 +44,19 @@ namespace GeneralBot.Commands
                         break;
                     case ResultType.Info:
                         severity = LogSeverity.Info;
-                        embed = EmbedTemplates.FromInfo(customResult.Reason);
+                        embed = EmbedTemplates.FromInfo(description: customResult.Reason);
                         break;
                     case ResultType.Warning:
                         severity = LogSeverity.Warning;
-                        embed = EmbedTemplates.FromWarning(customResult.Reason);
+                        embed = EmbedTemplates.FromWarning(description: customResult.Reason);
                         break;
                     case ResultType.Error:
                         severity = LogSeverity.Error;
-                        embed = EmbedTemplates.FromError(customResult.Reason);
+                        embed = EmbedTemplates.FromError(description: customResult.Reason);
                         break;
                     case ResultType.Success:
                         severity = LogSeverity.Verbose;
-                        embed = EmbedTemplates.FromSuccess(customResult.Reason);
+                        embed = EmbedTemplates.FromSuccess(description: customResult.Reason);
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
@@ -90,7 +90,7 @@ namespace GeneralBot.Commands
             var context = new SocketCommandContext(_client, msg);
             var result = await _commandService.ExecuteAsync(context, argPos, _services);
             if (!result.IsSuccess && result.Error != CommandError.UnknownCommand)
-                await context.Channel.SendMessageAsync("", embed: EmbedTemplates.FromError(result.ErrorReason));
+                await context.Channel.SendMessageAsync("", embed: EmbedTemplates.FromError(description: result.ErrorReason));
         }
     }
 }

@@ -4,6 +4,7 @@ using Discord;
 using Discord.Commands;
 using GeneralBot.Results;
 using GeneralBot.Services;
+using GeneralBot.Templates;
 
 namespace GeneralBot.Commands.User
 {
@@ -29,7 +30,7 @@ namespace GeneralBot.Commands.User
         public async Task<RuntimeResult> LocationLookup([Remainder] string location)
         {
             var geocodeResults = await Geocoding.GeocodeAsync(location);
-            var embed = new EmbedBuilder {Color = Color.Red};
+            var embed = EmbedTemplates.FromInfo();
             foreach (var geocodeResult in geocodeResults)
             {
                 if (embed.Fields.Count > 10) break;

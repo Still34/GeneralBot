@@ -42,7 +42,7 @@ namespace GeneralBot.Services
                 sb.Append($"ID: {errorId}");
                 var _ = command.Context.Channel.SendMessageAsync("", embed:
                     EmbedTemplates
-                        .FromError("We ran into a problem when executing this command!\n\nDon't worry, this error has been reported.", "Uh oh...")
+                        .FromError(title: "Uh oh...", description: "We ran into a problem when executing this command!\n\nDon't worry, this error has been reported.")
                         .AddInlineField("Error ID", errorId)
                         .WithThumbnailUrl("https://cdn.discordapp.com/emojis/288727789241237504.png"));
             }
