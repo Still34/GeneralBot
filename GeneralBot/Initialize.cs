@@ -36,9 +36,9 @@ namespace GeneralBot
             collection.AddDbContext<UserContext>();
             collection.AddSingleton(commandSerivce);
             collection.AddSingleton<CommandHandler>();
-            collection.AddSingleton<LogService>();
+            collection.AddSingleton<LoggingService>();
             collection.AddSingleton<GuildConfigureService>();
-            collection.AddSingleton<LatencyUpdatedHandler>();
+            collection.AddSingleton<StatusConfigureService>();
             collection.AddSingleton(ConfigureSettings());
             collection.AddMemoryCache();
             collection.AddLogging();
@@ -51,9 +51,9 @@ namespace GeneralBot
         {
             await services.GetRequiredService<UserContext>().Database.MigrateAsync();
             await services.GetRequiredService<CoreContext>().Database.MigrateAsync();
-            services.GetRequiredService<LogService>();
+            services.GetRequiredService<LoggingService>();
             services.GetRequiredService<GuildConfigureService>();
-            services.GetRequiredService<LatencyUpdatedHandler>();
+            services.GetRequiredService<StatusConfigureService>();
             await services.GetRequiredService<CommandHandler>().InitAsync();
         }
 

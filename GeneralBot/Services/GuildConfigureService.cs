@@ -9,9 +9,9 @@ namespace GeneralBot.Services
     internal class GuildConfigureService
     {
         private readonly CoreContext _coreSettings;
-        private readonly LogService _loggingService;
+        private readonly LoggingService _loggingService;
 
-        public GuildConfigureService(DiscordSocketClient client, CoreContext coreSettings, LogService loggingService)
+        public GuildConfigureService(DiscordSocketClient client, CoreContext coreSettings, LoggingService loggingService)
         {
             client.GuildAvailable += RegisterGuild;
             client.JoinedGuild += RegisterGuild;

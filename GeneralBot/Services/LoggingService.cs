@@ -8,12 +8,12 @@ using Microsoft.Extensions.Logging;
 
 namespace GeneralBot.Services
 {
-    public class LogService
+    public class LoggingService
     {
         private readonly ILogger _clientLogger;
         private readonly ILogger _commandsLogger;
 
-        public LogService(DiscordSocketClient client, CommandService commandService, ILoggerFactory loggerFactory)
+        public LoggingService(DiscordSocketClient client, CommandService commandService, ILoggerFactory loggerFactory)
         {
             var loggerFactory1 = ConfigureLogging(loggerFactory);
             _clientLogger = loggerFactory1.CreateLogger("client");

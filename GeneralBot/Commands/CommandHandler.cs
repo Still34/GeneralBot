@@ -17,16 +17,16 @@ namespace GeneralBot.Commands
         private readonly DiscordSocketClient _client;
         private readonly CommandService _commandService;
         private readonly CoreContext _coreSettings;
-        private readonly LogService _logService;
+        private readonly LoggingService _loggingService;
         private readonly IServiceProvider _services;
 
-        public CommandHandler(IServiceProvider services, DiscordSocketClient client, CommandService commandService, CoreContext settings, LogService logService)
+        public CommandHandler(IServiceProvider services, DiscordSocketClient client, CommandService commandService, CoreContext settings, LoggingService loggingService)
         {
             _services = services;
             _client = client;
             _commandService = commandService;
             _coreSettings = settings;
-            _logService = logService;
+            _loggingService = loggingService;
             _client.MessageReceived += CommandHandling;
             _commandService.CommandExecuted += OnCommandExecuted;
         }
@@ -61,7 +61,7 @@ namespace GeneralBot.Commands
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
-                await _logService.Log($"{context.User} executed {commandInfo.Name} in {(context.Guild == null ? context.Channel.Name : $"{context.Channel.Name}/{context.Guild.Name}")}\nResult: {customResult.Reason}", severity);
+                await _loggingService.Log($"{context.User} executed {commandInfo.Name} in {(context.Guild == null ? context.Channel.Name : $"{context.Channel.Name}/{context.Guild.Name}")}\nResult: {customResult.Reason}", severity);
                 await context.Channel.SendMessageAsync("", embed: embed);
             }
         }
