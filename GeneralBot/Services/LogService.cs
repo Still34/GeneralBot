@@ -52,6 +52,15 @@ namespace GeneralBot.Services
             return Task.CompletedTask;
         }
 
+        public Task Log(object message, LogSeverity severity, Exception exception = null)
+        {
+            _clientLogger.Log(GetLogLevel(severity), 0,
+                message,
+                exception,
+                (msg, ex) => message.ToString());
+            return Task.CompletedTask;
+        }
+
         private static LogLevel GetLogLevel(LogSeverity severity)
             => (LogLevel) Math.Abs((int) severity - 5);
     }
