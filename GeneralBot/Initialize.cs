@@ -38,6 +38,7 @@ namespace GeneralBot
             collection.AddSingleton<GuildConfigureService>();
             collection.AddSingleton<LatencyUpdatedHandler>();
             collection.AddSingleton(ConfigureSettings());
+            collection.AddMemoryCache();
             collection.AddLogging();
             using (var db = new CoreContext())
             {
