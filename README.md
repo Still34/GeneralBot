@@ -1,3 +1,3 @@
 # GeneralBot
 
-the best bot. (period)
+Placeholder until the overall structure is finished.
