@@ -7,6 +7,7 @@ using Discord.Commands;
 using Discord.WebSocket;
 using GeneralBot.Databases.Context;
 using GeneralBot.Results;
+using GeneralBot.Templates;
 
 namespace GeneralBot.Commands
 {
@@ -31,18 +32,23 @@ namespace GeneralBot.Commands
         {
             if (result is CommandRuntimeResult customResult)
             {
+                if (string.IsNullOrEmpty(customResult.Reason)) return;
                 var embed = new EmbedBuilder();
                 switch (customResult.Type)
                 {
                     case ResultType.Unknown:
                         break;
                     case ResultType.Info:
+                        embed = EmbedTemplates.FromInfo(customResult.Reason);
                         break;
                     case ResultType.Warning:
+                        embed = EmbedTemplates.FromWarning(customResult.Reason);
                         break;
                     case ResultType.Error:
+                        embed = EmbedTemplates.FromError(customResult.Reason);
                         break;
                     case ResultType.Success:
+                        embed = EmbedTemplates.FromSuccess(customResult.Reason);
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
@@ -74,6 +80,8 @@ namespace GeneralBot.Commands
 
             var context = new SocketCommandContext(_client, msg);
             var result = await _commandService.ExecuteAsync(context, argPos, _services);
+            if (!result.IsSuccess && result.Error != CommandError.UnknownCommand)
+                await context.Channel.SendMessageAsync("", embed: EmbedTemplates.FromError(result.ErrorReason));
         }
     }
 }
