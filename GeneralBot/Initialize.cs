@@ -61,7 +61,7 @@ namespace GeneralBot
             const string config = "config.json";
             if (!File.Exists(config))
             {
-                string text = JsonConvert.SerializeObject(new ConfigModel());
+                string text = JsonConvert.SerializeObject(new ConfigModel(), Formatting.Indented);
                 File.WriteAllText(config, text);
             }
             return JsonConvert.DeserializeObject<ConfigModel>(File.ReadAllText(config));
