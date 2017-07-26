@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using Discord;
 using Discord.WebSocket;
 
@@ -44,6 +41,5 @@ namespace GeneralBot.Extensions
         /// <param name="size">The size of the avatar (default avatar will always be 256x256).</param>
         /// <returns></returns>
         public static string GetAvatarUrlOrDefault(this IUser user, ushort size = 128) => user?.GetAvatarUrl(size: size) ?? "https://i.imgur.com/o5vbqOB.png";
-
     }
 }
