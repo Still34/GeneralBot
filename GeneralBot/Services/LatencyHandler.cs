@@ -20,10 +20,6 @@ namespace GeneralBot.Services
             var newStatus = UserStatus.Online;
             switch (latencyAfter)
             {
-                case var i when i <= 150:
-                    newStatus = UserStatus.Online;
-                    break;
-
                 case var i when i > 150 && i < 500:
                     newStatus = UserStatus.AFK;
                     break;
