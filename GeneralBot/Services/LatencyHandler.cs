@@ -16,20 +16,24 @@ namespace GeneralBot.Services
 
         private async Task LatencyUpdatedAsync(int latencyBefore, int latencyAfter)
         {
+            var currentStatus = _client.CurrentUser.Status;
+            var newStatus = UserStatus.Online;
             switch (latencyAfter)
             {
                 case var i when i <= 150:
-                    await _client.SetStatusAsync(UserStatus.Online);
+                    newStatus = UserStatus.Online;
                     break;
 
                 case var i when i > 150 && i < 500:
-                    await _client.SetStatusAsync(UserStatus.AFK);
+                    newStatus = UserStatus.AFK;
                     break;
 
                 case var i when i >= 500:
-                    await _client.SetStatusAsync(UserStatus.DoNotDisturb);
+                    newStatus = UserStatus.DoNotDisturb;
                     break;
             }
+            if (!Equals(currentStatus, newStatus))
+                await _client.SetStatusAsync(newStatus);
         }
     }
 }

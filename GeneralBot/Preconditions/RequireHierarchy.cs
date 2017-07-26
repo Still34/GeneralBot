@@ -24,7 +24,7 @@ namespace GeneralBot.Preconditions
 
             var currentUser = await context.Guild.GetCurrentUserAsync() as SocketGuildUser;
             if (currentUser?.Hierarchy < targetUser.Hierarchy)
-                return PreconditionResult.FromError("The bot's role is lower than the targetted user.");
+                return PreconditionResult.FromError("The bot's role is lower than the targeted user.");
 
             return PreconditionResult.FromSuccess();
         }
