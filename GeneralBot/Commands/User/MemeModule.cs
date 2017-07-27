@@ -16,7 +16,7 @@ namespace GeneralBot.Commands.User
                 sb.Append(c);
                 sb.Append(" ");
             }
-            return Task.FromResult<RuntimeResult>(CommandRuntimeResult.FromInfo(sb.ToString()));
+            return Task.FromResult<RuntimeResult>(CommandRuntimeResult.FromInfo(sb));
         }
     }
 }
