@@ -1,8 +1,13 @@
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Discord;
+using Discord.Addons.Interactive;
 using Discord.Commands;
+using GeneralBot.Extensions;
 using GeneralBot.Preconditions;
 using GeneralBot.Results;
+using GeneralBot.Templates;
 
 namespace GeneralBot.Commands.Admin
 {
@@ -12,6 +17,21 @@ namespace GeneralBot.Commands.Admin
     [RequireOwners]
     public class BotModule : ModuleBase<SocketCommandContext>
     {
+        private IDisposable _typing;
+        public InteractiveService InteractiveService { get; set; }
+
+        protected override void BeforeExecute(CommandInfo command)
+        {
+            base.BeforeExecute(command);
+            _typing = Context.Channel.EnterTypingState();
+        }
+
+        protected override void AfterExecute(CommandInfo command)
+        {
+            base.AfterExecute(command);
+            _typing.Dispose();
+        }
+
         [Command("username")]
         [Summary("Changes the bot's username.")]
         public async Task<RuntimeResult> ConfigUsername([Remainder] string username)
@@ -28,58 +48,31 @@ namespace GeneralBot.Commands.Admin
             return CommandRuntimeResult.FromSuccess($"Successfully changed game to {Format.Bold(game)}.");
         }
 
-
-        [Command("status")]
-        [Summary("Changes the bot's status.")]
-        public async Task<RuntimeResult> ConfigStatus(string status)
+        [Command("avatar")]
+        [Summary("Changes the bot's avatar.")]
+        public async Task<RuntimeResult> AvatarConfigure()
         {
-            switch (status.ToLower())
+            await ReplyAsync("", embed: EmbedTemplates.FromInfo(description: "Please upload the new avatar."));
+            var message = await InteractiveService.NextMessageAsync(Context, new EnsureFromUserCriterion(Context.User.Id), TimeSpan.FromMinutes(5));
+            Uri imageUri = null;
+            if (!string.IsNullOrEmpty(message.Content))
             {
-                case "online":
-                    await Context.Client.SetStatusAsync(UserStatus.Online);
-                    return CommandRuntimeResult.FromSuccess($"Successfully changed status to {Format.Bold("Online")}.");
-                case "offline":
-                    await Context.Client.SetStatusAsync(UserStatus.Offline);
-                    return CommandRuntimeResult.FromSuccess($"Successfully changed status to {Format.Bold("Offline")}.");
-                case "afk":
-                    await Context.Client.SetStatusAsync(UserStatus.AFK);
-                    return CommandRuntimeResult.FromSuccess($"Successfully changed status to {Format.Bold("AFK")}.");
-                case "idle":
-                    await Context.Client.SetStatusAsync(UserStatus.Idle);
-                    return CommandRuntimeResult.FromSuccess($"Successfully changed status to {Format.Bold("Idle")}.");
-                case "dnd":
-                    await Context.Client.SetStatusAsync(UserStatus.DoNotDisturb);
-                    return CommandRuntimeResult.FromSuccess($"Successfully changed status to {Format.Bold("Do Not Disturb")}.");
-                case "invisible":
-                    await Context.Client.SetStatusAsync(UserStatus.Invisible);
-                    return CommandRuntimeResult.FromSuccess($"Successfully changed status to {Format.Bold("Invisible")}.");
-                default:
-                    return CommandRuntimeResult.FromError($"{Format.Bold(status)} is not a valid status.");
+                var image = await WebHelper.GetImageUri(message.Content);
+                if (image != null) imageUri = image;
             }
+            var attachment = message.Attachments.FirstOrDefault();
+            if (attachment?.Height != null) Uri.TryCreate(attachment.Url, UriKind.RelativeOrAbsolute, out imageUri);
+            if (imageUri == null) return CommandRuntimeResult.FromError("No valid images were detected.");
+            var imageStream = await WebHelper.GetFile(imageUri);
+            try
+            {
+                await Context.Client.CurrentUser.ModifyAsync(x => x.Avatar = new Image(imageStream));
+            }
+            finally
+            {
+                imageStream.Dispose();
+            }
+            return CommandRuntimeResult.FromSuccess("Successfully changed avatar.");
         }
-
-        //public IMemoryCache Cache { get; set; }
-
-        //public CacheHelper CacheHelper { get; set; }
-
-        //[Command("test")]
-        //public async Task<RuntimeResult> Test(string key, string value)
-        //{
-        //   return CommandRuntimeResult.FromSuccess((await _cacheHelper.TryGetValueSet<string, string>(key, value, TimeSpan.FromMinutes(1))));
-        //}
-
-        //[Command("test2")]
-        //public async Task<RuntimeResult> Test(string key)
-        //{
-        //    if(_cache.TryGetValue(key, out string value))
-        //    {
-        //        return CommandRuntimeResult.FromSuccess(value);
-        //    }
-        //    else
-        //    {
-        //        return CommandRuntimeResult.FromError($"No value found for {key} in the cache!");
-        //    }
-
-        //}
     }
 }
