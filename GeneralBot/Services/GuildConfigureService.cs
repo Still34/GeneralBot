@@ -16,15 +16,15 @@ namespace GeneralBot.Services
 
         public GuildConfigureService(DiscordSocketClient client, CoreContext coreSettings, LoggingService loggingService)
         {
-            client.GuildAvailable += RegisterGuild;
-            client.JoinedGuild += RegisterGuild;
-            client.LeftGuild += UnregisterGuild;
-            client.UserJoined += WelcomeMember;
+            client.GuildAvailable += RegisterGuildAsync;
+            client.JoinedGuild += RegisterGuildAsync;
+            client.LeftGuild += UnregisterGuildAsync;
+            client.UserJoined += WelcomeAsync;
             _coreSettings = coreSettings;
             _loggingService = loggingService;
         }
 
-        private async Task UnregisterGuild(SocketGuild guild)
+        private async Task UnregisterGuildAsync(SocketGuild guild)
         {
             var dbEntry = _coreSettings.GuildsSettings.Where(x => x.GuildId == guild.Id);
             if (dbEntry == null) return;
@@ -33,9 +33,9 @@ namespace GeneralBot.Services
             await _coreSettings.SaveChangesAsync();
         }
 
-        private async Task RegisterGuild(SocketGuild guild) => await GetOrRegisterGuildEntry(guild);
+        private async Task RegisterGuildAsync(SocketGuild guild) => await GetOrRegisterGuildAsync(guild);
 
-        private async Task<GuildSettings> GetOrRegisterGuildEntry(SocketGuild guild)
+        private async Task<GuildSettings> GetOrRegisterGuildAsync(SocketGuild guild)
         {
             var dbEntry = _coreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == guild.Id);
             if (dbEntry != null) return dbEntry;
@@ -47,12 +47,12 @@ namespace GeneralBot.Services
             return dbEntry;
         }
 
-        private async Task WelcomeMember(SocketGuildUser user)
+        private async Task WelcomeAsync(SocketGuildUser user)
         {
             var guild = user.Guild;
             await _loggingService.Log($"{user.GetFullnameOrDefault()} ({user.Id}) joined {guild} ({guild.Id}).", LogSeverity.Verbose);
 
-            var dbEntry = await GetOrRegisterGuildEntry(guild);
+            var dbEntry = await GetOrRegisterGuildAsync(guild);
             if (!dbEntry.WelcomeEnable) return;
             var channel = guild.GetTextChannel(dbEntry.WelcomeChannel);
             if (channel == null) return;

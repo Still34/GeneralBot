@@ -27,11 +27,11 @@ namespace GeneralBot.Commands
             _commandService = commandService;
             _coreSettings = settings;
             _loggingService = loggingService;
-            _client.MessageReceived += CommandHandling;
-            _commandService.CommandExecuted += OnCommandExecuted;
+            _client.MessageReceived += CommandHandleAsync;
+            _commandService.CommandExecuted += OnCommandExecutedAsync;
         }
 
-        private async Task OnCommandExecuted(CommandInfo commandInfo, ICommandContext context, IResult result)
+        private async Task OnCommandExecutedAsync(CommandInfo commandInfo, ICommandContext context, IResult result)
         {
             if (result is CommandRuntimeResult customResult)
             {
@@ -68,7 +68,7 @@ namespace GeneralBot.Commands
 
         public async Task InitAsync() => await _commandService.AddModulesAsync(Assembly.GetEntryAssembly());
 
-        private async Task CommandHandling(SocketMessage msgArg)
+        private async Task CommandHandleAsync(SocketMessage msgArg)
         {
             // Bail when it's not an user message.
             var msg = msgArg as SocketUserMessage;
