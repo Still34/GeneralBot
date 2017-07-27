@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
+using Discord.Addons.Interactive;
 using Discord.Commands;
 using Discord.WebSocket;
 using GeneralBot.Commands;
@@ -44,6 +45,7 @@ namespace GeneralBot
                 // Discord Command Service
                 .AddSingleton(commandSerivce)
                 .AddSingleton<CommandHandler>()
+                .AddSingleton<InteractiveService>()
                 // Database Contexts
                 .AddDbContext<CoreContext>()
                 .AddDbContext<UserContext>()
