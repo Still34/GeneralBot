@@ -26,7 +26,7 @@ namespace GeneralBot.Commands.Admin
         [Summary("Changes the command prefix.")]
         public async Task<RuntimeResult> ConfigPrefix(string prefix)
         {
-            var dbEntry = CoreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ?? new GuildSettings();
+            var dbEntry = CoreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ?? CoreSettings.GuildsSettings.Add(new GuildSettings {GuildId = Context.Guild.Id}).Entity;
             dbEntry.CommandPrefix = prefix;
             CoreSettings.Update(dbEntry);
             await CoreSettings.SaveChangesAsync();
@@ -39,7 +39,7 @@ namespace GeneralBot.Commands.Admin
         public async Task<RuntimeResult> ModeratorPermsSet(
             [OverrideTypeReader(typeof(GuildPermissionTypeReader))] [Remainder] GuildPermission guildPermission)
         {
-            var dbEntry = CoreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ?? new GuildSettings();
+            var dbEntry = CoreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ?? CoreSettings.GuildsSettings.Add(new GuildSettings {GuildId = Context.Guild.Id}).Entity;
             dbEntry.ModeratorPermission = guildPermission;
             CoreSettings.Update(dbEntry);
             await CoreSettings.SaveChangesAsync();
@@ -58,7 +58,7 @@ namespace GeneralBot.Commands.Admin
             [Summary("Checks the current status of the welcome feature.")]
             public async Task Welcome()
             {
-                var dbEntry = CoreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ?? new GuildSettings();
+                var dbEntry = CoreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ?? CoreSettings.GuildsSettings.Add(new GuildSettings {GuildId = Context.Guild.Id}).Entity;
                 string formattedMessage = dbEntry.WelcomeMessage.Replace("{mention}", Context.User.Mention)
                     .Replace("{username}", Context.User.Username)
                     .Replace("{discrim}", Context.User.Discriminator)
@@ -81,7 +81,7 @@ namespace GeneralBot.Commands.Admin
             [Summary("Enables the welcome setting on the current guild.")]
             public async Task<RuntimeResult> EnableWelcome()
             {
-                var dbEntry = CoreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ?? new GuildSettings();
+                var dbEntry = CoreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ?? CoreSettings.GuildsSettings.Add(new GuildSettings {GuildId = Context.Guild.Id}).Entity;
                 if (dbEntry.WelcomeEnable) return CommandRuntimeResult.FromError("The welcome message is already enabled!");
                 dbEntry.WelcomeEnable = true;
                 CoreSettings.Update(dbEntry);
@@ -94,7 +94,7 @@ namespace GeneralBot.Commands.Admin
             [Summary("Disables the welcome setting on the current guild.")]
             public async Task<RuntimeResult> DisableWelcome()
             {
-                var dbEntry = CoreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ?? new GuildSettings();
+                var dbEntry = CoreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ?? CoreSettings.GuildsSettings.Add(new GuildSettings {GuildId = Context.Guild.Id}).Entity;
                 if (!dbEntry.WelcomeEnable) return CommandRuntimeResult.FromError("The welcome message is already disabled!");
                 dbEntry.WelcomeEnable = false;
                 CoreSettings.Update(dbEntry);
@@ -108,7 +108,7 @@ namespace GeneralBot.Commands.Admin
             [Remarks("Placeholders: {mention}, {username}, {discrim}, {guild}, {date}")]
             public async Task<RuntimeResult> ConfigMessage([Remainder] string message)
             {
-                var dbEntry = CoreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ?? new GuildSettings();
+                var dbEntry = CoreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ?? CoreSettings.GuildsSettings.Add(new GuildSettings {GuildId = Context.Guild.Id}).Entity;
                 if (message.Length > 1024) return CommandRuntimeResult.FromError("Your welcome message is too long!");
                 dbEntry.WelcomeMessage = message;
                 CoreSettings.Update(dbEntry);
@@ -121,7 +121,7 @@ namespace GeneralBot.Commands.Admin
             [Summary("Changes the welcome channel on the current guild.")]
             public async Task<RuntimeResult> ConfigChannel(SocketTextChannel channel)
             {
-                var dbEntry = CoreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ?? new GuildSettings();
+                var dbEntry = CoreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ?? CoreSettings.GuildsSettings.Add(new GuildSettings {GuildId = Context.Guild.Id}).Entity;
                 dbEntry.WelcomeChannel = channel.Id;
                 CoreSettings.Update(dbEntry);
                 await CoreSettings.SaveChangesAsync();
