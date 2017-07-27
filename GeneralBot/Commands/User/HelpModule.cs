@@ -35,12 +35,16 @@ namespace GeneralBot.Commands.User
             };
             foreach (var commandInfo in commandInfos)
             {
-                if (embed.Fields.Count > 10)
+                if (embed.Fields.Count > 5)
                 {
                     embed.AddInlineField($"And {commandInfos.Count - embed.Fields.Count} more...", "Refine your search term to see more!");
                     break;
                 }
-                embed.AddInlineField($"{GetCommandPrefix(Context.Guild)}{BuildCommandInfo(commandInfo)}", commandInfo.Summary);
+                embed.AddField(x =>
+                {
+                    x.Name = $"{GetCommandPrefix(Context.Guild)}{BuildCommandInfo(commandInfo)}";
+                    x.Value = commandInfo.Summary ?? "No summary.";
+                });
             }
             await ReplyAsync("", embed: embed);
             return CommandRuntimeResult.FromSuccess();
