@@ -1,15 +1,15 @@
-﻿using System.Linq;
+﻿using System;
+using System.Globalization;
+using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
+using Discord.WebSocket;
 using GeneralBot.Databases.Context;
+using GeneralBot.Models;
 using GeneralBot.Results;
 using GeneralBot.Typereaders;
 using Humanizer;
-using Discord.WebSocket;
-using System;
-using System.Globalization;
-using GeneralBot.Models;
 
 namespace GeneralBot.Commands.Admin
 {
@@ -54,7 +54,7 @@ namespace GeneralBot.Commands.Admin
             public CoreContext CoreSettings { get; set; }
             public ConfigModel Config { get; set; }
 
-            [Command("")]
+            [Command]
             [Summary("Checks the current status of the welcome feature.")]
             public async Task Welcome()
             {
@@ -64,19 +64,15 @@ namespace GeneralBot.Commands.Admin
                     .Replace("{discrim}", Context.User.Discriminator)
                     .Replace("{guild}", Context.Guild.Name)
                     .Replace("{date}", DateTime.UtcNow.ToString(CultureInfo.InvariantCulture));
-                var em = new EmbedBuilder()
-                {
-                    Title = "Current welcome configuration:",
-                    Description = dbEntry.WelcomeEnable ? "Currently Enabled" : "Currently Disabled",
-                    Color = new Color(52, 152, 219),
-                    ThumbnailUrl = Config.Commands.Welcome
-                }.AddField(x=> {
-                    x.Name = "Current message:";
-                    x.Value = dbEntry.WelcomeMessage;
-                }).AddField(x=> {
-                    x.Name = "Example:";
-                    x.Value = formattedMessage;
-                });
+                var em = new EmbedBuilder
+                    {
+                        Title = "Current welcome configuration:",
+                        Description = $"Currently {(dbEntry.WelcomeEnable ? "Enabled" : "Disabled")}",
+                        Color = new Color(52, 152, 219),
+                        ThumbnailUrl = Config.Commands.Welcome
+                    }
+                    .AddInlineField("Current message:", dbEntry.WelcomeMessage)
+                    .AddInlineField("Example:", formattedMessage);
                 await ReplyAsync("", embed: em);
             }
 
@@ -103,15 +99,16 @@ namespace GeneralBot.Commands.Admin
                 dbEntry.WelcomeEnable = false;
                 CoreSettings.Update(dbEntry);
                 await CoreSettings.SaveChangesAsync();
-                return CommandRuntimeResult.FromSuccess($"Successfully disabled the welcome message!");
+                return CommandRuntimeResult.FromSuccess("Successfully disabled the welcome message!");
             }
 
             [Command("message")]
             [Alias("m")]
             [Summary("Changes the welcome message on the current guild.")]
-            public async Task<RuntimeResult> ConfigMessage([Remainder]string message)
+            public async Task<RuntimeResult> ConfigMessage([Remainder] string message)
             {
                 var dbEntry = CoreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ?? new GuildSettings();
+                if (message.Length > 1024) return CommandRuntimeResult.FromError("Your welcome message is too long!");
                 dbEntry.WelcomeMessage = message;
                 CoreSettings.Update(dbEntry);
                 await CoreSettings.SaveChangesAsync();
