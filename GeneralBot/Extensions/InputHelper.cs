@@ -12,8 +12,8 @@ namespace GeneralBot.Extensions
         public static Color GetRandomColor()
         {
             var random = new Random();
-            var fields = typeof(Discord.Color).GetFields();
-            var color = (Discord.Color) fields[random.Next(0, fields.Length)].GetValue(null);
+            var fields = typeof(Color).GetFields();
+            var color = (Color) fields[random.Next(0, fields.Length)].GetValue(null);
             return color;
         }
 
