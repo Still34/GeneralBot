@@ -23,6 +23,15 @@ namespace GeneralBot.Databases.Context
         public string Prefix { get; set; } = "!";
 
         [Required]
+        public bool EnableWelcome { get; set; } = false;
+
+        [Required]
+        public ulong WelcomeChannel { get; set; }
+
+        [Required]
+        public string WelcomeMessage { get; set; } = "Welcome {mention} to the guild!";
+
+        [Required]
         public GuildPermission ModeratorPermission { get; set; } = GuildPermission.KickMembers;
     }
 }
