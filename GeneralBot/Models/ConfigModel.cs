@@ -30,6 +30,8 @@ namespace GeneralBot.Models
                 "Very doubtful."
             },
             "https://i.imgur.com/eAAerQJ.png");
+
+        public string Welcome { get; set; } = "https://emojipedia-us.s3.amazonaws.com/thumbs/120/twitter/103/public-address-loudspeaker_1f4e2.png";
     }
 
     public class Credential

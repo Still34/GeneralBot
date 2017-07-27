@@ -7,6 +7,9 @@ using GeneralBot.Results;
 using GeneralBot.Typereaders;
 using Humanizer;
 using Discord.WebSocket;
+using System;
+using System.Globalization;
+using GeneralBot.Models;
 
 namespace GeneralBot.Commands.Admin
 {
@@ -49,13 +52,32 @@ namespace GeneralBot.Commands.Admin
         public class WelcomeModule : ModuleBase<SocketCommandContext>
         {
             public CoreContext CoreSettings { get; set; }
+            public ConfigModel Config { get; set; }
 
             [Command("")]
             [Summary("Checks the current status of the welcome feature.")]
-            public async Task<RuntimeResult> Welcome()
+            public async Task Welcome()
             {
                 var dbEntry = CoreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ?? new GuildSettings();
-                return CommandRuntimeResult.FromInfo($"The current welcome message is {Format.Bold(dbEntry.WelcomeMessage)} (Enabled: {dbEntry.WelcomeEnable})");
+                string formattedMessage = dbEntry.WelcomeMessage.Replace("{mention}", Context.User.Mention)
+                    .Replace("{username}", Context.User.Username)
+                    .Replace("{discrim}", Context.User.Discriminator)
+                    .Replace("{guild}", Context.Guild.Name)
+                    .Replace("{date}", DateTime.UtcNow.ToString(CultureInfo.InvariantCulture));
+                var em = new EmbedBuilder()
+                {
+                    Title = "Current welcome configuration:",
+                    Description = dbEntry.WelcomeEnable ? "Currently Enabled" : "Currently Disabled",
+                    Color = new Color(52, 152, 219),
+                    ThumbnailUrl = Config.Commands.Welcome
+                }.AddField(x=> {
+                    x.Name = "Current message:";
+                    x.Value = dbEntry.WelcomeMessage;
+                }).AddField(x=> {
+                    x.Name = "Example:";
+                    x.Value = formattedMessage;
+                });
+                await ReplyAsync("", embed: em);
             }
 
             [Command("enable")]
@@ -87,7 +109,7 @@ namespace GeneralBot.Commands.Admin
             [Command("message")]
             [Alias("m")]
             [Summary("Changes the welcome message on the current guild.")]
-            public async Task<RuntimeResult> ConfigMessage(string message)
+            public async Task<RuntimeResult> ConfigMessage([Remainder]string message)
             {
                 var dbEntry = CoreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ?? new GuildSettings();
                 dbEntry.WelcomeMessage = message;
