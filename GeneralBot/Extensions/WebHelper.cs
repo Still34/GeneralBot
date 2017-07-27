@@ -8,7 +8,7 @@ namespace GeneralBot.Extensions
 {
     public class WebHelper
     {
-        public static async Task<string> GetMediaHeader(Uri uri, TimeSpan? timeout = null)
+        public static async Task<string> GetMediaHeaderAsync(Uri uri, TimeSpan? timeout = null)
         {
             try
             {
@@ -24,7 +24,7 @@ namespace GeneralBot.Extensions
             }
         }
 
-        public static async Task<Stream> GetFile(Uri uri, TimeSpan? timeout = null)
+        public static async Task<Stream> GetFileAsync(Uri uri, TimeSpan? timeout = null)
         {
             try
             {
@@ -40,11 +40,11 @@ namespace GeneralBot.Extensions
             }
         }
 
-        public static async Task<Uri> GetImageUri(string input)
+        public static async Task<Uri> GetImageUriAsync(string input)
         {
             var regex = Regex.Match(input, @"\b\w+://\S+\b", RegexOptions.IgnoreCase);
             if (!regex.Success || !Uri.TryCreate(regex.Value, UriKind.RelativeOrAbsolute, out Uri uri)) return null;
-            string header = await GetMediaHeader(uri);
+            string header = await GetMediaHeaderAsync(uri);
             return header.StartsWith("image") ? uri : null;
         }
     }

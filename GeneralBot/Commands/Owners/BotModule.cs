@@ -57,13 +57,13 @@ namespace GeneralBot.Commands.Admin
             Uri imageUri = null;
             if (!string.IsNullOrEmpty(message.Content))
             {
-                var image = await WebHelper.GetImageUri(message.Content);
+                var image = await WebHelper.GetImageUriAsync(message.Content);
                 if (image != null) imageUri = image;
             }
             var attachment = message.Attachments.FirstOrDefault();
             if (attachment?.Height != null) Uri.TryCreate(attachment.Url, UriKind.RelativeOrAbsolute, out imageUri);
             if (imageUri == null) return CommandRuntimeResult.FromError("No valid images were detected.");
-            var imageStream = await WebHelper.GetFile(imageUri);
+            var imageStream = await WebHelper.GetFileAsync(imageUri);
             try
             {
                 await Context.Client.CurrentUser.ModifyAsync(x => x.Avatar = new Image(imageStream));
