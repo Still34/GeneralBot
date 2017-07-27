@@ -48,7 +48,7 @@ namespace GeneralBot.Commands.User
         {
             var regexParsed = Regex.Split(input, "or|;|,|and", RegexOptions.IgnoreCase);
             if (regexParsed.Length == 0)
-                return CommandRuntimeResult.FromError("You need to supply more than one options!");
+                return CommandRuntimeResult.FromError("You need to supply more than one option!");
             var embed = new EmbedBuilder
             {
                 Author = new EmbedAuthorBuilder
