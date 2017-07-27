@@ -83,7 +83,7 @@ namespace GeneralBot.Commands
             {
                 var dbEntry = _coreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == guildChannel.Guild.Id);
                 if (dbEntry != null)
-                    prefix = dbEntry.Prefix;
+                    prefix = dbEntry.CommandPrefix;
             }
             if (!msg.HasStringPrefix(prefix, ref argPos)) return;
 

@@ -20,10 +20,10 @@ namespace GeneralBot.Databases.Context
         public ulong GuildId { get; set; }
 
         [Required]
-        public string Prefix { get; set; } = "!";
+        public string CommandPrefix { get; set; } = "!";
 
         [Required]
-        public bool EnableWelcome { get; set; } = false;
+        public bool WelcomeEnable { get; set; } = false;
 
         [Required]
         public ulong WelcomeChannel { get; set; }

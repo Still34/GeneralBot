@@ -1,9 +1,11 @@
-﻿using System.Linq;
+﻿using System;
+using System.Globalization;
+using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
 using GeneralBot.Databases.Context;
-using System;
+using GeneralBot.Extensions;
 
 namespace GeneralBot.Services
 {
@@ -31,29 +33,35 @@ namespace GeneralBot.Services
             await _coreSettings.SaveChangesAsync();
         }
 
-        private async Task RegisterGuild(SocketGuild guild)
+        private async Task RegisterGuild(SocketGuild guild) => await RegisterOrGetGuildEntry(guild);
+
+        private async Task<GuildSettings> RegisterOrGetGuildEntry(SocketGuild guild)
         {
             var dbEntry = _coreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == guild.Id);
-            if (dbEntry != null) return;
+            if (dbEntry != null) return dbEntry;
+
             await _loggingService.Log($"New guild {guild} found, registering...", LogSeverity.Info);
-            await _coreSettings.GuildsSettings.AddAsync(new GuildSettings {GuildId = guild.Id});
+            dbEntry = new GuildSettings {GuildId = guild.Id};
+            await _coreSettings.GuildsSettings.AddAsync(dbEntry);
             await _coreSettings.SaveChangesAsync();
+            return dbEntry;
         }
 
         private async Task WelcomeMember(SocketGuildUser user)
         {
             var guild = user.Guild;
-            var dbEntry = _coreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == guild.Id);
-            if (dbEntry == null) await RegisterGuild(guild);
-            if (!dbEntry.EnableWelcome) return;
-            var channel = guild.GetChannel(dbEntry.WelcomeChannel) as SocketTextChannel;
+            await _loggingService.Log($"{user.GetFullnameOrDefault()} ({user.Id}) joined {guild} ({guild.Id}).", LogSeverity.Verbose);
+
+            var dbEntry = await RegisterOrGetGuildEntry(guild);
+            if (!dbEntry.WelcomeEnable) return;
+            var channel = guild.GetTextChannel(dbEntry.WelcomeChannel);
             if (channel == null) return;
-            var formattedMessage = dbEntry.WelcomeMessage.Replace("{mention}", user.Mention)
+            string formattedMessage = dbEntry.WelcomeMessage.Replace("{mention}", user.Mention)
                 .Replace("{username}", user.Username)
                 .Replace("{discrim}", user.Discriminator)
                 .Replace("{guild}", guild.Name)
-                .Replace("{date}", DateTime.UtcNow.ToString());
-            await channel.SendMessageAsync(formattedMessage);
+                .Replace("{date}", DateTime.UtcNow.ToString(CultureInfo.InvariantCulture));
+            var _ = channel.SendMessageAsync(formattedMessage);
         }
     }
 }

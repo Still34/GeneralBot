@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace GeneralBot.Migrations
 {
-    public partial class init : Migration
+    public partial class Welcome : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -14,8 +14,12 @@ namespace GeneralBot.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
+                    CommandPrefix = table.Column<string>(nullable: false),
                     GuildId = table.Column<ulong>(nullable: false),
-                    Prefix = table.Column<string>(nullable: false)
+                    ModeratorPermission = table.Column<byte>(nullable: false),
+                    WelcomeChannel = table.Column<ulong>(nullable: false),
+                    WelcomeEnable = table.Column<bool>(nullable: false),
+                    WelcomeMessage = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {

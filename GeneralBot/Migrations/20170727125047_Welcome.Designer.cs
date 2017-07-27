@@ -9,8 +9,8 @@ using Discord;
 namespace GeneralBot.Migrations
 {
     [DbContext(typeof(CoreContext))]
-    [Migration("20170726160358_ModPerms")]
-    partial class ModPerms
+    [Migration("20170727125047_Welcome")]
+    partial class Welcome
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -22,11 +22,18 @@ namespace GeneralBot.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<string>("CommandPrefix")
+                        .IsRequired();
+
                     b.Property<ulong>("GuildId");
 
                     b.Property<byte>("ModeratorPermission");
 
-                    b.Property<string>("Prefix")
+                    b.Property<ulong>("WelcomeChannel");
+
+                    b.Property<bool>("WelcomeEnable");
+
+                    b.Property<string>("WelcomeMessage")
                         .IsRequired();
 
                     b.HasKey("Id");

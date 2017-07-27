@@ -24,7 +24,7 @@ namespace GeneralBot.Commands.Admin
         public async Task<RuntimeResult> ConfigPrefix(string prefix)
         {
             var dbEntry = CoreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ?? new GuildSettings();
-            dbEntry.Prefix = prefix;
+            dbEntry.CommandPrefix = prefix;
             CoreSettings.Update(dbEntry);
             await CoreSettings.SaveChangesAsync();
             return CommandRuntimeResult.FromSuccess($"Successfully changed prefix to {Format.Bold(prefix)}.");
@@ -55,7 +55,7 @@ namespace GeneralBot.Commands.Admin
             public async Task<RuntimeResult> Welcome()
             {
                 var dbEntry = CoreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ?? new GuildSettings();
-                return CommandRuntimeResult.FromInfo($"The current welcome message is {Format.Bold(dbEntry.WelcomeMessage)} (Enabled: {dbEntry.EnableWelcome})");
+                return CommandRuntimeResult.FromInfo($"The current welcome message is {Format.Bold(dbEntry.WelcomeMessage)} (Enabled: {dbEntry.WelcomeEnable})");
             }
 
             [Command("enable")]
@@ -64,11 +64,11 @@ namespace GeneralBot.Commands.Admin
             public async Task<RuntimeResult> EnableWelcome()
             {
                 var dbEntry = CoreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ?? new GuildSettings();
-                if (dbEntry.EnableWelcome) return CommandRuntimeResult.FromError("The welcome message is already enabled!");
-                dbEntry.EnableWelcome = true;
+                if (dbEntry.WelcomeEnable) return CommandRuntimeResult.FromError("The welcome message is already enabled!");
+                dbEntry.WelcomeEnable = true;
                 CoreSettings.Update(dbEntry);
                 await CoreSettings.SaveChangesAsync();
-                return CommandRuntimeResult.FromSuccess($"Successfully enabled the welcome message! If you haven't configure the welcome message by using `{dbEntry.Prefix}server welcome message`");
+                return CommandRuntimeResult.FromSuccess($"Successfully enabled the welcome message! If you haven't configure the welcome message by using `{dbEntry.CommandPrefix}server welcome message`");
             }
 
             [Command("disable")]
@@ -77,8 +77,8 @@ namespace GeneralBot.Commands.Admin
             public async Task<RuntimeResult> DisableWelcome()
             {
                 var dbEntry = CoreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ?? new GuildSettings();
-                if (!dbEntry.EnableWelcome) return CommandRuntimeResult.FromError("The welcome message is already disabled!");
-                dbEntry.EnableWelcome = false;
+                if (!dbEntry.WelcomeEnable) return CommandRuntimeResult.FromError("The welcome message is already disabled!");
+                dbEntry.WelcomeEnable = false;
                 CoreSettings.Update(dbEntry);
                 await CoreSettings.SaveChangesAsync();
                 return CommandRuntimeResult.FromSuccess($"Successfully disabled the welcome message!");

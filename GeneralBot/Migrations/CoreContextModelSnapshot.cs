@@ -21,11 +21,18 @@ namespace GeneralBot.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<string>("CommandPrefix")
+                        .IsRequired();
+
                     b.Property<ulong>("GuildId");
 
                     b.Property<byte>("ModeratorPermission");
 
-                    b.Property<string>("Prefix")
+                    b.Property<ulong>("WelcomeChannel");
+
+                    b.Property<bool>("WelcomeEnable");
+
+                    b.Property<string>("WelcomeMessage")
                         .IsRequired();
 
                     b.HasKey("Id");
