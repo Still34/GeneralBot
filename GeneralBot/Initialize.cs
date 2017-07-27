@@ -37,7 +37,7 @@ namespace GeneralBot
                 // Misc Services / Configs
                 .AddSingleton(ConfigureSettings())
                 .AddSingleton<ConfigureGuildService>()
-                .AddSingleton<ConfigureStatusService>()
+                .AddSingleton<ConfigurePresenceService>()
                 .AddSingleton<GoogleGeocodingService>()
                 .AddSingleton(new Random())
                 // Discord Client
@@ -66,7 +66,7 @@ namespace GeneralBot
             await services.GetRequiredService<CoreContext>().Database.MigrateAsync();
             services.GetRequiredService<LoggingService>();
             services.GetRequiredService<ConfigureGuildService>();
-            services.GetRequiredService<ConfigureStatusService>();
+            services.GetRequiredService<ConfigurePresenceService>();
             await services.GetRequiredService<CommandHandler>().InitAsync();
         }
 

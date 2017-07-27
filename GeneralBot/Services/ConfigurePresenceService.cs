@@ -4,11 +4,11 @@ using Discord.WebSocket;
 
 namespace GeneralBot.Services
 {
-    public class ConfigureStatusService
+    public class ConfigurePresenceService
     {
         private readonly DiscordSocketClient _client;
 
-        public ConfigureStatusService(DiscordSocketClient client)
+        public ConfigurePresenceService(DiscordSocketClient client)
         {
             _client = client;
             _client.LatencyUpdated += LatencyUpdatedAsync;
