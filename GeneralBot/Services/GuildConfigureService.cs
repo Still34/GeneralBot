@@ -33,9 +33,9 @@ namespace GeneralBot.Services
             await _coreSettings.SaveChangesAsync();
         }
 
-        private async Task RegisterGuild(SocketGuild guild) => await RegisterOrGetGuildEntry(guild);
+        private async Task RegisterGuild(SocketGuild guild) => await GetOrRegisterGuildEntry(guild);
 
-        private async Task<GuildSettings> RegisterOrGetGuildEntry(SocketGuild guild)
+        private async Task<GuildSettings> GetOrRegisterGuildEntry(SocketGuild guild)
         {
             var dbEntry = _coreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == guild.Id);
             if (dbEntry != null) return dbEntry;
@@ -52,7 +52,7 @@ namespace GeneralBot.Services
             var guild = user.Guild;
             await _loggingService.Log($"{user.GetFullnameOrDefault()} ({user.Id}) joined {guild} ({guild.Id}).", LogSeverity.Verbose);
 
-            var dbEntry = await RegisterOrGetGuildEntry(guild);
+            var dbEntry = await GetOrRegisterGuildEntry(guild);
             if (!dbEntry.WelcomeEnable) return;
             var channel = guild.GetTextChannel(dbEntry.WelcomeChannel);
             if (channel == null) return;
