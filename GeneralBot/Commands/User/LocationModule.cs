@@ -60,5 +60,17 @@ namespace GeneralBot.Commands.User
             await UserSettings.SaveChangesAsync();
             return CommandRuntimeResult.FromSuccess($"Your location has been set to {result.FormattedAddress}!");
         }
+
+        [Command("remove")]
+        [Alias("delete", "wipe")]
+        public async Task<RuntimeResult> LocationRemove()
+        {
+            var dbEntry = UserSettings.Coordinates.Where(x => x.UserId == Context.User.Id);
+            if (dbEntry == null)
+                return CommandRuntimeResult.FromError("You do not have a location set up yet!");
+            UserSettings.RemoveRange(dbEntry);
+            await UserSettings.SaveChangesAsync();
+            return CommandRuntimeResult.FromSuccess("You have successfully removed your location!");
+        }
     }
 }
