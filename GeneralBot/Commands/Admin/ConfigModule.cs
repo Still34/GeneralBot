@@ -105,6 +105,7 @@ namespace GeneralBot.Commands.Admin
             [Command("message")]
             [Alias("m")]
             [Summary("Changes the welcome message on the current guild.")]
+            [Remarks("Placeholders: {mention}, {username}, {discrim}, {guild}, {date}")]
             public async Task<RuntimeResult> ConfigMessage([Remainder] string message)
             {
                 var dbEntry = CoreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ?? new GuildSettings();
