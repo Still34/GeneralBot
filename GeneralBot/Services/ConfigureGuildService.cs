@@ -9,12 +9,12 @@ using GeneralBot.Extensions;
 
 namespace GeneralBot.Services
 {
-    internal class GuildConfigureService
+    internal class ConfigureGuildService
     {
         private readonly CoreContext _coreSettings;
         private readonly LoggingService _loggingService;
 
-        public GuildConfigureService(DiscordSocketClient client, CoreContext coreSettings, LoggingService loggingService)
+        public ConfigureGuildService(DiscordSocketClient client, CoreContext coreSettings, LoggingService loggingService)
         {
             client.GuildAvailable += RegisterGuildAsync;
             client.JoinedGuild += RegisterGuildAsync;
