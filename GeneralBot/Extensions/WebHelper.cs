@@ -12,7 +12,7 @@ namespace GeneralBot.Extensions
         {
             try
             {
-                using (var client = new HttpClient {Timeout = timeout ?? TimeSpan.FromSeconds(5)})
+                using (var client = new HttpClient { Timeout = timeout ?? TimeSpan.FromSeconds(5) })
                 using (var response = await client.GetAsync(uri))
                 {
                     return response.IsSuccessStatusCode ? response.Content.Headers.ContentType.MediaType : null;
@@ -28,7 +28,7 @@ namespace GeneralBot.Extensions
         {
             try
             {
-                using (var client = new HttpClient {Timeout = timeout ?? TimeSpan.FromSeconds(5)})
+                using (var client = new HttpClient { Timeout = timeout ?? TimeSpan.FromSeconds(5) })
                 {
                     var response = await client.GetAsync(uri);
                     return await response.Content.ReadAsStreamAsync();
