@@ -1,13 +1,10 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace GeneralBot.Models
 {
     public class Result
     {
-
         [JsonProperty("definition")]
         public string Definition { get; set; }
 
@@ -38,7 +35,6 @@ namespace GeneralBot.Models
 
     public class UrbanModel
     {
-
         [JsonProperty("tags")]
         public IList<string> Tags { get; set; }
 
