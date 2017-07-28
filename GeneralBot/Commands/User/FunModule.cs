@@ -19,6 +19,7 @@ namespace GeneralBot.Commands.User
     {
         public Random Random { get; set; }
         public ConfigModel Config { get; set; }
+        public HttpClient HttpClient { get; set; }
 
         [Command("8ball")]
         [Summary("Ask it any questions!")]
@@ -73,8 +74,7 @@ namespace GeneralBot.Commands.User
         public async Task<RuntimeResult> Urban([Remainder] string term)
         {
             string parsedTerm = WebUtility.HtmlEncode(term);
-            using (var http = new HttpClient())
-            using (var response = await http.GetAsync($"http://api.urbandictionary.com/v0/define?term={parsedTerm}"))
+            using (var response = await HttpClient.GetAsync($"http://api.urbandictionary.com/v0/define?term={parsedTerm}"))
             {
                 if (!response.IsSuccessStatusCode)
                     return CommandRuntimeResult.FromError("Urban cannot be reached at the moment, please try again later!");

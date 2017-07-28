@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Addons.Interactive;
@@ -19,6 +20,7 @@ namespace GeneralBot.Commands.Admin
     {
         private IDisposable _typing;
         public InteractiveService InteractiveService { get; set; }
+        public HttpClient HttpClient { get; set; }
 
         protected override void BeforeExecute(CommandInfo command)
         {
@@ -57,13 +59,13 @@ namespace GeneralBot.Commands.Admin
             Uri imageUri = null;
             if (!string.IsNullOrEmpty(message.Content))
             {
-                var image = await WebHelper.GetImageUriAsync(message.Content);
+                var image = await WebHelper.GetImageUriAsync(HttpClient, message.Content);
                 if (image != null) imageUri = image;
             }
             var attachment = message.Attachments.FirstOrDefault();
             if (attachment?.Height != null) Uri.TryCreate(attachment.Url, UriKind.RelativeOrAbsolute, out imageUri);
             if (imageUri == null) return CommandRuntimeResult.FromError("No valid images were detected.");
-            var imageStream = await WebHelper.GetFileAsync(imageUri);
+            var imageStream = await WebHelper.GetFileAsync(HttpClient, imageUri);
             try
             {
                 await Context.Client.CurrentUser.ModifyAsync(x => x.Avatar = new Image(imageStream));

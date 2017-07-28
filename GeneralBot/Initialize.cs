@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Discord.Addons.Interactive;
 using Discord.Commands;
@@ -10,7 +11,6 @@ using GeneralBot.Models;
 using GeneralBot.Models.Context;
 using GeneralBot.Services;
 using GeneralBot.Typereaders;
-using Geocoding.Google;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
@@ -41,6 +41,7 @@ namespace GeneralBot
                 .AddSingleton<GoogleGeocodingService>()
                 .AddSingleton<BalanceService>()
                 .AddSingleton(new Random())
+                .AddSingleton(new HttpClient {Timeout = TimeSpan.FromSeconds(5)})
                 // Discord Client
                 .AddSingleton(client)
                 // Discord Command Service

@@ -9,6 +9,8 @@ namespace GeneralBot.Commands.User
 {
     public class MemeModule : ModuleBase<SocketCommandContext>
     {
+        public HttpClient HttpClient { get; set; }
+
         [Command("expand")]
         [Summary("Replies with a s t h e t i c texts.")]
         public Task<RuntimeResult> ExpandMeme([Remainder] string input)
@@ -27,8 +29,7 @@ namespace GeneralBot.Commands.User
         public async Task<RuntimeResult> Cowsay([Remainder] string text)
         {
             string parsedInput = WebUtility.HtmlEncode(text);
-            using (var client = new HttpClient())
-            using (var response = await client.GetAsync($"http://cowsay.morecode.org/say?message={parsedInput}&format=text"))
+            using (var response = await HttpClient.GetAsync($"http://cowsay.morecode.org/say?message={parsedInput}&format=text"))
             {
                 if (!response.IsSuccessStatusCode) return CommandRuntimeResult.FromError("I cannot reach cowsay at the moment, please try again later!");
                 string output = await response.Content.ReadAsStringAsync();
