@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Discord;
@@ -6,10 +9,7 @@ using Discord.Commands;
 using GeneralBot.Extensions;
 using GeneralBot.Models;
 using GeneralBot.Results;
-using System.Net.Http;
 using Newtonsoft.Json;
-using System.Linq;
-using ImageSharp;
 
 namespace GeneralBot.Commands.User
 {
@@ -19,7 +19,7 @@ namespace GeneralBot.Commands.User
     {
         public Random Random { get; set; }
         public ConfigModel Config { get; set; }
-   
+
         [Command("8ball")]
         [Summary("Ask it any questions!")]
         public async Task<RuntimeResult> EightBall([Remainder] string input)
@@ -71,25 +71,27 @@ namespace GeneralBot.Commands.User
         [Alias("urban-dictionary")]
         public async Task<RuntimeResult> Urban([Remainder] string term)
         {
+            string parsedTerm = WebUtility.HtmlEncode(term);
             using (var http = new HttpClient())
-            using (var response = await http.GetAsync($"http://api.urbandictionary.com/v0/define?term={term.Replace(" ", "+")}"))
+            using (var response = await http.GetAsync($"http://api.urbandictionary.com/v0/define?term={parsedTerm}"))
             {
-                UrbanModel search = JsonConvert.DeserializeObject<UrbanModel>(await response.Content.ReadAsStringAsync());
+                if (!response.IsSuccessStatusCode)
+                    return CommandRuntimeResult.FromError("Urban cannot be reached at the moment, please try again later!");
+                string responseParsed = await response.Content.ReadAsStringAsync();
+                var search = JsonConvert.DeserializeObject<UrbanModel>(responseParsed);
                 var result = search.Results?.FirstOrDefault();
                 if (result == null)
                     return CommandRuntimeResult.FromError($"No definition for {Format.Bold(term)} found!");
-                EmbedBuilder builder = new EmbedBuilder()
-                {
-                    Title = $"Urban dictionary search for {term}:",
-                    Description = result.Definition,
-                    Color = Color.Green
-                }.AddField(f => {
-                    f.Name = "Example:";
-                    f.Value = result.Example;
-                }).WithFooter(f => {
-                    f.Text = $"Defined by {result.Author}.";
-                }).AddInlineField("Likes:", $":thumbsup: {result.Likes}")
-                .AddInlineField("Dislikes:", $":thumbsdown: {result.Dislikes}");
+                var builder = new EmbedBuilder
+                    {
+                        Title = $"Urban dictionary search for {term}:",
+                        Description = result.Definition,
+                        Color = Color.Green,
+                        Footer = new EmbedFooterBuilder {Text = $"Defined by {result.Author}."}
+                    }
+                    .AddField("Example:", result.Example)
+                    .AddInlineField("Likes:", $":thumbsup: {result.Likes}")
+                    .AddInlineField("Dislikes:", $":thumbsdown: {result.Dislikes}");
                 await ReplyAsync("", embed: builder);
                 return CommandRuntimeResult.FromSuccess();
             }
