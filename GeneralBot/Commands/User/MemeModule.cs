@@ -23,12 +23,13 @@ namespace GeneralBot.Commands.User
 
         [Command("cowsay")]
         [Summary("Mooo!")]
-        public async Task Cowsay([Remainder] string text)
+        public async Task<RuntimeResult> Cowsay([Remainder] string text)
         {
             using (var http = new HttpClient())
+            using (var output = await http.GetAsync($"http://cowsay.morecode.org/say?message={text.Replace(" ", "+")}&format=text"))
             {
-                var output = await http.GetAsync($"http://cowsay.morecode.org/say?message={text.Replace(" ", "+")}&format=text");
                 await ReplyAsync($"```{await output.Content.ReadAsStringAsync()}```");
+                return CommandRuntimeResult.FromSuccess();
             }
         }
     }
