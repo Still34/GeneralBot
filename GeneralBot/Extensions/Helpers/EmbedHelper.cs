@@ -2,7 +2,7 @@
 
 namespace GeneralBot.Extensions.Helpers
 {
-    public static class EmbedHelper
+    public class EmbedHelper
     {
         public static EmbedBuilder FromInfo(string title = null, string description = null) => new EmbedBuilder
         {
