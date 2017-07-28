@@ -2,12 +2,10 @@
 using System.Reflection;
 using Discord;
 
-namespace GeneralBot.Extensions
+namespace GeneralBot.Extensions.Helpers
 {
-    public static class InputHelper
+    public class ColorHelper
     {
-        public static bool ContainsCaseInsensitive(this string originalString, string targetString) => originalString.IndexOf(targetString, StringComparison.CurrentCultureIgnoreCase) != -1;
-
         public static Color GetRandomColor()
         {
             var random = new Random();
@@ -17,6 +15,5 @@ namespace GeneralBot.Extensions
         }
 
         public static float GetLuminanceFromColor(byte r, byte g, byte b) => 0.2126f * r + 0.7152f * g + 0.0722f * b;
-        public static float GetLuminanceFromColor(this Color color) => GetLuminanceFromColor(color.R, color.G, color.B);
     }
 }

@@ -4,7 +4,7 @@ using Discord;
 
 namespace GeneralBot.Extensions
 {
-    public static class GuildHelper
+    public static class GuildExtensions
     {
         /// <summary>
         ///     Gets the last created invite of the channel, null if none (unless <see cref="createNew" /> is specified).

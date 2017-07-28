@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
-using GeneralBot.Templates;
+using GeneralBot.Extensions.Helpers;
 using Microsoft.Extensions.Logging;
 
 namespace GeneralBot.Services
@@ -41,7 +41,7 @@ namespace GeneralBot.Services
                 long errorId = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
                 sb.Append($"ID: {errorId}");
                 var _ = command.Context.Channel.SendMessageAsync("", embed:
-                    EmbedTemplates
+                    EmbedHelper
                         .FromError("Uh oh...", "We ran into a problem when executing this command!\n\nDon't worry, this error has been reported.")
                         .AddInlineField("Error ID", errorId)
                         .WithThumbnailUrl("https://cdn.discordapp.com/emojis/288727789241237504.png"));

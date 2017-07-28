@@ -4,7 +4,7 @@ using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace GeneralBot.Extensions
+namespace GeneralBot.Extensions.Helpers
 {
     public class WebHelper
     {
