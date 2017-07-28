@@ -2,7 +2,6 @@
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Discord;
 using Discord.Commands;
 using GeneralBot.Results;
 
@@ -30,8 +29,11 @@ namespace GeneralBot.Commands.User
             using (var client = new HttpClient())
             using (var response = await client.GetAsync($"http://cowsay.morecode.org/say?message={parsedInput}&format=text"))
             {
-                var output = await http.GetAsync($"http://cowsay.morecode.org/say?message={text.Replace(" ", "+")}&format=text");
-                await ReplyAsync($"```{await output.Content.ReadAsStringAsync()}```");
+                if (!response.IsSuccessStatusCode) return CommandRuntimeResult.FromError("I cannot reach cowsay at the moment, please try again later!");
+
+                string output = await response.Content.ReadAsStringAsync();
+                await ReplyAsync(output);
+                return CommandRuntimeResult.FromSuccess();
             }
         }
     }
