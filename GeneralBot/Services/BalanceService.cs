@@ -7,7 +7,7 @@ using GeneralBot.Models.Context;
 
 namespace GeneralBot.Services
 {
-    internal class BalanceService
+    public class BalanceService
     {
         private readonly LoggingService _loggingService;
         private readonly UserContext _userSettings;

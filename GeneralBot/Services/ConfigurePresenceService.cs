@@ -4,7 +4,7 @@ using Discord.WebSocket;
 
 namespace GeneralBot.Services
 {
-    public class ConfigurePresenceService
+    internal class ConfigurePresenceService
     {
         private readonly DiscordSocketClient _client;
 
