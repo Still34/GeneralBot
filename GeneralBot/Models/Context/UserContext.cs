@@ -38,7 +38,7 @@ namespace GeneralBot.Models.Context
         public uint Balance { get; set; } = 1;
 
         [Required]
-        public DateTimeOffset LastMessage { get; set; }
+        public DateTimeOffset LastMessage { get; set; } = DateTimeOffset.MinValue;
 
         [Required]
         public string Summary { get; set; } = "No summary.";
