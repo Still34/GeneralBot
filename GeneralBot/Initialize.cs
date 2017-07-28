@@ -39,6 +39,7 @@ namespace GeneralBot
                 .AddSingleton<ConfigureGuildService>()
                 .AddSingleton<ConfigurePresenceService>()
                 .AddSingleton<GoogleGeocodingService>()
+                .AddSingleton<BalanceService>()
                 .AddSingleton(new Random())
                 // Discord Client
                 .AddSingleton(client)
