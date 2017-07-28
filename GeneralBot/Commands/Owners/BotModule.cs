@@ -42,6 +42,15 @@ namespace GeneralBot.Commands.Admin
             return CommandRuntimeResult.FromSuccess($"Successfully changed username to {Format.Bold(username)}.");
         }
 
+        [Command("luminance")]
+        public async Task<RuntimeResult> GetLuminance(byte r, byte g,byte b)
+        {
+            var color = new Color(r, g, b);
+            var embed = new EmbedBuilder {Color = color, Description = $"Luminance value = {color.GetLuminanceFromColor()}"};
+            await ReplyAsync("", embed: embed);
+            return CommandRuntimeResult.FromSuccess();
+        }
+
         [Command("game")]
         [Summary("Changes the bot's playing status.")]
         public async Task<RuntimeResult> ConfigGame([Remainder] string game)

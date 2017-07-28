@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Reflection;
 using Discord;
-using Discord.WebSocket;
 
 namespace GeneralBot.Extensions
 {
@@ -17,9 +16,7 @@ namespace GeneralBot.Extensions
             return color;
         }
 
-        public static float GetLuminanceFromColor(byte r, byte g, byte b)
-        {
-            return (0.2126f * r + 0.7152f * g + 0.0722f * b);
-        }
+        public static float GetLuminanceFromColor(byte r, byte g, byte b) => 0.2126f * r + 0.7152f * g + 0.0722f * b;
+        public static float GetLuminanceFromColor(this Color color) => GetLuminanceFromColor(color.R, color.G, color.B);
     }
 }
