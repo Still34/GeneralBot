@@ -1,9 +1,10 @@
-﻿using System.Text;
-using System.Threading.Tasks;
+﻿using System.Net;
 using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
+using Discord;
 using Discord.Commands;
 using GeneralBot.Results;
-
 
 namespace GeneralBot.Commands.User
 {
@@ -23,12 +24,15 @@ namespace GeneralBot.Commands.User
 
         [Command("cowsay")]
         [Summary("Mooo!")]
-        public async Task Cowsay([Remainder] string text)
+        public async Task<RuntimeResult> Cowsay([Remainder] string text)
         {
-            using (var http = new HttpClient())
+            string parsedInput = WebUtility.HtmlEncode(text);
+            using (var client = new HttpClient())
+            using (var response = await client.GetAsync($"http://cowsay.morecode.org/say?message={parsedInput}&format=text"))
             {
-                var output = await http.GetAsync($"http://cowsay.morecode.org/say?message={text.Replace(" ", "+")}&format=text");
-                await ReplyAsync($"```{await output.Content.ReadAsStringAsync()}```");
+                string output = await response.Content.ReadAsStringAsync();
+                await ReplyAsync(Format.Code(output));
+                return CommandRuntimeResult.FromSuccess();
             }
         }
     }
