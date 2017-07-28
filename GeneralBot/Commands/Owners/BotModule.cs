@@ -77,6 +77,7 @@ namespace GeneralBot.Commands.Admin
             var imageStream = await WebHelper.GetFileAsync(HttpClient, imageUri);
             try
             {
+                // ReSharper disable once AccessToDisposedClosure
                 await Context.Client.CurrentUser.ModifyAsync(x => x.Avatar = new Image(imageStream));
             }
             finally

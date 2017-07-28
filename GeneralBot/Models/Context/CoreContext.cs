@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Discord;
 using Microsoft.EntityFrameworkCore;
-using System;
 
 namespace GeneralBot.Databases.Context
 {
