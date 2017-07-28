@@ -10,6 +10,7 @@ namespace GeneralBot.Commands.User
     public class MemeModule : ModuleBase<SocketCommandContext>
     {
         [Command("expand")]
+        [Summary("Replies with a s t h e t i c texts.")]
         public Task<RuntimeResult> ExpandMeme([Remainder] string input)
         {
             var sb = new StringBuilder();
@@ -31,6 +32,7 @@ namespace GeneralBot.Commands.User
             {
                 if (!response.IsSuccessStatusCode) return CommandRuntimeResult.FromError("I cannot reach cowsay at the moment, please try again later!");
                 string output = await response.Content.ReadAsStringAsync();
+                // This should likely never happen, but just in case.
                 if (string.IsNullOrEmpty(output)) return CommandRuntimeResult.FromError("Cowsay is out of reach, please try again with another text!");
                 await ReplyAsync(output);
                 return CommandRuntimeResult.FromSuccess();

@@ -19,6 +19,7 @@ namespace GeneralBot.Commands.User
         public IServiceProvider ServiceProvider { get; set; }
 
         [Command]
+        [Summary("Need help for a specific command? Use this!")]
         public async Task<RuntimeResult> HelpSpecificCommand(string input)
         {
             var commandInfos = await GetCommandInfosAsync(input);

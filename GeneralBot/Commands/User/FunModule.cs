@@ -68,7 +68,8 @@ namespace GeneralBot.Commands.User
         }
 
         [Command("urban")]
-        [Alias("urban-dictionary")]
+        [Alias("urban-dictionary", "ud")]
+        [Summary("Looks up a term on the Urban Dictionary.")]
         public async Task<RuntimeResult> Urban([Remainder] string term)
         {
             string parsedTerm = WebUtility.HtmlEncode(term);

@@ -30,6 +30,7 @@ namespace GeneralBot.Commands.User
 
         [Command("lookup")]
         [Alias("search")]
+        [Summary("Looks up a location and returns its information.")]
         public async Task<RuntimeResult> LocationLookup([Remainder] string location)
         {
             var geocodeResults = (await Geocoding.GeocodeAsync(location)).ToList();
@@ -47,6 +48,7 @@ namespace GeneralBot.Commands.User
 
         [Command("set")]
         [Alias("edit")]
+        [Summary("Set your current location for time and weather commands.")]
         public async Task<RuntimeResult> LocationSet([Remainder] string location)
         {
             var geocodeResults = (await Geocoding.GeocodeAsync(location)).ToList();
@@ -63,6 +65,7 @@ namespace GeneralBot.Commands.User
 
         [Command("remove")]
         [Alias("delete", "wipe")]
+        [Summary("Removes *all* of your location data.")]
         public async Task<RuntimeResult> LocationRemove()
         {
             var dbEntry = UserSettings.Coordinates.Where(x => x.UserId == Context.User.Id);
