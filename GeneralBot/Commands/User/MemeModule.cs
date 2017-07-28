@@ -30,9 +30,8 @@ namespace GeneralBot.Commands.User
             using (var client = new HttpClient())
             using (var response = await client.GetAsync($"http://cowsay.morecode.org/say?message={parsedInput}&format=text"))
             {
-                string output = await response.Content.ReadAsStringAsync();
-                await ReplyAsync(Format.Code(output));
-                return CommandRuntimeResult.FromSuccess();
+                var output = await http.GetAsync($"http://cowsay.morecode.org/say?message={text.Replace(" ", "+")}&format=text");
+                await ReplyAsync($"```{await output.Content.ReadAsStringAsync()}```");
             }
         }
     }

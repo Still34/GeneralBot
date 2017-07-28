@@ -72,9 +72,9 @@ namespace GeneralBot.Commands.User
         public async Task<RuntimeResult> Urban([Remainder] string term)
         {
             using (var http = new HttpClient())
+            using (var response = await http.GetAsync($"http://api.urbandictionary.com/v0/define?term={term.Replace(" ", "+")}"))
             {
-                var response = await (await http.GetAsync($"http://api.urbandictionary.com/v0/define?term={term.Replace(" ", "+")}")).Content.ReadAsStringAsync();
-                UrbanModel search = JsonConvert.DeserializeObject<UrbanModel>(response);
+                UrbanModel search = JsonConvert.DeserializeObject<UrbanModel>(await response.Content.ReadAsStringAsync());
                 var result = search.Results?.FirstOrDefault();
                 if (result == null)
                     return CommandRuntimeResult.FromError($"No definition for {Format.Bold(term)} found!");
@@ -83,13 +83,13 @@ namespace GeneralBot.Commands.User
                     Title = $"Urban dictionary search for {term}:",
                     Description = result.Definition,
                     Color = Color.Green
-                }.AddField(f=> {
+                }.AddField(f => {
                     f.Name = "Example:";
                     f.Value = result.Example;
-                }).WithFooter(f=> {
+                }).WithFooter(f => {
                     f.Text = $"Defined by {result.Author}.";
                 }).AddInlineField("Likes:", $":thumbsup: {result.Likes}")
-                .AddInlineField("Dislikes:", $":thumbsdown: {result.Dislikes}"); 
+                .AddInlineField("Dislikes:", $":thumbsdown: {result.Dislikes}");
                 await ReplyAsync("", embed: builder);
                 return CommandRuntimeResult.FromSuccess();
             }
