@@ -21,7 +21,7 @@ namespace GeneralBot.Services
 
         private async Task AwardBalance(SocketMessage msgArg)
         {
-            if (msgArg is SocketUserMessage msg && msg.Channel is SocketGuildChannel)
+            if (msgArg is SocketUserMessage msg && msg.Channel is SocketGuildChannel && !msg.Author.IsBot)
             {
                 var user = msg.Author;
                 var dbEntry = _userSettings.Profile.SingleOrDefault(x => x.UserId == user.Id) ?? _userSettings.Profile.Add(new Profile {UserId = user.Id, LastMessage = msg.Timestamp}).Entity;
