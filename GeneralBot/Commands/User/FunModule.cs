@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using GeneralBot.Extensions;
+using GeneralBot.Extensions.Helpers;
 using GeneralBot.Models;
 using GeneralBot.Results;
 using Newtonsoft.Json;
@@ -37,7 +38,7 @@ namespace GeneralBot.Commands.User
                         Name = "The Magic 8Ball",
                         IconUrl = Context.Client.CurrentUser.GetAvatarUrlOrDefault()
                     },
-                    Color = InputHelper.GetRandomColor(),
+                    Color = ColorHelper.GetRandomColor(),
                     ThumbnailUrl = Config.Commands.EightBall.Image
                 }
                 .AddField("You asked...", input)
@@ -61,7 +62,7 @@ namespace GeneralBot.Commands.User
                     Name = "I think you should choose...",
                     IconUrl = Context.Client.CurrentUser.GetAvatarUrlOrDefault()
                 },
-                Color = InputHelper.GetRandomColor(),
+                Color = ColorHelper.GetRandomColor(),
                 Description = regexParsed[Random.Next(0, regexParsed.Length)]
             };
             await ReplyAsync("", embed: embed);

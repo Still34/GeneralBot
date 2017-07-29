@@ -1,8 +1,8 @@
 ﻿using Discord;
 
-namespace GeneralBot.Templates
+namespace GeneralBot.Extensions.Helpers
 {
-    public static class EmbedTemplates
+    public class EmbedHelper
     {
         public static EmbedBuilder FromInfo(string title = null, string description = null) => new EmbedBuilder
         {

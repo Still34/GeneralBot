@@ -4,7 +4,7 @@ using Discord.Commands;
 
 namespace GeneralBot.Extensions
 {
-    public static class CommandHelper
+    public static class CommandExtensions
     {
         /// <summary>
         ///     Returns the parameter name with required or optional tag.
@@ -17,9 +17,7 @@ namespace GeneralBot.Extensions
         {
             var sb = new StringBuilder();
             foreach (var parameterInfo in paramInfos)
-            {
                 sb.Append($"{GetParamUsage(parameterInfo)} ");
-            }
             return sb.ToString();
         }
     }

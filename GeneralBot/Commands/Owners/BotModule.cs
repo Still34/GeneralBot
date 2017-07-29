@@ -6,9 +6,9 @@ using Discord;
 using Discord.Addons.Interactive;
 using Discord.Commands;
 using GeneralBot.Extensions;
+using GeneralBot.Extensions.Helpers;
 using GeneralBot.Preconditions;
 using GeneralBot.Results;
-using GeneralBot.Templates;
 
 namespace GeneralBot.Commands.Admin
 {
@@ -43,7 +43,7 @@ namespace GeneralBot.Commands.Admin
         }
 
         [Command("luminance")]
-        public async Task<RuntimeResult> GetLuminance(byte r, byte g,byte b)
+        public async Task<RuntimeResult> GetLuminance(byte r, byte g, byte b)
         {
             var color = new Color(r, g, b);
             var embed = new EmbedBuilder {Color = color, Description = $"Luminance value = {color.GetLuminanceFromColor()}"};
@@ -63,7 +63,7 @@ namespace GeneralBot.Commands.Admin
         [Summary("Changes the bot's avatar.")]
         public async Task<RuntimeResult> AvatarConfigure()
         {
-            await ReplyAsync("", embed: EmbedTemplates.FromInfo(description: "Please upload the new avatar."));
+            await ReplyAsync("", embed: EmbedHelper.FromInfo(description: "Please upload the new avatar."));
             var message = await InteractiveService.NextMessageAsync(Context, new EnsureFromUserCriterion(Context.User.Id), TimeSpan.FromMinutes(5));
             Uri imageUri = null;
             if (!string.IsNullOrEmpty(message.Content))
@@ -77,6 +77,7 @@ namespace GeneralBot.Commands.Admin
             var imageStream = await WebHelper.GetFileAsync(HttpClient, imageUri);
             try
             {
+                // ReSharper disable once AccessToDisposedClosure
                 await Context.Client.CurrentUser.ModifyAsync(x => x.Avatar = new Image(imageStream));
             }
             finally

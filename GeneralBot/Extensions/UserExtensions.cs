@@ -4,7 +4,7 @@ using Discord.WebSocket;
 
 namespace GeneralBot.Extensions
 {
-    public static class UserHelper
+    public static class UserExtensions
     {
         /// <summary>
         ///     Gets the highest role of the user whose color is set.

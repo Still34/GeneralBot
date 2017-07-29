@@ -2,10 +2,10 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Discord.Commands;
+using GeneralBot.Extensions.Helpers;
 using GeneralBot.Models.Context;
 using GeneralBot.Results;
 using GeneralBot.Services;
-using GeneralBot.Templates;
 
 namespace GeneralBot.Commands.User
 {
@@ -36,7 +36,7 @@ namespace GeneralBot.Commands.User
             var geocodeResults = (await Geocoding.GeocodeAsync(location)).ToList();
             if (!geocodeResults.Any()) return CommandRuntimeResult.FromError("No results found.");
 
-            var embed = EmbedTemplates.FromInfo();
+            var embed = EmbedHelper.FromInfo();
             foreach (var geocodeResult in geocodeResults)
             {
                 if (embed.Fields.Count > 10) break;
