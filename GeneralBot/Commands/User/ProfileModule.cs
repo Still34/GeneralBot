@@ -1,16 +1,12 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using System.Net.Http;
+using Discord;
+using Discord.WebSocket;
 using Discord.Commands;
 using GeneralBot.Models;
 using GeneralBot.Models.Context;
 using GeneralBot.Results;
-using ImageSharp;
-using GeneralBot.Extensions;
-using System.Net.Http;
-using SixLabors.Primitives;
-using SixLabors.Fonts;
-using Discord.WebSocket;
-using Discord;
 
 namespace GeneralBot.Commands.User
 {
