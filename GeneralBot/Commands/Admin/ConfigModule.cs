@@ -47,7 +47,7 @@ namespace GeneralBot.Commands.Admin
         }
 
         [Group("welcome")]
-        [Alias("w")]
+        [Alias("w", "greet")]
         [Summary("Configures the welcome setting.")]
         public class WelcomeModule : ModuleBase<SocketCommandContext>
         {

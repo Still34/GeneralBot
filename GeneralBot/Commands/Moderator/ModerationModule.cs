@@ -97,11 +97,29 @@ namespace GeneralBot.Commands.Moderator
             return CommandRuntimeResult.FromSuccess($"Successfully changed {user}'s name to {nickname}.");
         }
 
+        [Command("block")]
+        [Summary("Blocks a user from the current channel.")]
+        [RequireBotPermission(GuildPermission.ManageChannels)]
+        public async Task<RuntimeResult> BlockUser([RequireHierarchy] SocketGuildUser user)
+        {
+            await (Context.Channel as SocketTextChannel).AddPermissionOverwriteAsync(user, new OverwritePermissions(sendMessages: PermValue.Deny));
+            return CommandRuntimeResult.FromSuccess($"Successfully blocked {user.Mention}.");
+        }
+
+        [Command("unblock")]
+        [Summary("Unblocks a user from the current channel.")]
+        [RequireBotPermission(GuildPermission.ManageChannels)]
+        public async Task<RuntimeResult> UnblockUser([RequireHierarchy] SocketGuildUser user)
+        {
+            await (Context.Channel as SocketTextChannel).AddPermissionOverwriteAsync(user, new OverwritePermissions(sendMessages: PermValue.Inherit));
+            return CommandRuntimeResult.FromSuccess($"Successfully unblocked {user.Mention}");
+        }
+
         [Group("purge")]
-        [RequireContext(ContextType.Guild)]
         [Alias("clean")]
-        [RequireBotPermission(GuildPermission.ManageMessages)]
         [RequireModerator]
+        [RequireContext(ContextType.Guild)]
+        [RequireBotPermission(GuildPermission.ManageMessages)]
         [Remarks("Clean messages that meet the criteria.")]
         public class CleanModule : ModuleBase<SocketCommandContext>
         {
