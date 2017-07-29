@@ -11,7 +11,6 @@
     <None Remove="Logs\**" />
   </ItemGroup>
 
-
   <ItemGroup>
     <PackageReference Include="Discord.Addons.Interactive" Version="1.0.0" />
     <PackageReference Include="Discord.Net" Version="1.0.1-build-00794" />
@@ -32,7 +31,7 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="1.1.2" />
     <PackageReference Include="Serilog.Extensions.Logging.File" Version="1.0.1" />
     <PackageReference Include="Humanizer.Core" Version="2.2.0" />
-    <PackageReference Include="System.ValueTuple" Version="4.3.1" />
+    <PackageReference Include="System.ValueTuple" Version="4.4.0-preview2-25405-01" />
   </ItemGroup>
 
 </Project>
