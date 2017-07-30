@@ -18,6 +18,7 @@ namespace GeneralBot.Commands.User
             var sb = new StringBuilder();
             foreach (char c in input)
             {
+                if (c == ' ') continue;
                 sb.Append(c);
                 sb.Append(" ");
             }
