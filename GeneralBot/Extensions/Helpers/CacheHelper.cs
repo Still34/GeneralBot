@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Memory;
 
-namespace GeneralBot.Services
+namespace GeneralBot.Extensions.Helpers
 {
     public class CacheHelper
     {
@@ -12,10 +12,8 @@ namespace GeneralBot.Services
 
         public Task<T2> TryGetValueSet<T1, T2>(T1 key, T2 value, TimeSpan duration)
         {
-            T2 cacheEntry;
-
             // Look for cache key.
-            if (!_cache.TryGetValue(key, out cacheEntry))
+            if (!_cache.TryGetValue(key, out T2 cacheEntry))
             {
                 cacheEntry = value;
 
