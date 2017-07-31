@@ -3,8 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
-using GeneralBot.Databases.Context;
 using Discord;
+using GeneralBot.Models.Context;
 
 namespace GeneralBot.Migrations
 {

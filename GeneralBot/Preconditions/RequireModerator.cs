@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
-using GeneralBot.Databases.Context;
+using GeneralBot.Models.Context;
 using Humanizer;
 using Microsoft.Extensions.DependencyInjection;
 

@@ -10,7 +10,7 @@ using GeneralBot.Extensions.Helpers;
 using GeneralBot.Preconditions;
 using GeneralBot.Results;
 
-namespace GeneralBot.Commands.Admin
+namespace GeneralBot.Commands.Owners
 {
     [Group("bot")]
     [Summary("Bot-specific Settings")]

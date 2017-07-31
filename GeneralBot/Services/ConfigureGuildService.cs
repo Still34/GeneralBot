@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
-using GeneralBot.Databases.Context;
 using GeneralBot.Extensions;
+using GeneralBot.Models.Context;
 
 namespace GeneralBot.Services
 {

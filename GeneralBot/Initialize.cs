@@ -6,7 +6,6 @@ using Discord.Addons.Interactive;
 using Discord.Commands;
 using Discord.WebSocket;
 using GeneralBot.Commands;
-using GeneralBot.Databases.Context;
 using GeneralBot.Extensions.Helpers;
 using GeneralBot.Models;
 using GeneralBot.Models.Context;

@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
-using GeneralBot.Databases.Context;
 using GeneralBot.Extensions;
+using GeneralBot.Models.Context;
 using GeneralBot.Results;
 
 namespace GeneralBot.Commands.User

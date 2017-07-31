@@ -2,7 +2,7 @@
 using Discord;
 using Microsoft.EntityFrameworkCore;
 
-namespace GeneralBot.Databases.Context
+namespace GeneralBot.Models.Context
 {
     public class CoreContext : DbContext
     {
