@@ -89,6 +89,7 @@ namespace GeneralBot.Commands
 
             var context = new SocketCommandContext(_client, msg);
             var result = await _commandService.ExecuteAsync(context, argPos, _services);
+            // TODO: Merge this with CommandExecuted event for a more centralized error handling.
             if (!result.IsSuccess && result.Error != CommandError.UnknownCommand)
                 await context.Channel.SendMessageAsync("", embed: EmbedHelper.FromError(description: result.ErrorReason));
         }
