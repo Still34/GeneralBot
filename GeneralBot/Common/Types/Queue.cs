@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -24,6 +25,11 @@ namespace GeneralBot.Common.Types
         public void RemoveSong(Song song)
         {
             Songs.Remove(song);
+        }
+
+        public void RemoveSong(string streamUrl)
+        {
+            Songs.Remove(Songs.SingleOrDefault(x => x.StreamUrl == streamUrl));
         }
     }
 }
