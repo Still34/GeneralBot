@@ -32,7 +32,7 @@ namespace GeneralBot.Migrations.User
                     b.ToTable("Coordinates");
                 });
 
-            modelBuilder.Entity("GeneralBot.Models.Context.Profile", b =>
+            modelBuilder.Entity("GeneralBot.Models.Context.Profiles", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
@@ -48,7 +48,7 @@ namespace GeneralBot.Migrations.User
 
                     b.HasKey("Id");
 
-                    b.ToTable("Profile");
+                    b.ToTable("Profiles");
                 });
         }
     }

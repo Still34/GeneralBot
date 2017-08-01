@@ -7,8 +7,11 @@ namespace GeneralBot.Models.Context
     public class UserContext : DbContext
     {
         public DbSet<Coordinate> Coordinates { get; set; }
-        public DbSet<Profile> Profile { get; set; }
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) => optionsBuilder.UseSqlite("Filename=./UserConfig.db");
+        public DbSet<Profile> Profiles { get; set; }
+        public DbSet<Reminder> Reminders { get; set; }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) => optionsBuilder.UseSqlite(
+            "Filename=./UserConfig.db");
     }
 
     public class Coordinate
@@ -62,5 +65,4 @@ namespace GeneralBot.Models.Context
         [MaxLength(512)]
         public string Content { get; set; }
     }
-
 }
