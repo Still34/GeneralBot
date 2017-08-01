@@ -2,6 +2,7 @@
 using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
+using DirectoryMaid.Services;
 using Discord.Addons.Interactive;
 using Discord.Commands;
 using Discord.WebSocket;
@@ -36,6 +37,7 @@ namespace GeneralBot
                 .AddSingleton(ConfigureSettings())
                 .AddSingleton<ConfigureGuildService>()
                 .AddSingleton<ConfigurePresenceService>()
+                .AddSingleton<ReminderService>()
                 .AddSingleton<GoogleGeocodingService>()
                 .AddSingleton<BalanceService>()
                 .AddSingleton<Random>()
