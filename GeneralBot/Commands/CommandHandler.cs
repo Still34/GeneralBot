@@ -34,43 +34,51 @@ namespace GeneralBot.Commands
 
         private async Task OnCommandExecutedAsync(CommandInfo commandInfo, ICommandContext context, IResult result)
         {
-            if (result is CommandRuntimeResult customResult)
+            if (string.IsNullOrEmpty(result.ErrorReason) || result.Error == CommandError.UnknownCommand) return;
+            var embed = new EmbedBuilder();
+            var severity = LogSeverity.Debug;
+            switch (result)
             {
-                if (string.IsNullOrEmpty(customResult.Reason)) return;
-                var embed = new EmbedBuilder();
-                var severity = LogSeverity.Debug;
-                switch (customResult.Type)
-                {
-                    case ResultType.Unknown:
-                        break;
-                    case ResultType.Info:
-                        severity = LogSeverity.Info;
-                        embed = EmbedHelper.FromInfo(description: customResult.Reason);
-                        break;
-                    case ResultType.Warning:
-                        severity = LogSeverity.Warning;
-                        embed = EmbedHelper.FromWarning(description: customResult.Reason);
-                        break;
-                    case ResultType.Error:
-                        severity = LogSeverity.Error;
-                        embed = EmbedHelper.FromError(description: customResult.Reason);
-                        break;
-                    case ResultType.Success:
-                        severity = LogSeverity.Verbose;
-                        embed = EmbedHelper.FromSuccess(description: customResult.Reason);
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-                await _loggingService.Log(
-                    $"{context.User} executed {commandInfo.Name} in {(context.Guild == null ? context.Channel.Name : $"{context.Channel.Name}/{context.Guild.Name}")}\nResult: {customResult.Reason}",
-                    severity);
-                await context.Channel.SendMessageAsync("", embed: embed);
+                case CommandRuntimeResult customResult:
+                    switch (customResult.Type)
+                    {
+                        case ResultType.Unknown:
+                            break;
+                        case ResultType.Info:
+                            severity = LogSeverity.Info;
+                            embed = EmbedHelper.FromInfo(description: customResult.Reason);
+                            break;
+                        case ResultType.Warning:
+                            severity = LogSeverity.Warning;
+                            embed = EmbedHelper.FromWarning(description: customResult.Reason);
+                            break;
+                        case ResultType.Error:
+                            severity = LogSeverity.Error;
+                            embed = EmbedHelper.FromError(description: customResult.Reason);
+                            break;
+                        case ResultType.Success:
+                            severity = LogSeverity.Verbose;
+                            embed = EmbedHelper.FromSuccess(description: customResult.Reason);
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+                    break;
+                default:
+                    severity = LogSeverity.Error;
+                    embed = EmbedHelper.FromError(description: result.ErrorReason);
+                    break;
             }
+            await context.Channel.SendMessageAsync("", embed: embed);
+            await _loggingService.Log(
+                $"{context.User} executed {commandInfo.Name} in {(context.Guild == null ? context.Channel.Name : $"{context.Channel.Name}/{context.Guild.Name}")}\n" +
+                $"Result: {result.ErrorReason}",
+                severity);
         }
 
         public async Task InitAsync()
         {
+            // Load TypeReaders dynamically because I'm lazy.
             var typeReaders = Assembly.GetEntryAssembly().GetTypes()
                 .Where(x => x.GetTypeInfo().BaseType == typeof(TypeReader));
             foreach (var typeReader in typeReaders)
@@ -79,6 +87,8 @@ namespace GeneralBot.Commands
                     .FirstOrDefault(x => !x.ContainsGenericParameters & (x.Name == "AddTypeReader"));
                 method.Invoke(_commandService, new[] {typeReader, Activator.CreateInstance(typeReader)});
             }
+
+            // Adds all command modules.
             await _commandService.AddModulesAsync(Assembly.GetEntryAssembly());
         }
 
@@ -102,11 +112,7 @@ namespace GeneralBot.Commands
             if (!msg.HasStringPrefix(prefix, ref argPos)) return;
 
             var context = new SocketCommandContext(_client, msg);
-            var result = await _commandService.ExecuteAsync(context, argPos, _services);
-            // TODO: Merge this with CommandExecuted event for a more centralized error handling.
-            if (!result.IsSuccess && result.Error != CommandError.UnknownCommand)
-                await context.Channel.SendMessageAsync("",
-                    embed: EmbedHelper.FromError(description: result.ErrorReason));
+            await _commandService.ExecuteAsync(context, argPos, _services);
         }
     }
 }
