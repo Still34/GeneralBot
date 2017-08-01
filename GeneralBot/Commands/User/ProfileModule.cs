@@ -31,7 +31,7 @@ namespace GeneralBot.Commands.User
         {
             public UserContext UserSettings { get; set; }
 
-            [Command()]
+            [Command]
             public Task<RuntimeResult> CheckSummary(SocketUser user = null)
             {
                 var targetUser = user ?? Context.User;
