@@ -38,6 +38,7 @@ namespace GeneralBot
                 .AddSingleton<ConfigurePresenceService>()
                 .AddSingleton<GoogleGeocodingService>()
                 .AddSingleton<BalanceService>()
+                .AddSingleton<AudioService>()
                 .AddSingleton<Random>()
                 .AddSingleton(new HttpClient {Timeout = TimeSpan.FromSeconds(5)})
                 // Discord Client
