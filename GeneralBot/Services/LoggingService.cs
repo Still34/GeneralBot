@@ -26,7 +26,13 @@ namespace GeneralBot.Services
 
         private static ILoggerFactory ConfigureLogging(ILoggerFactory factory)
         {
-            factory.AddConsole();
+            factory
+#if DEBUG
+                .AddConsole(LogLevel.Debug)
+#else
+                .AddConsole(LogLevel.Information)
+#endif
+                .AddDebug();
             factory.AddFile($"Logs/{DateTime.UtcNow:MM-dd-yy}.log");
             return factory;
         }
@@ -42,7 +48,8 @@ namespace GeneralBot.Services
                 sb.Append($"ID: {errorId}");
                 var _ = command.Context.Channel.SendMessageAsync("", embed:
                     EmbedHelper
-                        .FromError("Uh oh...", "We ran into a problem when executing this command!\n\nDon't worry, this error has been reported.")
+                        .FromError("Uh oh...",
+                            "We ran into a problem when executing this command!\n\nDon't worry, this error has been reported.")
                         .AddInlineField("Error ID", errorId)
                         .WithThumbnailUrl("https://cdn.discordapp.com/emojis/288727789241237504.png"));
             }
