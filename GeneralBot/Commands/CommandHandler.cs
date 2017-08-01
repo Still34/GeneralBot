@@ -20,7 +20,8 @@ namespace GeneralBot.Commands
         private readonly LoggingService _loggingService;
         private readonly IServiceProvider _services;
 
-        public CommandHandler(IServiceProvider services, DiscordSocketClient client, CommandService commandService, CoreContext settings, LoggingService loggingService)
+        public CommandHandler(IServiceProvider services, DiscordSocketClient client, CommandService commandService,
+            CoreContext settings, LoggingService loggingService)
         {
             _services = services;
             _client = client;
@@ -61,12 +62,25 @@ namespace GeneralBot.Commands
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
-                await _loggingService.Log($"{context.User} executed {commandInfo.Name} in {(context.Guild == null ? context.Channel.Name : $"{context.Channel.Name}/{context.Guild.Name}")}\nResult: {customResult.Reason}", severity);
+                await _loggingService.Log(
+                    $"{context.User} executed {commandInfo.Name} in {(context.Guild == null ? context.Channel.Name : $"{context.Channel.Name}/{context.Guild.Name}")}\nResult: {customResult.Reason}",
+                    severity);
                 await context.Channel.SendMessageAsync("", embed: embed);
             }
         }
 
-        public async Task InitAsync() => await _commandService.AddModulesAsync(Assembly.GetEntryAssembly());
+        public async Task InitAsync()
+        {
+            var typeReaders = Assembly.GetEntryAssembly().GetTypes()
+                .Where(x => x.GetTypeInfo().BaseType == typeof(TypeReader));
+            foreach (var typeReader in typeReaders)
+            {
+                var method = typeof(CommandService).GetMethods()
+                    .FirstOrDefault(x => !x.ContainsGenericParameters & (x.Name == "AddTypeReader"));
+                method.Invoke(_commandService, new[] {typeReader, Activator.CreateInstance(typeReader)});
+            }
+            await _commandService.AddModulesAsync(Assembly.GetEntryAssembly());
+        }
 
         private async Task CommandHandleAsync(SocketMessage msgArg)
         {
@@ -91,7 +105,8 @@ namespace GeneralBot.Commands
             var result = await _commandService.ExecuteAsync(context, argPos, _services);
             // TODO: Merge this with CommandExecuted event for a more centralized error handling.
             if (!result.IsSuccess && result.Error != CommandError.UnknownCommand)
-                await context.Channel.SendMessageAsync("", embed: EmbedHelper.FromError(description: result.ErrorReason));
+                await context.Channel.SendMessageAsync("",
+                    embed: EmbedHelper.FromError(description: result.ErrorReason));
         }
     }
 }

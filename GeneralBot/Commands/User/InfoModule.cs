@@ -1,19 +1,18 @@
 ﻿using System;
-using System.IO;
-using System.Reflection;
-using System.Linq;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
-using GeneralBot.Databases.Context;
 using GeneralBot.Extensions;
-using GeneralBot.Results;
 using GeneralBot.Models;
+using GeneralBot.Models.Context;
+using GeneralBot.Results;
 using Humanizer;
-using GeneralBot.Extensions.Helpers;
 
 namespace GeneralBot.Commands.User
 {
@@ -24,19 +23,26 @@ namespace GeneralBot.Commands.User
         [Command("info")]
         public async Task<RuntimeResult> Info()
         {
-            var builder = new EmbedBuilder()
+            var builder = new EmbedBuilder
             {
-                Author = new EmbedAuthorBuilder() { Name = "Bot Info:", IconUrl = Context.Client.CurrentUser.GetAvatarUrlOrDefault() },
-                ThumbnailUrl = "https://emojipedia-us.s3.amazonaws.com/thumbs/120/twitter/103/information-source_2139.png",
+                Author = new EmbedAuthorBuilder
+                {
+                    Name = "Bot Info:",
+                    IconUrl = Context.Client.CurrentUser.GetAvatarUrlOrDefault()
+                },
+                ThumbnailUrl =
+                    "https://emojipedia-us.s3.amazonaws.com/thumbs/120/twitter/103/information-source_2139.png",
                 Color = new Color(61, 138, 192)
             };
             var appInfo = await Context.Client.GetApplicationInfoAsync();
-            builder.AddField("Owners:", $"{string.Join(", ", Config.Owners.Select(x => Context.Client.GetUser(x).ToString()))}({string.Join(", ", Config.Owners)})", false);
-            builder.AddField("Uptime:", (DateTime.Now - Process.GetCurrentProcess().StartTime).Humanize(), false);
-            builder.AddInlineField("Heap Size:", $"{(GC.GetTotalMemory(false) / 1000000)} MB");
+            builder.AddField("Owners:",
+                $"{string.Join(", ", Config.Owners.Select(x => Context.Client.GetUser(x).ToString()))}({string.Join(", ", Config.Owners)})");
+            builder.AddField("Uptime:", (DateTime.Now - Process.GetCurrentProcess().StartTime).Humanize());
+            builder.AddInlineField("Heap Size:", $"{GC.GetTotalMemory(false) / 1000000} MB");
             builder.AddInlineField("Latency:", Context.Client.Latency + "ms");
             builder.AddInlineField("Created On:", appInfo.CreatedAt.UtcDateTime);
-            builder.AddInlineField("Last Update:", File.GetLastWriteTimeUtc(typeof(GeneralBot).GetTypeInfo().Assembly.Location));
+            builder.AddInlineField("Last Update:",
+                File.GetLastWriteTimeUtc(typeof(GeneralBot).GetTypeInfo().Assembly.Location));
             builder.AddInlineField("Discord.NET Version:", DiscordConfig.Version);
             await ReplyAsync("", embed: builder);
             return CommandRuntimeResult.FromSuccess();
@@ -69,7 +75,8 @@ namespace GeneralBot.Commands.User
                 {
                     if (embed.Fields.Count > 5)
                     {
-                        embed.AddInlineField($"And {commandInfos.Count - embed.Fields.Count} more...", "Refine your search term to see more!");
+                        embed.AddInlineField($"And {commandInfos.Count - embed.Fields.Count} more...",
+                            "Refine your search term to see more!");
                         break;
                     }
                     embed.AddField(x =>
@@ -82,24 +89,30 @@ namespace GeneralBot.Commands.User
                 return CommandRuntimeResult.FromSuccess();
             }
 
-            private string GetCommandPrefix(SocketGuild guild) => guild == null ? "!" : CoreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id).CommandPrefix;
+            private string GetCommandPrefix(SocketGuild guild)
+            {
+                return guild == null
+                    ? "!"
+                    : CoreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id).CommandPrefix;
+            }
 
-            private static string BuildCommandInfo(CommandInfo cmdInfo) => $"{cmdInfo.Aliases.First()} {cmdInfo.Parameters.GetParamsUsage()}";
+            private static string BuildCommandInfo(CommandInfo cmdInfo)
+            {
+                return $"{cmdInfo.Aliases.First()} {cmdInfo.Parameters.GetParamsUsage()}";
+            }
 
             private async Task<IReadOnlyCollection<CommandInfo>> GetCommandInfosAsync(string input)
             {
                 var commandInfos = new List<CommandInfo>();
                 foreach (var module in CommandService.Modules)
+                foreach (var command in module.Commands)
                 {
-                    foreach (var command in module.Commands)
-                    {
-                        var check = await command.CheckPreconditionsAsync(Context, ServiceProvider);
-                        if (!check.IsSuccess) continue;
-                        if (command.Aliases.Any(x => x.ContainsCaseInsensitive(input)) ||
-                            module.IsSubmodule &&
-                            module.Aliases.Any(x => x.ContainsCaseInsensitive(input)))
-                            commandInfos.Add(command);
-                    }
+                    var check = await command.CheckPreconditionsAsync(Context, ServiceProvider);
+                    if (!check.IsSuccess) continue;
+                    if (command.Aliases.Any(x => x.ContainsCaseInsensitive(input)) ||
+                        module.IsSubmodule &&
+                        module.Aliases.Any(x => x.ContainsCaseInsensitive(input)))
+                        commandInfos.Add(command);
                 }
                 return commandInfos;
             }

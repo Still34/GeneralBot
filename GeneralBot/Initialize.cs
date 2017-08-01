@@ -10,7 +10,6 @@ using GeneralBot.Extensions.Helpers;
 using GeneralBot.Models;
 using GeneralBot.Models.Context;
 using GeneralBot.Services;
-using GeneralBot.Typereaders;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
@@ -32,7 +31,6 @@ namespace GeneralBot
             {
                 DefaultRunMode = RunMode.Async
             });
-            commandSerivce.AddTypeReader<GuildPermissionTypeReader>(new GuildPermissionTypeReader());
             collection
                 // Misc Services / Configs
                 .AddSingleton(ConfigureSettings())
