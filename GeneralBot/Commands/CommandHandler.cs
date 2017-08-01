@@ -72,7 +72,7 @@ namespace GeneralBot.Commands
             await context.Channel.SendMessageAsync("", embed: embed);
             await _loggingService.Log(
                 $"{context.User} executed {commandInfo.Name} in {(context.Guild == null ? context.Channel.Name : $"{context.Channel.Name}/{context.Guild.Name}")}\n" +
-                $"Result: {result.ErrorReason}",
+                $"Result: {result.ErrorReason} ({result.GetType()})",
                 severity);
         }
 
