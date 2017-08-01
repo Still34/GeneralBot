@@ -9,7 +9,7 @@ namespace GeneralBot.Migrations.User
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Profile",
+                name: "Profiles",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
@@ -28,7 +28,7 @@ namespace GeneralBot.Migrations.User
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Profile");
+                name: "Profiles");
         }
     }
 }
