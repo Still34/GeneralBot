@@ -62,25 +62,23 @@ namespace GeneralBot.Commands.User
         {
             var entries = UserContext.Reminders.Where(x => x.UserId == Context.User.Id)
                 .OrderBy(x => x.Time);
-            if (entries.Any())
+            if (!entries.Any()) return CommandRuntimeResult.FromError("You do not have a reminder set yet!");
+
+            var sb = new StringBuilder();
+            var embed = ReminderService.GetReminderEmbed("");
+            var userTimeOffset = await GetUserTimeOffset(Context.User);
+            if (userTimeOffset > TimeSpan.Zero)
+                embed.WithFooter(x => x.Text = $"Converted to {Context.User.GetFullnameOrDefault()}'s timezone.");
+            foreach (var entry in entries)
             {
-                var sb = new StringBuilder();
-                var embed = ReminderService.GetReminderEmbed("");
-                var userTimeOffset = await GetUserTimeOffset(Context.User);
-                if (userTimeOffset > TimeSpan.Zero)
-                    embed.WithFooter(x => x.Text = $"Converted to {Context.User.GetFullnameOrDefault()}'s timezone.");
-                foreach (var entry in entries)
-                {
-                    var time = entry.Time.ToOffset(userTimeOffset);
-                    sb.AppendLine($"**{time} ({entry.Time.Humanize()})**");
-                    string channelname = Context.Guild.GetChannel(entry.ChannelId)?.Name ?? "Unknown Channel";
-                    sb.AppendLine($@"   '{entry.Content}' at #{channelname}");
-                    sb.AppendLine();
-                }
-                await ReplyAsync("", embed: embed.WithDescription(sb.ToString()));
-                return CommandRuntimeResult.FromSuccess();
+                var time = entry.Time.ToOffset(userTimeOffset);
+                sb.AppendLine($"**{time} ({entry.Time.Humanize()})**");
+                string channelname = Context.Guild.GetChannel(entry.ChannelId)?.Name ?? "Unknown Channel";
+                sb.AppendLine($@"   '{entry.Content}' at #{channelname}");
+                sb.AppendLine();
             }
-            return CommandRuntimeResult.FromError("You do not have a reminder set yet!");
+            await ReplyAsync("", embed: embed.WithDescription(sb.ToString()));
+            return CommandRuntimeResult.FromSuccess();
         }
 
         [Command]
@@ -88,8 +86,8 @@ namespace GeneralBot.Commands.User
         [Priority(3)]
         public async Task<RuntimeResult> RemindUser(
             [Summary("Time")] [OverrideTypeReader(typeof(StringTimeSpanTypeReader))] TimeSpan dateTimeParsed,
-            [Summary("Content")] [Remainder] string remindContent) => await Remind(Context.User,
-            DateTimeOffset.Now.Add(dateTimeParsed), remindContent);
+            [Summary("Content")] [Remainder] string remindContent) =>
+            await Remind(Context.User, DateTimeOffset.Now.Add(dateTimeParsed), remindContent);
 
         [Command]
         [Summary("Set a reminder for another user")]
@@ -98,22 +96,25 @@ namespace GeneralBot.Commands.User
         public async Task<RuntimeResult> RemindOtherUser(
             [Summary("User")] SocketUser user,
             [Summary("Time")] [OverrideTypeReader(typeof(StringTimeSpanTypeReader))] TimeSpan dateTimeParsed,
-            [Summary("Content")] [Remainder] string remindContent) => await Remind(user,
-            DateTimeOffset.Now.Add(dateTimeParsed), remindContent);
+            [Summary("Content")] [Remainder] string remindContent) =>
+            await Remind(user, DateTimeOffset.Now.Add(dateTimeParsed), remindContent);
 
         [Command]
         [Summary("Set a reminder")]
         [Priority(1)]
-        public async Task<RuntimeResult> RemindUser([Summary("Date Time")] DateTimeOffset dateTime,
-            [Summary("Content")] [Remainder] string remindContent) => await Remind(Context.User, dateTime,
-            remindContent);
+        public async Task<RuntimeResult> RemindUser(
+            [Summary("Date Time")] DateTimeOffset dateTime,
+            [Summary("Content")] [Remainder] string remindContent) =>
+            await Remind(Context.User, dateTime, remindContent);
 
         [Command]
         [Summary("Set a reminder for another user")]
         [Priority(0)]
         [RequireModerator]
-        public async Task<RuntimeResult> RemindOtherUser([Summary("User")] SocketUser user,
-            [Summary("Date Time")] DateTimeOffset dateTime, [Summary("Content")] [Remainder] string remindContent) =>
+        public async Task<RuntimeResult> RemindOtherUser(
+            [Summary("User")] SocketUser user,
+            [Summary("Date Time")] DateTimeOffset dateTime, 
+            [Summary("Content")] [Remainder] string remindContent) =>
             await Remind(user, dateTime, remindContent);
 
         private async Task<CommandRuntimeResult> Remind(SocketUser user, DateTimeOffset dateTime, string remindContent)

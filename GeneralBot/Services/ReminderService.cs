@@ -39,12 +39,12 @@ namespace DirectoryMaid.Services
         }.WithCurrentTimestamp();
 
         public async Task AddReminder(IUser user, ISocketMessageChannel channel, DateTimeOffset dateTime,
-            string reasonContent)
+            string content)
         {
             await _userContext.AddAsync(new Reminder
             {
                 ChannelId = channel.Id,
-                Content = reasonContent,
+                Content = content,
                 Time = dateTime,
                 UserId = user.Id
             });
