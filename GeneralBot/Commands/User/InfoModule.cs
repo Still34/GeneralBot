@@ -69,7 +69,7 @@ namespace GeneralBot.Commands.User
 
             // Last updated on based on file modification date
             embedBuilder.AddInlineField("Last Update",
-                File.GetLastWriteTimeUtc(typeof(GeneralBot).GetTypeInfo().Assembly.Location));
+                File.GetLastWriteTimeUtc(Assembly.GetEntryAssembly().Location));
 
             // Lib version
             embedBuilder.AddInlineField("Discord.NET Version", DiscordConfig.Version);
