@@ -89,17 +89,12 @@ namespace GeneralBot.Commands.User
                 return CommandRuntimeResult.FromSuccess();
             }
 
-            private string GetCommandPrefix(SocketGuild guild)
-            {
-                return guild == null
-                    ? "!"
-                    : CoreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id).CommandPrefix;
-            }
+            private string GetCommandPrefix(SocketGuild guild) => guild == null
+                ? "!"
+                : CoreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id).CommandPrefix;
 
-            private static string BuildCommandInfo(CommandInfo cmdInfo)
-            {
-                return $"{cmdInfo.Aliases.First()} {cmdInfo.Parameters.GetParamsUsage()}";
-            }
+            private static string BuildCommandInfo(CommandInfo cmdInfo) =>
+                $"{cmdInfo.Aliases.First()} {cmdInfo.Parameters.GetParamsUsage()}";
 
             private async Task<IReadOnlyCollection<CommandInfo>> GetCommandInfosAsync(string input)
             {

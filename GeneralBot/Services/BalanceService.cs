@@ -21,14 +21,19 @@ namespace GeneralBot.Services
 
         private async Task AwardBalance(SocketMessage msgArg)
         {
-            if (msgArg is SocketUserMessage msg && msg.Channel is SocketGuildChannel && !msg.Author.IsBot)
+            if (msgArg is SocketUserMessage msg &&
+                msg.Channel is SocketGuildChannel &&
+                !msg.Author.IsBot)
             {
                 var user = msg.Author;
-                var dbEntry = _userSettings.Profiles.SingleOrDefault(x => x.UserId == user.Id) ?? _userSettings.Profiles.Add(new Profile {UserId = user.Id, LastMessage = msg.Timestamp}).Entity;
+                var dbEntry = _userSettings.Profiles.SingleOrDefault(x => x.UserId == user.Id) ??
+                              _userSettings.Profiles.Add(new Profile {UserId = user.Id, LastMessage = msg.Timestamp})
+                                  .Entity;
                 uint balanceIncrement = Convert.ToUInt32(new Random().Next(1, 10));
                 if (msg.Timestamp >= dbEntry.LastMessage.AddMinutes(1))
                 {
-                    await _loggingService.Log($"Increasing {user}'s balance by {balanceIncrement}...", LogSeverity.Debug).ConfigureAwait(false);
+                    await _loggingService.Log($"Increasing {user}'s balance by {balanceIncrement}...",
+                        LogSeverity.Debug).ConfigureAwait(false);
                     dbEntry.LastMessage = msg.Timestamp;
                     dbEntry.Balance = dbEntry.Balance + balanceIncrement;
                 }

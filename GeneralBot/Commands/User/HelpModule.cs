@@ -38,7 +38,8 @@ namespace GeneralBot.Commands.User
             {
                 if (embed.Fields.Count > 5)
                 {
-                    embed.AddInlineField($"And {commandInfos.Count - embed.Fields.Count} more...", "Refine your search term to see more!");
+                    embed.AddInlineField($"And {commandInfos.Count - embed.Fields.Count} more...",
+                        "Refine your search term to see more!");
                     break;
                 }
                 embed.AddField(x =>
@@ -51,9 +52,12 @@ namespace GeneralBot.Commands.User
             return CommandRuntimeResult.FromSuccess();
         }
 
-        private string GetCommandPrefix(SocketGuild guild) => guild == null ? "!" : CoreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id).CommandPrefix;
+        private string GetCommandPrefix(SocketGuild guild) => guild == null
+            ? "!"
+            : CoreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id).CommandPrefix;
 
-        private static string BuildCommandInfo(CommandInfo cmdInfo) => $"{cmdInfo.Aliases.First()} {cmdInfo.Parameters.GetParamsUsage()}";
+        private static string BuildCommandInfo(CommandInfo cmdInfo) =>
+            $"{cmdInfo.Aliases.First()} {cmdInfo.Parameters.GetParamsUsage()}";
 
         private async Task<IReadOnlyCollection<CommandInfo>> GetCommandInfosAsync(string input)
         {

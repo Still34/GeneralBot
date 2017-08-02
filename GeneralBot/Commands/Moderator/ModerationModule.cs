@@ -91,7 +91,8 @@ namespace GeneralBot.Commands.Moderator
         [Summary("Changes the nickname for the targeted user.")]
         [RequireBotPermission(GuildPermission.ManageNicknames)]
         [RequireUserPermission(GuildPermission.ManageNicknames)]
-        public async Task<RuntimeResult> NicknameChange([RequireHierarchy] SocketGuildUser user, [Remainder] string nickname)
+        public async Task<RuntimeResult> NicknameChange([RequireHierarchy] SocketGuildUser user,
+            [Remainder] string nickname)
         {
             await user.ModifyAsync(x => x.Nickname = nickname);
             return CommandRuntimeResult.FromSuccess($"Successfully changed {user}'s name to {nickname}.");
@@ -103,7 +104,8 @@ namespace GeneralBot.Commands.Moderator
         [RequireUserPermission(GuildPermission.ManageChannels)]
         public async Task<RuntimeResult> BlockUser([RequireHierarchy] SocketGuildUser user)
         {
-            await (Context.Channel as SocketTextChannel).AddPermissionOverwriteAsync(user, new OverwritePermissions(sendMessages: PermValue.Deny));
+            await (Context.Channel as SocketTextChannel).AddPermissionOverwriteAsync(user,
+                new OverwritePermissions(sendMessages: PermValue.Deny));
             return CommandRuntimeResult.FromSuccess($"Successfully blocked {user.Mention}.");
         }
 
@@ -133,7 +135,8 @@ namespace GeneralBot.Commands.Moderator
                 var messages = (await GetMessageAsync(amount)).ToList();
                 if (messages.Count == 0) return CommandRuntimeResult.FromError(MessagesNotFound);
                 await DeleteMessagesAsync(messages);
-                return CommandRuntimeResult.FromSuccess($"Deleted {Format.Bold(messages.Count.ToString())} message(s)!");
+                return CommandRuntimeResult.FromSuccess(
+                    $"Deleted {Format.Bold(messages.Count.ToString())} message(s)!");
             }
 
             [Command("user")]
@@ -142,7 +145,8 @@ namespace GeneralBot.Commands.Moderator
                 var messages = (await GetMessageAsync(amount)).Where(x => x.Author.Id == user.Id).ToList();
                 if (messages.Count == 0) return CommandRuntimeResult.FromError(MessagesNotFound);
                 await DeleteMessagesAsync(messages);
-                return CommandRuntimeResult.FromSuccess($"Deleted {Format.Bold(messages.Count.ToString())} message(s) from user {Format.Bold(user.Mention)}!");
+                return CommandRuntimeResult.FromSuccess(
+                    $"Deleted {Format.Bold(messages.Count.ToString())} message(s) from user {Format.Bold(user.Mention)}!");
             }
 
             [Command("bots")]
@@ -151,16 +155,19 @@ namespace GeneralBot.Commands.Moderator
                 var messages = (await GetMessageAsync(amount)).Where(x => x.Author.IsBot).ToList();
                 if (messages.Count == 0) return CommandRuntimeResult.FromError(MessagesNotFound);
                 await DeleteMessagesAsync(messages);
-                return CommandRuntimeResult.FromSuccess($"Deleted {Format.Bold(messages.Count.ToString())} message(s) from bots!");
+                return CommandRuntimeResult.FromSuccess(
+                    $"Deleted {Format.Bold(messages.Count.ToString())} message(s) from bots!");
             }
 
             [Command("contains")]
             public async Task<RuntimeResult> CleanContainsAsync(string text, int amount = 25)
             {
-                var messages = (await GetMessageAsync(amount)).Where(x => x.Content.ContainsCaseInsensitive(text)).ToList();
+                var messages = (await GetMessageAsync(amount)).Where(x => x.Content.ContainsCaseInsensitive(text))
+                    .ToList();
                 if (messages.Count == 0) return CommandRuntimeResult.FromError(MessagesNotFound);
                 await DeleteMessagesAsync(messages);
-                return CommandRuntimeResult.FromSuccess($"Deleted {Format.Bold(messages.Count.ToString())} message(s) containing {text}!");
+                return CommandRuntimeResult.FromSuccess(
+                    $"Deleted {Format.Bold(messages.Count.ToString())} message(s) containing {text}!");
             }
 
             [Command("attachments")]
@@ -169,7 +176,8 @@ namespace GeneralBot.Commands.Moderator
                 var messages = (await GetMessageAsync(amount)).Where(x => x.Attachments.Count > 0).ToList();
                 if (messages.Count == 0) return CommandRuntimeResult.FromError(MessagesNotFound);
                 await DeleteMessagesAsync(messages);
-                return CommandRuntimeResult.FromSuccess($"Deleted {Format.Bold(messages.Count.ToString())} message(s) containing attachments!");
+                return CommandRuntimeResult.FromSuccess(
+                    $"Deleted {Format.Bold(messages.Count.ToString())} message(s) containing attachments!");
             }
 
             private async Task<IEnumerable<IMessage>> GetMessageAsync(int count)

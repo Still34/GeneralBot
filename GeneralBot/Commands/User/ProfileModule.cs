@@ -1,9 +1,9 @@
 ﻿using System.Linq;
-using System.Threading.Tasks;
 using System.Net.Http;
+using System.Threading.Tasks;
 using Discord;
-using Discord.WebSocket;
 using Discord.Commands;
+using Discord.WebSocket;
 using GeneralBot.Models;
 using GeneralBot.Models.Context;
 using GeneralBot.Results;
@@ -22,8 +22,12 @@ namespace GeneralBot.Commands.User
         public Task<RuntimeResult> Balance(SocketUser user = null)
         {
             var targetUser = user ?? Context.User;
-            var dbEntry = UserSettings.Profiles.SingleOrDefault(x => x.UserId == targetUser.Id) ?? UserSettings.Profiles.Add(new Profile { UserId = targetUser.Id, LastMessage = Context.Message.Timestamp }).Entity;
-            return Task.FromResult<RuntimeResult>(CommandRuntimeResult.FromSuccess($"{targetUser.Mention}'s current balance is {dbEntry.Balance}{Config.CurrencySymbol}"));
+            var dbEntry = UserSettings.Profiles.SingleOrDefault(x => x.UserId == targetUser.Id) ?? UserSettings.Profiles
+                              .Add(new Profile {UserId = targetUser.Id, LastMessage = Context.Message.Timestamp})
+                              .Entity;
+            return Task.FromResult<RuntimeResult>(
+                CommandRuntimeResult.FromSuccess(
+                    $"{targetUser.Mention}'s current balance is {dbEntry.Balance}{Config.CurrencySymbol}"));
         }
 
         [Group("summary")]
@@ -35,14 +39,25 @@ namespace GeneralBot.Commands.User
             public Task<RuntimeResult> CheckSummary(SocketUser user = null)
             {
                 var targetUser = user ?? Context.User;
-                var dbEntry = UserSettings.Profiles.SingleOrDefault(x => x.UserId == targetUser.Id) ?? UserSettings.Profiles.Add(new Profile { UserId = targetUser.Id, LastMessage = Context.Message.Timestamp }).Entity;
-                return Task.FromResult<RuntimeResult>(CommandRuntimeResult.FromInfo($"Current Summary: {Format.Bold(dbEntry.Summary)}"));
+                var dbEntry = UserSettings.Profiles.SingleOrDefault(x => x.UserId == targetUser.Id) ?? UserSettings
+                                  .Profiles.Add(new Profile
+                                  {
+                                      UserId = targetUser.Id,
+                                      LastMessage = Context.Message.Timestamp
+                                  }).Entity;
+                return Task.FromResult<RuntimeResult>(
+                    CommandRuntimeResult.FromInfo($"Current Summary: {Format.Bold(dbEntry.Summary)}"));
             }
 
             [Command("set")]
             public async Task<RuntimeResult> SetSummary([Remainder] string summary)
             {
-                var dbEntry = UserSettings.Profiles.SingleOrDefault(x => x.UserId == Context.User.Id) ?? UserSettings.Profiles.Add(new Profile { UserId = Context.User.Id, LastMessage = Context.Message.Timestamp }).Entity;
+                var dbEntry = UserSettings.Profiles.SingleOrDefault(x => x.UserId == Context.User.Id) ?? UserSettings
+                                  .Profiles.Add(new Profile
+                                  {
+                                      UserId = Context.User.Id,
+                                      LastMessage = Context.Message.Timestamp
+                                  }).Entity;
                 dbEntry.Summary = summary;
                 UserSettings.Add(dbEntry);
                 await UserSettings.SaveChangesAsync();

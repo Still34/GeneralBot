@@ -113,7 +113,7 @@ namespace GeneralBot.Commands.User
         [RequireModerator]
         public async Task<RuntimeResult> RemindOtherUser(
             [Summary("User")] SocketUser user,
-            [Summary("Date Time")] DateTimeOffset dateTime, 
+            [Summary("Date Time")] DateTimeOffset dateTime,
             [Summary("Content")] [Remainder] string remindContent) =>
             await Remind(user, dateTime, remindContent);
 

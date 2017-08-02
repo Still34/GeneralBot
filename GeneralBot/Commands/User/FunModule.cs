@@ -29,7 +29,8 @@ namespace GeneralBot.Commands.User
             int responseCount = Config.Commands.EightBall.Responses.Count;
             if (responseCount == 0)
                 // This should hopefully never happen.
-                return CommandRuntimeResult.FromError("The 8ball responses are not yet set, contact the bot developers.");
+                return CommandRuntimeResult.FromError(
+                    "The 8ball responses are not yet set, contact the bot developers.");
             string response = Config.Commands.EightBall.Responses[Random.Next(0, responseCount)];
             var embed = new EmbedBuilder
                 {
@@ -75,10 +76,12 @@ namespace GeneralBot.Commands.User
         public async Task<RuntimeResult> Urban([Remainder] string term)
         {
             string parsedTerm = WebUtility.HtmlEncode(term);
-            using (var response = await HttpClient.GetAsync($"http://api.urbandictionary.com/v0/define?term={parsedTerm}"))
+            using (var response =
+                await HttpClient.GetAsync($"http://api.urbandictionary.com/v0/define?term={parsedTerm}"))
             {
                 if (!response.IsSuccessStatusCode)
-                    return CommandRuntimeResult.FromError("Urban cannot be reached at the moment, please try again later!");
+                    return CommandRuntimeResult.FromError(
+                        "Urban cannot be reached at the moment, please try again later!");
                 string responseParsed = await response.Content.ReadAsStringAsync();
                 var search = JsonConvert.DeserializeObject<UrbanModel>(responseParsed);
                 var result = search.Results?.FirstOrDefault();
