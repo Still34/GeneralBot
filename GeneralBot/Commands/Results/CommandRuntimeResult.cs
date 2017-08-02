@@ -8,12 +8,18 @@ namespace GeneralBot.Commands.Results
         {
         }
 
-        public CommandRuntimeResult(CommandError? error, ResultType type, string reason) : base(error, reason) => Type = type;
+        public CommandRuntimeResult(CommandError? error, ResultType type, string reason) : base(error, reason) => Type =
+            type;
 
         public ResultType Type { get; set; }
 
-        public static CommandRuntimeResult FromError(object reason) => new CommandRuntimeResult(CommandError.Unsuccessful, ResultType.Error, reason.ToString());
-        public static CommandRuntimeResult FromInfo(object reason) => new CommandRuntimeResult(null, ResultType.Info, reason.ToString());
-        public static CommandRuntimeResult FromSuccess(object reason = null) => new CommandRuntimeResult(null, ResultType.Success, reason?.ToString());
+        public static CommandRuntimeResult FromError(object reason) => new CommandRuntimeResult(
+            CommandError.Unsuccessful, ResultType.Error, reason.ToString());
+
+        public static CommandRuntimeResult FromInfo(object reason) => new CommandRuntimeResult(null, ResultType.Info,
+            reason.ToString());
+
+        public static CommandRuntimeResult FromSuccess(object reason = null) => new CommandRuntimeResult(null,
+            ResultType.Success, reason?.ToString());
     }
 }

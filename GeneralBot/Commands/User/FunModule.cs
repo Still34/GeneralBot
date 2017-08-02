@@ -9,7 +9,6 @@ using Discord.Commands;
 using GeneralBot.Commands.Results;
 using GeneralBot.Extensions;
 using GeneralBot.Extensions.Helpers;
-using GeneralBot.Models;
 using GeneralBot.Models.Config;
 using GeneralBot.Models.Urban;
 using Newtonsoft.Json;
@@ -31,8 +30,10 @@ namespace GeneralBot.Commands.User
             int responseCount = Config.Commands.EightBall.Responses.Count;
             if (responseCount == 0)
                 // This should hopefully never happen.
+            {
                 return CommandRuntimeResult.FromError(
                     "The 8ball responses are not yet set, contact the bot developers.");
+            }
             string response = Config.Commands.EightBall.Responses[Random.Next(0, responseCount)];
             var embed = new EmbedBuilder
                 {
@@ -82,8 +83,10 @@ namespace GeneralBot.Commands.User
                 await HttpClient.GetAsync($"http://api.urbandictionary.com/v0/define?term={parsedTerm}"))
             {
                 if (!response.IsSuccessStatusCode)
+                {
                     return CommandRuntimeResult.FromError(
                         "Urban cannot be reached at the moment, please try again later!");
+                }
                 string responseParsed = await response.Content.ReadAsStringAsync();
                 var search = JsonConvert.DeserializeObject<UrbanResponse>(responseParsed);
                 var result = search.Results?.FirstOrDefault();

@@ -34,13 +34,17 @@ namespace GeneralBot.Commands.User
                 await HttpClient.GetAsync($"http://cowsay.morecode.org/say?message={parsedInput}&format=text"))
             {
                 if (!response.IsSuccessStatusCode)
+                {
                     return CommandRuntimeResult.FromError(
                         "I cannot reach cowsay at the moment, please try again later!");
+                }
                 string output = await response.Content.ReadAsStringAsync();
                 // This should likely never happen, but just in case.
                 if (string.IsNullOrEmpty(output))
+                {
                     return CommandRuntimeResult.FromError(
                         "Cowsay is out of reach, please try again with another text!");
+                }
                 await ReplyAsync(output);
                 return CommandRuntimeResult.FromSuccess();
             }
