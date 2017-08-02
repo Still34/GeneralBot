@@ -1,4 +1,4 @@
-﻿namespace GeneralBot.Results
+﻿namespace GeneralBot.Commands.Results
 {
     public enum ResultType
     {

@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using GeneralBot.Commands.Results;
 using GeneralBot.Extensions;
 using GeneralBot.Models;
 using GeneralBot.Models.Config;
 using GeneralBot.Models.Database.CoreSettings;
-using GeneralBot.Results;
 using Humanizer;
 
 namespace GeneralBot.Commands.User

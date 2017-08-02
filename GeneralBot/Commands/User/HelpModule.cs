@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using GeneralBot.Commands.Results;
 using GeneralBot.Extensions;
 using GeneralBot.Models.Database.CoreSettings;
-using GeneralBot.Results;
 
 namespace GeneralBot.Commands.User
 {

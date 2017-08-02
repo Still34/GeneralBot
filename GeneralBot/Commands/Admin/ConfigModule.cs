@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using GeneralBot.Commands.Results;
 using GeneralBot.Models;
 using GeneralBot.Models.Config;
 using GeneralBot.Models.Database.CoreSettings;
-using GeneralBot.Results;
 using GeneralBot.Typereaders;
 using Humanizer;
 

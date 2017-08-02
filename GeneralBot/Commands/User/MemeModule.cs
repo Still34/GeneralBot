@@ -3,7 +3,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Discord.Commands;
-using GeneralBot.Results;
+using GeneralBot.Commands.Results;
 
 namespace GeneralBot.Commands.User
 {

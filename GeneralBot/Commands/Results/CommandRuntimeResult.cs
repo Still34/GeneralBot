@@ -1,6 +1,6 @@
 ﻿using Discord.Commands;
 
-namespace GeneralBot.Results
+namespace GeneralBot.Commands.Results
 {
     internal class CommandRuntimeResult : RuntimeResult
     {

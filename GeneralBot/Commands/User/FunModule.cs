@@ -6,12 +6,12 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
+using GeneralBot.Commands.Results;
 using GeneralBot.Extensions;
 using GeneralBot.Extensions.Helpers;
 using GeneralBot.Models;
 using GeneralBot.Models.Config;
 using GeneralBot.Models.Urban;
-using GeneralBot.Results;
 using Newtonsoft.Json;
 
 namespace GeneralBot.Commands.User

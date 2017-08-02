@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Addons.Interactive;
 using Discord.Commands;
+using GeneralBot.Commands.Results;
 using GeneralBot.Extensions;
 using GeneralBot.Extensions.Helpers;
 using GeneralBot.Preconditions;
-using GeneralBot.Results;
 
 namespace GeneralBot.Commands.Owners
 {

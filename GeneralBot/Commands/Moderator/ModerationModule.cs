@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using GeneralBot.Commands.Results;
 using GeneralBot.Extensions;
 using GeneralBot.Preconditions;
-using GeneralBot.Results;
 
 namespace GeneralBot.Commands.Moderator
 {

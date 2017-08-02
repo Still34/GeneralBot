@@ -6,11 +6,11 @@ using DirectoryMaid.Services;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using GeneralBot.Commands.Results;
 using GeneralBot.Extensions;
 using GeneralBot.Extensions.Helpers;
 using GeneralBot.Models.Database.UserSettings;
 using GeneralBot.Preconditions;
-using GeneralBot.Results;
 using GeneralBot.Typereaders;
 using Humanizer;
 
