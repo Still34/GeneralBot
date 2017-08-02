@@ -14,12 +14,10 @@ namespace GeneralBot.Commands.User
 {
     [Group("weather")]
     [RequireContext(ContextType.Guild)]
-    [Summary(ModuleName)]
+    [Summary("Weather Commands")]
     [Remarks("Curious to see what the weather is like at the moment? Check out the following commands!")]
     public class WeatherModule : ModuleBase<SocketCommandContext>
     {
-        private const string ModuleName = "Weather Commands";
-
         private readonly DarkSkyService.OptionalParameters _darkSkyParams = new DarkSkyService.OptionalParameters
         {
             MeasurementUnits = "si",

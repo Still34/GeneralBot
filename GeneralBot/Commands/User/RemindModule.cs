@@ -18,6 +18,8 @@ namespace GeneralBot.Commands.User
 {
     [Group("remind")]
     [Alias("remember", "reminder", "remindme")]
+    [Summary("Remind Commands")]
+    [Remarks("Forget things often? Remind yourself with these commands!")]
     public class RemindModule : ModuleBase<SocketCommandContext>
     {
         public ReminderService ReminderService { get; set; }
