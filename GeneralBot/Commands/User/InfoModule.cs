@@ -25,7 +25,7 @@ namespace GeneralBot.Commands.User
         [Command("info")]
         public async Task<RuntimeResult> GetInfo()
         {
-            var builder = new EmbedBuilder
+            var embedBuilder = new EmbedBuilder
             {
                 Author = new EmbedAuthorBuilder
                 {
@@ -37,12 +37,12 @@ namespace GeneralBot.Commands.User
                 Color = new Color(61, 138, 192)
             };
             // Owners
-            builder.AddField("Owners:",
+            embedBuilder.AddField("Owners:",
                 string.Join(", ", Config.Owners.Select(x => Context.Client.GetUser(x).ToString())));
 
             // Application uptime
             var currentProcess = Process.GetCurrentProcess();
-            builder.AddField("Uptime:", (DateTime.Now - currentProcess.StartTime).Humanize());
+            embedBuilder.AddField("Uptime:", (DateTime.Now - currentProcess.StartTime).Humanize());
 
             // Memory report
             var memInfoTitleBuilder = new StringBuilder();
@@ -58,22 +58,22 @@ namespace GeneralBot.Commands.User
                 memInfoDescrBuilder.Append(
                     $" / {Math.Round(workingSetBytes.LargestWholeNumberValue, 2)} {workingSetBytes.LargestWholeNumberSymbol}");
             }
-            builder.AddInlineField(memInfoTitleBuilder.ToString(), memInfoDescrBuilder);
+            embedBuilder.AddInlineField(memInfoTitleBuilder.ToString(), memInfoDescrBuilder);
 
             // Application latency
-            builder.AddInlineField("Latency:", Context.Client.Latency + "ms");
+            embedBuilder.AddInlineField("Latency:", Context.Client.Latency + "ms");
 
             // Discord application creation date
             var appInfo = await Context.Client.GetApplicationInfoAsync();
-            builder.AddInlineField("Created On:", appInfo.CreatedAt.UtcDateTime);
+            embedBuilder.AddInlineField("Created On:", appInfo.CreatedAt.UtcDateTime);
 
             // Last updated on based on file modification date
-            builder.AddInlineField("Last Update:",
+            embedBuilder.AddInlineField("Last Update:",
                 File.GetLastWriteTimeUtc(typeof(GeneralBot).GetTypeInfo().Assembly.Location));
 
             // Lib version
-            builder.AddInlineField("Discord.NET Version:", DiscordConfig.Version);
-            await ReplyAsync("", embed: builder);
+            embedBuilder.AddInlineField("Discord.NET Version:", DiscordConfig.Version);
+            await ReplyAsync("", embed: embedBuilder);
             return CommandRuntimeResult.FromSuccess();
         }
 
