@@ -6,7 +6,7 @@ using GeneralBot.Commands.Results;
 using GeneralBot.Extensions.Helpers;
 using GeneralBot.Models.Context;
 using GeneralBot.Models.Database.UserSettings;
-using GeneralBot.Services;
+using Geocoding.Google;
 
 namespace GeneralBot.Commands.User
 {
@@ -14,7 +14,7 @@ namespace GeneralBot.Commands.User
     public class LocationModule : ModuleBase<SocketCommandContext>
     {
         private IDisposable _typing;
-        public GoogleGeocodingService Geocoding { get; set; }
+        public GoogleGeocoder Geocoding { get; set; }
         public UserContext UserSettings { get; set; }
 
         protected override void BeforeExecute(CommandInfo command)

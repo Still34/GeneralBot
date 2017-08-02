@@ -2,6 +2,7 @@
 using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
+using DarkSky.Services;
 using DirectoryMaid.Services;
 using Discord.Addons.Interactive;
 using Discord.Commands;
@@ -13,6 +14,7 @@ using GeneralBot.Models.Config;
 using GeneralBot.Models.Database.CoreSettings;
 using GeneralBot.Models.Database.UserSettings;
 using GeneralBot.Services;
+using Geocoding.Google;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
@@ -34,16 +36,19 @@ namespace GeneralBot
             {
                 DefaultRunMode = RunMode.Async
             });
+            var config = ConfigureSettings();
             collection
                 // Misc Services / Configs
-                .AddSingleton(ConfigureSettings())
+                .AddSingleton(config)
                 .AddSingleton<ConfigureGuildService>()
                 .AddSingleton<ConfigurePresenceService>()
                 .AddSingleton<ReminderService>()
-                .AddSingleton<GoogleGeocodingService>()
+                .AddSingleton<WeatherService>()
                 .AddSingleton<BalanceService>()
                 .AddSingleton<AudioService>()
                 .AddSingleton<Random>()
+                .AddSingleton(new GoogleGeocoder(config.Credentials.Google))
+                .AddSingleton(new DarkSkyService(config.Credentials.DarkSky))
                 .AddSingleton(new HttpClient {Timeout = TimeSpan.FromSeconds(5)})
                 // Discord Client
                 .AddSingleton(client)
