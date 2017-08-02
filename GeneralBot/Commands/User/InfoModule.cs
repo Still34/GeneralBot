@@ -37,12 +37,12 @@ namespace GeneralBot.Commands.User
                 Color = new Color(61, 138, 192)
             };
             // Owners
-            embedBuilder.AddField("Owners:",
+            embedBuilder.AddField("Owners",
                 string.Join(", ", Config.Owners.Select(x => Context.Client.GetUser(x).ToString())));
 
             // Application uptime
             var currentProcess = Process.GetCurrentProcess();
-            embedBuilder.AddField("Uptime:", (DateTime.Now - currentProcess.StartTime).Humanize());
+            embedBuilder.AddField("Uptime", (DateTime.Now - currentProcess.StartTime).Humanize());
 
             // Memory report
             var memInfoTitleBuilder = new StringBuilder();
@@ -61,18 +61,18 @@ namespace GeneralBot.Commands.User
             embedBuilder.AddInlineField(memInfoTitleBuilder.ToString(), memInfoDescrBuilder);
 
             // Application latency
-            embedBuilder.AddInlineField("Latency:", Context.Client.Latency + "ms");
+            embedBuilder.AddInlineField("Latency", Context.Client.Latency + "ms");
 
             // Discord application creation date
             var appInfo = await Context.Client.GetApplicationInfoAsync();
-            embedBuilder.AddInlineField("Created On:", appInfo.CreatedAt.UtcDateTime);
+            embedBuilder.AddInlineField("Created On", appInfo.CreatedAt.UtcDateTime);
 
             // Last updated on based on file modification date
-            embedBuilder.AddInlineField("Last Update:",
+            embedBuilder.AddInlineField("Last Update",
                 File.GetLastWriteTimeUtc(typeof(GeneralBot).GetTypeInfo().Assembly.Location));
 
             // Lib version
-            embedBuilder.AddInlineField("Discord.NET Version:", DiscordConfig.Version);
+            embedBuilder.AddInlineField("Discord.NET Version", DiscordConfig.Version);
             await ReplyAsync("", embed: embedBuilder);
             return CommandRuntimeResult.FromSuccess();
         }
