@@ -1,8 +1,6 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
-using GeneralBot.Models;
 using GeneralBot.Models.Config;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -10,17 +8,15 @@ namespace GeneralBot
 {
     public class GeneralBot
     {
-        private DiscordSocketClient _client;
-        private IServiceProvider _services;
         private static void Main() => new GeneralBot().StartAsync().GetAwaiter().GetResult();
 
         public async Task StartAsync()
         {
-            _client = new DiscordSocketClient();
-            _services = await Initialize.StartAsync(_client);
-            var config = _services.GetRequiredService<ConfigModel>();
-            await _client.LoginAsync(TokenType.Bot, config.Credentials.Discord);
-            await _client.StartAsync();
+            var client = new DiscordSocketClient();
+            var services = await Initialize.StartAsync(client);
+            var config = services.GetRequiredService<ConfigModel>();
+            await client.LoginAsync(TokenType.Bot, config.Credentials.Discord);
+            await client.StartAsync();
             await Task.Delay(-1);
         }
     }
