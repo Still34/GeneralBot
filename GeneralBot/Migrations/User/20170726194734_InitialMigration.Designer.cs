@@ -1,9 +1,9 @@
 ﻿using System;
+using GeneralBot.Models.Database.UserSettings;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
-using GeneralBot.Models.Context;
 
 namespace GeneralBot.Migrations.User
 {

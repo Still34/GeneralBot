@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Discord.Commands;
 using GeneralBot.Models;
+using GeneralBot.Models.Config;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace GeneralBot.Preconditions

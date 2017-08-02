@@ -8,7 +8,7 @@ using Discord.Commands;
 using Discord.WebSocket;
 using GeneralBot.Extensions;
 using GeneralBot.Extensions.Helpers;
-using GeneralBot.Models.Context;
+using GeneralBot.Models.Database.UserSettings;
 using GeneralBot.Preconditions;
 using GeneralBot.Results;
 using GeneralBot.Typereaders;

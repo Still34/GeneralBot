@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
 using GeneralBot.Models;
+using GeneralBot.Models.Config;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace GeneralBot

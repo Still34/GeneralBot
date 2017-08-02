@@ -5,7 +5,8 @@ using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 using GeneralBot.Models;
-using GeneralBot.Models.Context;
+using GeneralBot.Models.Config;
+using GeneralBot.Models.Database.UserSettings;
 using GeneralBot.Results;
 
 namespace GeneralBot.Commands.User

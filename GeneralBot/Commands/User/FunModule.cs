@@ -9,6 +9,8 @@ using Discord.Commands;
 using GeneralBot.Extensions;
 using GeneralBot.Extensions.Helpers;
 using GeneralBot.Models;
+using GeneralBot.Models.Config;
+using GeneralBot.Models.Urban;
 using GeneralBot.Results;
 using Newtonsoft.Json;
 
@@ -83,7 +85,7 @@ namespace GeneralBot.Commands.User
                     return CommandRuntimeResult.FromError(
                         "Urban cannot be reached at the moment, please try again later!");
                 string responseParsed = await response.Content.ReadAsStringAsync();
-                var search = JsonConvert.DeserializeObject<UrbanModel>(responseParsed);
+                var search = JsonConvert.DeserializeObject<UrbanResponse>(responseParsed);
                 var result = search.Results?.FirstOrDefault();
                 if (result == null)
                     return CommandRuntimeResult.FromError($"No definition for {Format.Bold(term)} found!");

@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace GeneralBot.Models
+namespace GeneralBot.Models.Urban
 {
     public class Result
     {
@@ -31,20 +30,5 @@ namespace GeneralBot.Models
 
         [JsonProperty("thumbs_down")]
         public int Dislikes { get; set; }
-    }
-
-    public class UrbanModel
-    {
-        [JsonProperty("tags")]
-        public IList<string> Tags { get; set; }
-
-        [JsonProperty("result_type")]
-        public string ResultType { get; set; }
-
-        [JsonProperty("list")]
-        public IList<Result> Results { get; set; }
-
-        [JsonProperty("sounds")]
-        public IList<string> Sounds { get; set; }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using GeneralBot.Models;
+using GeneralBot.Models.Config;
 using Geocoding;
 using Geocoding.Google;
 

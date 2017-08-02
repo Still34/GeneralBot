@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Discord.Commands;
 using GeneralBot.Extensions.Helpers;
-using GeneralBot.Models.Context;
+using GeneralBot.Models.Database.UserSettings;
 using GeneralBot.Results;
 using GeneralBot.Services;
 

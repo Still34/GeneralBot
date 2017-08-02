@@ -10,7 +10,8 @@ using Discord.Commands;
 using Discord.WebSocket;
 using GeneralBot.Extensions;
 using GeneralBot.Models;
-using GeneralBot.Models.Context;
+using GeneralBot.Models.Config;
+using GeneralBot.Models.Database.CoreSettings;
 using GeneralBot.Results;
 using Humanizer;
 

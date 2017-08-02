@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
 using GeneralBot.Extensions;
-using GeneralBot.Models.Context;
+using GeneralBot.Models.Database.CoreSettings;
 
 namespace GeneralBot.Services
 {

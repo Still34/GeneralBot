@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
-using GeneralBot.Models.Context;
+using GeneralBot.Models.Database.UserSettings;
 
 namespace GeneralBot.Services
 {

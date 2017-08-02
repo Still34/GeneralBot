@@ -6,7 +6,7 @@ using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 using GeneralBot.Extensions.Helpers;
-using GeneralBot.Models.Context;
+using GeneralBot.Models.Database.CoreSettings;
 using GeneralBot.Results;
 using GeneralBot.Services;
 

@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Discord;
-using GeneralBot.Models.Context;
+using GeneralBot.Models.Database.CoreSettings;
 
 namespace GeneralBot.Migrations
 {
