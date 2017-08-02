@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
@@ -21,7 +23,7 @@ namespace GeneralBot.Commands.User
         public ConfigModel Config { get; set; }
 
         [Command("info")]
-        public async Task<RuntimeResult> Info()
+        public async Task<RuntimeResult> GetInfo()
         {
             var builder = new EmbedBuilder
             {
@@ -34,15 +36,42 @@ namespace GeneralBot.Commands.User
                     "https://emojipedia-us.s3.amazonaws.com/thumbs/120/twitter/103/information-source_2139.png",
                 Color = new Color(61, 138, 192)
             };
-            var appInfo = await Context.Client.GetApplicationInfoAsync();
+            // Owners
             builder.AddField("Owners:",
-                $"{string.Join(", ", Config.Owners.Select(x => Context.Client.GetUser(x).ToString()))}({string.Join(", ", Config.Owners)})");
-            builder.AddField("Uptime:", (DateTime.Now - Process.GetCurrentProcess().StartTime).Humanize());
-            builder.AddInlineField("Heap Size:", $"{GC.GetTotalMemory(false) / 1000000} MB");
+                string.Join(", ", Config.Owners.Select(x => Context.Client.GetUser(x).ToString())));
+
+            // Application uptime
+            var currentProcess = Process.GetCurrentProcess();
+            builder.AddField("Uptime:", (DateTime.Now - currentProcess.StartTime).Humanize());
+
+            // Memory report
+            var memInfoTitleBuilder = new StringBuilder();
+            var memInfoDescrBuilder = new StringBuilder();
+            var heapBytes = GC.GetTotalMemory(false).Bytes();
+            memInfoTitleBuilder.Append("Heap Size");
+            memInfoDescrBuilder.Append(
+                $"{Math.Round(heapBytes.LargestWholeNumberValue, 2)} {heapBytes.LargestWholeNumberSymbol}");
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                var workingSetBytes = currentProcess.WorkingSet64.Bytes();
+                memInfoTitleBuilder.Append(" / Working Set");
+                memInfoDescrBuilder.Append(
+                    $" / {Math.Round(workingSetBytes.LargestWholeNumberValue, 2)} {workingSetBytes.LargestWholeNumberSymbol}");
+            }
+            builder.AddInlineField(memInfoTitleBuilder.ToString(), memInfoDescrBuilder);
+
+            // Application latency
             builder.AddInlineField("Latency:", Context.Client.Latency + "ms");
+
+            // Discord application creation date
+            var appInfo = await Context.Client.GetApplicationInfoAsync();
             builder.AddInlineField("Created On:", appInfo.CreatedAt.UtcDateTime);
+
+            // Last updated on based on file modification date
             builder.AddInlineField("Last Update:",
                 File.GetLastWriteTimeUtc(typeof(GeneralBot).GetTypeInfo().Assembly.Location));
+
+            // Lib version
             builder.AddInlineField("Discord.NET Version:", DiscordConfig.Version);
             await ReplyAsync("", embed: builder);
             return CommandRuntimeResult.FromSuccess();
