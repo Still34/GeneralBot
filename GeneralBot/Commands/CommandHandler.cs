@@ -73,7 +73,7 @@ namespace GeneralBot.Commands
             await _loggingService.Log(
                 $"{context.User} executed {commandInfo.Aliases.FirstOrDefault()} in {(context.Guild == null ? context.Channel.Name : $"{context.Channel.Name}/{context.Guild.Name}")}\n" +
                 $"Result: {result.ErrorReason} ({result.GetType()})",
-                severity);
+                severity).ConfigureAwait(false);
         }
 
         public async Task InitAsync()
@@ -81,12 +81,18 @@ namespace GeneralBot.Commands
             // Load TypeReaders dynamically because I'm lazy.
             var typeReaders = Assembly.GetEntryAssembly().GetTypes()
                 .Where(x => x.GetTypeInfo().BaseType == typeof(TypeReader));
-            foreach (var typeReader in typeReaders)
+            var method = typeof(CommandService).GetMethods()
+                .FirstOrDefault(x => !x.ContainsGenericParameters & (x.Name == "AddTypeReader"));
+            int typeReadersCount = 0;
+            if (method != null)
             {
-                var method = typeof(CommandService).GetMethods()
-                    .FirstOrDefault(x => !x.ContainsGenericParameters & (x.Name == "AddTypeReader"));
-                method.Invoke(_commandService, new[] {typeReader, Activator.CreateInstance(typeReader)});
+                foreach (var typeReader in typeReaders)
+                {
+                    typeReadersCount++;
+                    method.Invoke(_commandService, new[] {typeReader, Activator.CreateInstance(typeReader)});
+                }
             }
+            await _loggingService.Log($"{typeReadersCount} type readers loaded.", LogSeverity.Debug).ConfigureAwait(false);
 
             // Adds all command modules.
             await _commandService.AddModulesAsync(Assembly.GetEntryAssembly());

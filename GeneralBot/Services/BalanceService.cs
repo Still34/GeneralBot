@@ -14,12 +14,12 @@ namespace GeneralBot.Services
 
         public BalanceService(DiscordSocketClient client, UserContext usersettings, LoggingService loggingService)
         {
-            client.MessageReceived += AwardBalance;
+            client.MessageReceived += AwardBalanceAsync;
             _userSettings = usersettings;
             _loggingService = loggingService;
         }
 
-        private async Task AwardBalance(SocketMessage msgArg)
+        private async Task AwardBalanceAsync(SocketMessage msgArg)
         {
             if (msgArg is SocketUserMessage msg &&
                 msg.Channel is SocketGuildChannel &&
