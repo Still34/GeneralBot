@@ -104,8 +104,8 @@ namespace GeneralBot.Commands.Moderator
         [RequireUserPermission(GuildPermission.ManageChannels)]
         public async Task<RuntimeResult> BlockUser([RequireHierarchy] SocketGuildUser user)
         {
-            await (Context.Channel as SocketTextChannel).AddPermissionOverwriteAsync(user,
-                new OverwritePermissions(sendMessages: PermValue.Deny));
+            if (Context.Channel is SocketTextChannel channel)
+                await channel.AddPermissionOverwriteAsync(user, new OverwritePermissions(readMessages: PermValue.Deny));
             return CommandRuntimeResult.FromSuccess($"Successfully blocked {user.Mention}.");
         }
 
@@ -115,7 +115,8 @@ namespace GeneralBot.Commands.Moderator
         [RequireUserPermission(GuildPermission.ManageChannels)]
         public async Task<RuntimeResult> UnblockUser([RequireHierarchy] SocketGuildUser user)
         {
-            await (Context.Channel as SocketTextChannel).AddPermissionOverwriteAsync(user, new OverwritePermissions());
+            if (Context.Channel is SocketTextChannel channel)
+                await channel.RemovePermissionOverwriteAsync(user);
             return CommandRuntimeResult.FromSuccess($"Successfully unblocked {user.Mention}");
         }
 
