@@ -122,9 +122,8 @@ namespace GeneralBot.Commands.Moderator
 
         [Group("purge")]
         [Alias("clean")]
-        [RequireModerator]
-        [RequireContext(ContextType.Guild)]
         [RequireBotPermission(GuildPermission.ManageMessages)]
+        [RequireUserPermission(GuildPermission.ManageMessages)]
         [Remarks("Clean messages that meet the criteria.")]
         public class CleanModule : ModuleBase<SocketCommandContext>
         {
