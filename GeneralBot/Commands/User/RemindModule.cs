@@ -28,7 +28,7 @@ namespace GeneralBot.Commands.User
         [Command("remove")]
         [Summary("Remove the next reminder for yourself")]
         [Priority(10)]
-        public async Task<RuntimeResult> RemoveRemind()
+        public async Task<RuntimeResult> RemoveRemindAsync()
         {
             var entry = UserContext.Reminders.Where(x => x.UserId == Context.User.Id)
                 .OrderBy(x => x.Time)
@@ -44,7 +44,7 @@ namespace GeneralBot.Commands.User
         [Command("snooze")]
         [Summary("Snoozes the next reminder")]
         [Priority(5)]
-        public async Task<RuntimeResult> SnoozeReminder(
+        public async Task<RuntimeResult> SnoozeReminderAsync(
             [Summary("Time")] [OverrideTypeReader(typeof(StringTimeSpanTypeReader))] TimeSpan dateTimeParsed)
         {
             var entry = UserContext.Reminders.Where(x => x.UserId == Context.User.Id)
@@ -60,7 +60,7 @@ namespace GeneralBot.Commands.User
         [Command("list")]
         [Summary("List the remaining reminders for yourself")]
         [Priority(4)]
-        public async Task<RuntimeResult> ListReminders()
+        public async Task<RuntimeResult> ListRemindersAsync()
         {
             var entries = UserContext.Reminders.Where(x => x.UserId == Context.User.Id)
                 .OrderBy(x => x.Time);
@@ -68,7 +68,7 @@ namespace GeneralBot.Commands.User
 
             var sb = new StringBuilder();
             var embed = ReminderService.GetReminderEmbed("");
-            var userTimeOffset = await GetUserTimeOffset(Context.User);
+            var userTimeOffset = GetUserTimeOffset(Context.User);
             if (userTimeOffset > TimeSpan.Zero)
                 embed.WithFooter(x => x.Text = $"Converted to {Context.User.GetFullnameOrDefault()}'s timezone.");
             foreach (var entry in entries)
@@ -86,45 +86,45 @@ namespace GeneralBot.Commands.User
         [Command]
         [Summary("Set a reminder")]
         [Priority(3)]
-        public async Task<RuntimeResult> RemindUser(
+        public async Task<RuntimeResult> RemindUserAsync(
             [Summary("Time")] [OverrideTypeReader(typeof(StringTimeSpanTypeReader))] TimeSpan dateTimeParsed,
             [Summary("Content")] [Remainder] string remindContent) =>
-            await Remind(Context.User, DateTimeOffset.Now.Add(dateTimeParsed), remindContent);
+            await RemindAsync(Context.User, DateTimeOffset.Now.Add(dateTimeParsed), remindContent);
 
         [Command]
         [Summary("Set a reminder for another user")]
         [Priority(2)]
         [RequireModerator]
-        public async Task<RuntimeResult> RemindOtherUser(
+        public async Task<RuntimeResult> RemindOtherUserAsync(
             [Summary("User")] SocketUser user,
             [Summary("Time")] [OverrideTypeReader(typeof(StringTimeSpanTypeReader))] TimeSpan dateTimeParsed,
             [Summary("Content")] [Remainder] string remindContent) =>
-            await Remind(user, DateTimeOffset.Now.Add(dateTimeParsed), remindContent);
+            await RemindAsync(user, DateTimeOffset.Now.Add(dateTimeParsed), remindContent);
 
         [Command]
         [Summary("Set a reminder")]
         [Priority(1)]
-        public async Task<RuntimeResult> RemindUser(
+        public async Task<RuntimeResult> RemindUserAsync(
             [Summary("Date Time")] DateTimeOffset dateTime,
             [Summary("Content")] [Remainder] string remindContent) =>
-            await Remind(Context.User, dateTime, remindContent);
+            await RemindAsync(Context.User, dateTime, remindContent);
 
         [Command]
         [Summary("Set a reminder for another user")]
         [Priority(0)]
         [RequireModerator]
-        public async Task<RuntimeResult> RemindOtherUser(
+        public async Task<RuntimeResult> RemindOtherUserAsync(
             [Summary("User")] SocketUser user,
             [Summary("Date Time")] DateTimeOffset dateTime,
             [Summary("Content")] [Remainder] string remindContent) =>
-            await Remind(user, dateTime, remindContent);
+            await RemindAsync(user, dateTime, remindContent);
 
-        private async Task<CommandRuntimeResult> Remind(SocketUser user, DateTimeOffset dateTime, string remindContent)
+        private async Task<CommandRuntimeResult> RemindAsync(SocketUser user, DateTimeOffset dateTime, string remindContent)
         {
             if (DateTimeOffset.Now > dateTime)
                 return CommandRuntimeResult.FromError($"{dateTime} has already passed!");
-            var userTimeOffset = await GetUserTimeOffset(user);
-            await ReminderService.AddReminder(user, Context.Channel, dateTime, remindContent);
+            var userTimeOffset = GetUserTimeOffset(user);
+            await ReminderService.AddReminderAsync(user, Context.Channel, dateTime, remindContent);
             await ReplyAsync(string.Empty,
                 embed: EmbedHelper.FromSuccess()
                     .WithAuthor(new EmbedAuthorBuilder
@@ -138,6 +138,6 @@ namespace GeneralBot.Commands.User
         }
 
         // TODO: Implement TimezoneDb API.
-        private async Task<TimeSpan> GetUserTimeOffset(SocketUser user) => TimeSpan.Zero;
+        private TimeSpan GetUserTimeOffset(SocketUser user) => TimeSpan.Zero;
     }
 }

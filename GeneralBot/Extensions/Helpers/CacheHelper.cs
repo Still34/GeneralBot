@@ -10,7 +10,7 @@ namespace GeneralBot.Extensions.Helpers
 
         public CacheHelper(IMemoryCache cache) => _cache = cache;
 
-        public Task<T2> TryGetValueSet<T1, T2>(T1 key, T2 value, TimeSpan duration)
+        public Task<T2> TryGetValueSetAsync<T1, T2>(T1 key, T2 value, TimeSpan duration)
         {
             // Look for cache key.
             if (!_cache.TryGetValue(key, out T2 cacheEntry))

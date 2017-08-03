@@ -36,14 +36,14 @@ namespace GeneralBot.Commands.Owners
 
         [Command("username")]
         [Summary("Changes the bot's username.")]
-        public async Task<RuntimeResult> ConfigUsername([Remainder] string username)
+        public async Task<RuntimeResult> ConfigUsernameAsync([Remainder] string username)
         {
             await Context.Client.CurrentUser.ModifyAsync(x => { x.Username = username; });
             return CommandRuntimeResult.FromSuccess($"Successfully changed username to {Format.Bold(username)}.");
         }
 
         [Command("luminance")]
-        public async Task<RuntimeResult> GetLuminance(byte r, byte g, byte b)
+        public async Task<RuntimeResult> GetLuminanceAsync(byte r, byte g, byte b)
         {
             var color = new Color(r, g, b);
             var embed = new EmbedBuilder
@@ -57,7 +57,7 @@ namespace GeneralBot.Commands.Owners
 
         [Command("game")]
         [Summary("Changes the bot's playing status.")]
-        public async Task<RuntimeResult> ConfigGame([Remainder] string game)
+        public async Task<RuntimeResult> ConfigGameAsync([Remainder] string game)
         {
             await Context.Client.SetGameAsync(game);
             return CommandRuntimeResult.FromSuccess($"Successfully changed game to {Format.Bold(game)}.");
@@ -65,7 +65,7 @@ namespace GeneralBot.Commands.Owners
 
         [Command("avatar")]
         [Summary("Changes the bot's avatar.")]
-        public async Task<RuntimeResult> AvatarConfigure()
+        public async Task<RuntimeResult> AvatarConfigureAsync()
         {
             await ReplyAsync("", embed: EmbedHelper.FromInfo(description: "Please upload the new avatar."));
             var message = await InteractiveService.NextMessageAsync(Context,

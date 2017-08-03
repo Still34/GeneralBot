@@ -70,7 +70,7 @@ namespace GeneralBot.Commands
                     break;
             }
             await context.Channel.SendMessageAsync("", embed: embed);
-            await _loggingService.Log(
+            await _loggingService.LogAsync(
                 $"{context.User} executed {commandInfo.Aliases.FirstOrDefault()} in {(context.Guild == null ? context.Channel.Name : $"{context.Channel.Name}/{context.Guild.Name}")}\n" +
                 $"Result: {result.ErrorReason} ({result.GetType()})",
                 severity).ConfigureAwait(false);
@@ -92,7 +92,7 @@ namespace GeneralBot.Commands
                     method.Invoke(_commandService, new[] {typeReader, Activator.CreateInstance(typeReader)});
                 }
             }
-            await _loggingService.Log($"{typeReadersCount} type readers loaded.", LogSeverity.Debug).ConfigureAwait(false);
+            await _loggingService.LogAsync($"{typeReadersCount} type readers loaded.", LogSeverity.Debug).ConfigureAwait(false);
 
             // Adds all command modules.
             await _commandService.AddModulesAsync(Assembly.GetEntryAssembly());

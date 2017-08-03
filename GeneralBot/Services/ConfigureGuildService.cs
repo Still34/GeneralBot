@@ -28,7 +28,7 @@ namespace GeneralBot.Services
         {
             var dbEntry = _coreSettings.GuildsSettings.Where(x => x.GuildId == guild.Id);
             if (dbEntry == null) return;
-            await _loggingService.Log($"Left {guild}, unregistering...", LogSeverity.Info);
+            await _loggingService.LogAsync($"Left {guild}, unregistering...", LogSeverity.Info);
             _coreSettings.GuildsSettings.RemoveRange(dbEntry);
             await _coreSettings.SaveChangesAsync();
         }
@@ -40,7 +40,7 @@ namespace GeneralBot.Services
             var dbEntry = _coreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == guild.Id);
             if (dbEntry != null) return dbEntry;
 
-            await _loggingService.Log($"New guild {guild} found, registering...", LogSeverity.Info);
+            await _loggingService.LogAsync($"New guild {guild} found, registering...", LogSeverity.Info);
             dbEntry = new GuildSettings {GuildId = guild.Id};
             await _coreSettings.GuildsSettings.AddAsync(dbEntry);
             await _coreSettings.SaveChangesAsync();
@@ -50,7 +50,7 @@ namespace GeneralBot.Services
         private async Task WelcomeAsync(SocketGuildUser user)
         {
             var guild = user.Guild;
-            await _loggingService.Log($"{user.GetFullnameOrDefault()} ({user.Id}) joined {guild} ({guild.Id}).", LogSeverity.Verbose);
+            await _loggingService.LogAsync($"{user.GetFullnameOrDefault()} ({user.Id}) joined {guild} ({guild.Id}).", LogSeverity.Verbose);
 
             var dbEntry = await GetOrRegisterGuildAsync(guild);
             if (!dbEntry.WelcomeEnable) return;

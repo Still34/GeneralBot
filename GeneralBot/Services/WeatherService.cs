@@ -26,7 +26,7 @@ namespace GeneralBot.Services
                 var alertEmbeds = new List<EmbedBuilder>();
                 var weatherEmbeds = new List<EmbedBuilder>();
                 var response = forecast.Response;
-                var location = await GetShortLocation(geocode);
+                var location = await GetShortLocationAsync(geocode);
                 var hourlyDataPoint = response.Hourly.Data.FirstOrDefault();
                 if (hourlyDataPoint != null)
                 {
@@ -85,12 +85,12 @@ namespace GeneralBot.Services
                 }
                 return (weatherEmbeds, alertEmbeds);
             }
-            await _loggingService.Log($"Weather returned unexpected response: {forecast.ResponseReasonPhrase}",
+            await _loggingService.LogAsync($"Weather returned unexpected response: {forecast.ResponseReasonPhrase}",
                 LogSeverity.Error).ConfigureAwait(false);
             return (null, null);
         }
 
-        public Task<(string Address, string Flag)> GetShortLocation(GoogleAddress geocode)
+        public Task<(string Address, string Flag)> GetShortLocationAsync(GoogleAddress geocode)
         {
             var country = geocode.Components.FirstOrDefault(
                 x => x.Types.Any(y => y == GoogleAddressType.Country || y == GoogleAddressType.Establishment));

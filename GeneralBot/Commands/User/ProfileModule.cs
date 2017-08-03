@@ -19,7 +19,7 @@ namespace GeneralBot.Commands.User
 
         [Command("balance")]
         [Summary("Shows the specified user's balance.")]
-        public Task<RuntimeResult> Balance(SocketUser user = null)
+        public Task<RuntimeResult> BalanceAsync(SocketUser user = null)
         {
             var targetUser = user ?? Context.User;
             var dbEntry = UserSettings.Profiles.SingleOrDefault(x => x.UserId == targetUser.Id) ??
@@ -39,7 +39,7 @@ namespace GeneralBot.Commands.User
             public UserContext UserSettings { get; set; }
 
             [Command]
-            public Task<RuntimeResult> CheckSummary(SocketUser user = null)
+            public Task<RuntimeResult> CheckSummaryAsync(SocketUser user = null)
             {
                 var targetUser = user ?? Context.User;
                 var dbEntry = UserSettings.Profiles.SingleOrDefault(x => x.UserId == targetUser.Id) ??
@@ -53,7 +53,7 @@ namespace GeneralBot.Commands.User
             }
 
             [Command("set")]
-            public async Task<RuntimeResult> SetSummary([Remainder] string summary)
+            public async Task<RuntimeResult> SetSummaryAsync([Remainder] string summary)
             {
                 var dbEntry = UserSettings.Profiles.SingleOrDefault(x => x.UserId == Context.User.Id) ??
                               UserSettings.Profiles.Add(new Profile

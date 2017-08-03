@@ -25,7 +25,7 @@ namespace GeneralBot.Commands.User
 
         [Command("8ball")]
         [Summary("Ask it any questions!")]
-        public async Task<RuntimeResult> EightBall([Remainder] string input)
+        public async Task<RuntimeResult> EightBallAsync([Remainder] string input)
         {
             int responseCount = Config.Commands.EightBall.Responses.Count;
             if (responseCount == 0)
@@ -54,7 +54,7 @@ namespace GeneralBot.Commands.User
         [Command("choose")]
         [Alias("decide")]
         [Summary("Can't decide? Ask the bot to choose it for you!")]
-        public async Task<RuntimeResult> Choose([Remainder] string input)
+        public async Task<RuntimeResult> ChooseAsync([Remainder] string input)
         {
             var regexParsed = Regex.Split(input, "or|;|,|and", RegexOptions.IgnoreCase);
             if (regexParsed.Length == 0)
@@ -76,7 +76,7 @@ namespace GeneralBot.Commands.User
         [Command("urban")]
         [Alias("urban-dictionary", "ud")]
         [Summary("Looks up a term on the Urban Dictionary.")]
-        public async Task<RuntimeResult> Urban([Remainder] string term)
+        public async Task<RuntimeResult> UrbanAsync([Remainder] string term)
         {
             string parsedTerm = WebUtility.HtmlEncode(term);
             using (var response =

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 
 namespace GeneralBot.Common.Types
@@ -23,6 +21,6 @@ namespace GeneralBot.Common.Types
 
         public CancellationToken Token => TokenSource.Token;
 
-        public TimeSpan Duration { get; } 
+        public TimeSpan Duration { get; }
     }
 }

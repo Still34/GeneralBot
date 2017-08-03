@@ -23,7 +23,7 @@ namespace GeneralBot.Commands.User
         public ConfigModel Config { get; set; }
 
         [Command("info")]
-        public async Task<RuntimeResult> GetInfo()
+        public async Task<RuntimeResult> GetInfoAsync()
         {
             var embedBuilder = new EmbedBuilder
             {
@@ -46,19 +46,19 @@ namespace GeneralBot.Commands.User
 
             // Memory report
             var memInfoTitleBuilder = new StringBuilder();
-            var memInfoDescrBuilder = new StringBuilder();
+            var memInfoDescriptionBuilder = new StringBuilder();
             var heapBytes = GC.GetTotalMemory(false).Bytes();
             memInfoTitleBuilder.Append("Heap Size");
-            memInfoDescrBuilder.Append(
+            memInfoDescriptionBuilder.Append(
                 $"{Math.Round(heapBytes.LargestWholeNumberValue, 2)} {heapBytes.LargestWholeNumberSymbol}");
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 var workingSetBytes = currentProcess.WorkingSet64.Bytes();
                 memInfoTitleBuilder.Append(" / Working Set");
-                memInfoDescrBuilder.Append(
+                memInfoDescriptionBuilder.Append(
                     $" / {Math.Round(workingSetBytes.LargestWholeNumberValue, 2)} {workingSetBytes.LargestWholeNumberSymbol}");
             }
-            embedBuilder.AddInlineField(memInfoTitleBuilder.ToString(), memInfoDescrBuilder);
+            embedBuilder.AddInlineField(memInfoTitleBuilder.ToString(), memInfoDescriptionBuilder);
 
             // Application latency
             embedBuilder.AddInlineField("Latency", Context.Client.Latency + "ms");
@@ -86,7 +86,7 @@ namespace GeneralBot.Commands.User
 
             [Command]
             [Summary("Need help for a specific command? Use this!")]
-            public async Task<RuntimeResult> HelpSpecificCommand(string input)
+            public async Task<RuntimeResult> HelpSpecificCommandAsync(string input)
             {
                 var commandInfos = await GetCommandInfosAsync(input);
                 if (commandInfos.Count == 0)

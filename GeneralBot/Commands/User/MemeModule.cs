@@ -13,7 +13,7 @@ namespace GeneralBot.Commands.User
 
         [Command("expand")]
         [Summary("Replies with a s t h e t i c texts.")]
-        public Task<RuntimeResult> ExpandMeme([Remainder] string input)
+        public Task<RuntimeResult> ExpandMemeAsync([Remainder] string input)
         {
             var sb = new StringBuilder();
             foreach (char c in input)
@@ -26,8 +26,8 @@ namespace GeneralBot.Commands.User
         }
 
         [Command("cowsay")]
-        [Summary("Mooo!")]
-        public async Task<RuntimeResult> Cowsay([Remainder] string text)
+        [Summary("Moo!")]
+        public async Task<RuntimeResult> CowsayAsync([Remainder] string text)
         {
             string parsedInput = WebUtility.HtmlEncode(text);
             using (var response =

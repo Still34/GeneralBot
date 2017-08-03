@@ -9,7 +9,7 @@ namespace GeneralBot.Typereaders
     {
         private readonly Regex _regex = new Regex(@"(\d+)\s{0,1}([a-zA-Z]*)", RegexOptions.Compiled);
 
-        private Task<TimeSpan> DehumanizeTimespan(string input)
+        private Task<TimeSpan> DehumanizeTimespanAsync(string input)
         {
             var regexMatches = _regex.Matches(input);
             var timeSpan = new TimeSpan();
@@ -44,7 +44,7 @@ namespace GeneralBot.Typereaders
         public override async Task<TypeReaderResult> Read(ICommandContext context, string input,
             IServiceProvider services)
         {
-            var dateTimeParsed = await DehumanizeTimespan(input);
+            var dateTimeParsed = await DehumanizeTimespanAsync(input);
             return dateTimeParsed == TimeSpan.Zero
                 ? TypeReaderResult.FromError(CommandError.ParseFailed,
                     @"Invalid time format. Format example: `4d3h2m1s` (4 days 3 hours 2 minutes 1 second).")

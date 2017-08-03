@@ -1,18 +1,18 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Discord;
+﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 using GeneralBot.Commands.Results;
 using GeneralBot.Extensions;
 using GeneralBot.Preconditions;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace GeneralBot.Commands.Moderator
 {
     [Group("mod")]
     [Summary("Moderator Commands")]
-    [Remarks("Comamnds used for server moderation.")]
+    [Remarks("Commands used for server moderation.")]
     [RequireContext(ContextType.Guild)]
     [RequireModerator]
     public class ModerationModule : ModuleBase<SocketCommandContext>
@@ -59,7 +59,7 @@ namespace GeneralBot.Commands.Moderator
 
         [Command("softban")]
         [Priority(1)]
-        [Summary("Bans the user and then unbans. Useful for purging content for the targetted user.")]
+        [Summary("Bans the user and then unbans. Useful for purging content for the targeted user.")]
         [RequireUserPermission(GuildPermission.BanMembers)]
         [RequireBotPermission(GuildPermission.BanMembers)]
         public async Task<RuntimeResult> SoftBanAsync(
@@ -74,7 +74,7 @@ namespace GeneralBot.Commands.Moderator
 
         [Command("softban")]
         [Priority(0)]
-        [Summary("Bans the user and then unbans. Useful for purging content for the targetted user.")]
+        [Summary("Bans the user and then unbans. Useful for purging content for the targeted user.")]
         [RequireUserPermission(GuildPermission.BanMembers)]
         [RequireBotPermission(GuildPermission.BanMembers)]
         public async Task<RuntimeResult> SoftBanAsync(
@@ -91,7 +91,7 @@ namespace GeneralBot.Commands.Moderator
         [Summary("Changes the nickname for the targeted user.")]
         [RequireBotPermission(GuildPermission.ManageNicknames)]
         [RequireUserPermission(GuildPermission.ManageNicknames)]
-        public async Task<RuntimeResult> NicknameChange([RequireHierarchy] SocketGuildUser user,
+        public async Task<RuntimeResult> NicknameChangeAsync([RequireHierarchy] SocketGuildUser user,
             [Remainder] string nickname)
         {
             await user.ModifyAsync(x => x.Nickname = nickname);
@@ -102,7 +102,7 @@ namespace GeneralBot.Commands.Moderator
         [Summary("Blocks a user from the current channel.")]
         [RequireBotPermission(GuildPermission.ManageChannels)]
         [RequireUserPermission(GuildPermission.ManageChannels)]
-        public async Task<RuntimeResult> BlockUser([RequireHierarchy] SocketGuildUser user)
+        public async Task<RuntimeResult> BlockUserAsync([RequireHierarchy] SocketGuildUser user)
         {
             if (Context.Channel is SocketTextChannel channel)
                 await channel.AddPermissionOverwriteAsync(user, new OverwritePermissions(readMessages: PermValue.Deny));
@@ -113,7 +113,7 @@ namespace GeneralBot.Commands.Moderator
         [Summary("Unblocks a user from the current channel.")]
         [RequireBotPermission(GuildPermission.ManageChannels)]
         [RequireUserPermission(GuildPermission.ManageChannels)]
-        public async Task<RuntimeResult> UnblockUser([RequireHierarchy] SocketGuildUser user)
+        public async Task<RuntimeResult> UnblockUserAsync([RequireHierarchy] SocketGuildUser user)
         {
             if (Context.Channel is SocketTextChannel channel)
                 await channel.RemovePermissionOverwriteAsync(user);

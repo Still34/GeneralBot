@@ -9,7 +9,6 @@ using Discord.Commands;
 using Discord.WebSocket;
 using GeneralBot.Commands;
 using GeneralBot.Extensions.Helpers;
-using GeneralBot.Models;
 using GeneralBot.Models.Config;
 using GeneralBot.Models.Database.CoreSettings;
 using GeneralBot.Models.Database.UserSettings;
@@ -32,7 +31,7 @@ namespace GeneralBot
         private async Task<IServiceProvider> InitAsync(DiscordSocketClient client)
         {
             var collection = new ServiceCollection();
-            var commandSerivce = new CommandService(new CommandServiceConfig
+            var commandService = new CommandService(new CommandServiceConfig
             {
                 DefaultRunMode = RunMode.Async
             });
@@ -53,7 +52,7 @@ namespace GeneralBot
                 // Discord Client
                 .AddSingleton(client)
                 // Discord Command Service
-                .AddSingleton(commandSerivce)
+                .AddSingleton(commandService)
                 .AddSingleton<CommandHandler>()
                 .AddSingleton<InteractiveService>()
                 // Database Contexts
@@ -66,11 +65,11 @@ namespace GeneralBot
                 .AddSingleton<CacheHelper>()
                 .AddMemoryCache();
             var services = collection.BuildServiceProvider();
-            await ConfigureServices(services);
+            await ConfigureServicesAsync(services);
             return services;
         }
 
-        private static async Task ConfigureServices(IServiceProvider services)
+        private static async Task ConfigureServicesAsync(IServiceProvider services)
         {
             await services.GetRequiredService<UserContext>().Database.MigrateAsync();
             await services.GetRequiredService<CoreContext>().Database.MigrateAsync();

@@ -38,7 +38,7 @@ namespace DirectoryMaid.Services
             ThumbnailUrl = "https://i.imgur.com/Igurn2H.png"
         }.WithCurrentTimestamp();
 
-        public async Task AddReminder(IUser user, ISocketMessageChannel channel, DateTimeOffset dateTime,
+        public async Task AddReminderAsync(IUser user, ISocketMessageChannel channel, DateTimeOffset dateTime,
             string content)
         {
             await _userContext.AddAsync(new Reminder
@@ -57,13 +57,13 @@ namespace DirectoryMaid.Services
             if (!remindEntries.Any()) return;
             foreach (var entry in remindEntries)
             {
-                RemindUser(entry).ConfigureAwait(false).GetAwaiter().GetResult();
+                RemindUserAsync(entry).ConfigureAwait(false).GetAwaiter().GetResult();
                 _userContext.Remove(entry);
                 _userContext.SaveChanges();
             }
         }
 
-        private async Task RemindUser(Reminder reminder)
+        private async Task RemindUserAsync(Reminder reminder)
         {
             var channel = _client.GetChannel(reminder.ChannelId);
             var user = _client.GetUser(reminder.UserId);

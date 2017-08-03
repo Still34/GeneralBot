@@ -32,7 +32,7 @@ namespace GeneralBot.Services
                 uint balanceIncrement = Convert.ToUInt32(new Random().Next(1, 10));
                 if (msg.Timestamp >= dbEntry.LastMessage.AddMinutes(1))
                 {
-                    await _loggingService.Log($"Increasing {user}'s balance by {balanceIncrement}...",
+                    await _loggingService.LogAsync($"Increasing {user}'s balance by {balanceIncrement}...",
                         LogSeverity.Debug).ConfigureAwait(false);
                     dbEntry.LastMessage = msg.Timestamp;
                     dbEntry.Balance = dbEntry.Balance + balanceIncrement;

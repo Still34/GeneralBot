@@ -20,8 +20,8 @@ namespace GeneralBot.Services
             _clientLogger = loggerFactory1.CreateLogger("client");
             _commandsLogger = loggerFactory1.CreateLogger("commands");
 
-            client.Log += LogDiscord;
-            commandService.Log += LogCommand;
+            client.Log += LogDiscordAsync;
+            commandService.Log += LogCommandAsync;
         }
 
         private static ILoggerFactory ConfigureLogging(ILoggerFactory factory)
@@ -37,7 +37,7 @@ namespace GeneralBot.Services
             return factory;
         }
 
-        private Task LogCommand(LogMessage message)
+        private Task LogCommandAsync(LogMessage message)
         {
             var sb = new StringBuilder().AppendLine(message.ToString(prependTimestamp: false));
 
@@ -61,7 +61,7 @@ namespace GeneralBot.Services
             return Task.CompletedTask;
         }
 
-        private Task LogDiscord(LogMessage message)
+        private Task LogDiscordAsync(LogMessage message)
         {
             _clientLogger.Log(GetLogLevel(message.Severity), 0,
                 message,
@@ -70,7 +70,7 @@ namespace GeneralBot.Services
             return Task.CompletedTask;
         }
 
-        public Task Log(object message, LogSeverity severity, Exception exception = null)
+        public Task LogAsync(object message, LogSeverity severity, Exception exception = null)
         {
             _clientLogger.Log(GetLogLevel(severity), 0,
                 message,
