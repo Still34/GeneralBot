@@ -41,6 +41,7 @@ namespace GeneralBot
                 .AddSingleton(config)
                 .AddSingleton<ConfigureGuildService>()
                 .AddSingleton<ConfigurePresenceService>()
+                .AddSingleton<ConfigureReadyService>()
                 .AddSingleton<ReminderService>()
                 .AddSingleton<WeatherService>()
                 .AddSingleton<BalanceService>()
@@ -76,6 +77,7 @@ namespace GeneralBot
             services.GetRequiredService<LoggingService>();
             services.GetRequiredService<ConfigureGuildService>();
             services.GetRequiredService<ConfigurePresenceService>();
+            services.GetRequiredService<ConfigureReadyService>();
             await services.GetRequiredService<CommandHandler>().InitAsync();
         }
 
