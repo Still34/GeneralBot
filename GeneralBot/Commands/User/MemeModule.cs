@@ -11,7 +11,6 @@ using GeneralBot.Extensions.Helpers;
 using GeneralBot.Models.Reddit;
 using Newtonsoft.Json;
 
-
 namespace GeneralBot.Commands.User
 {
     [Summary("Meme Commands")]
@@ -61,20 +60,23 @@ namespace GeneralBot.Commands.User
         }
 
         [Command("thinking")]
-        public async Task<RuntimeResult> Thinking()
+        public async Task<RuntimeResult> ThinkingAsync()
         {
             using (var response = await HttpClient.GetAsync("https://www.reddit.com/r/Thinking/.json"))
             {
                 if (!response.IsSuccessStatusCode)
                     return CommandRuntimeResult.FromError("Reddit is out of reach, please try again later!");
 
-                RedditResponseModel result = JsonConvert.DeserializeObject<RedditResponseModel>(await response.Content.ReadAsStringAsync());
-                var children = Context.Channel.IsNsfw ? result.Data.Children : result.Data.Children.Where(x => !x.Data.IsNsfw).ToList();
-                var index = Random.Next(children.Count());
+                var result =
+                    JsonConvert.DeserializeObject<RedditResponseModel>(await response.Content.ReadAsStringAsync());
+                var children = Context.Channel.IsNsfw
+                    ? result.Data.Children
+                    : result.Data.Children.Where(x => !x.Data.IsNsfw).ToList();
+                int index = Random.Next(children.Count);
                 var post = children[index];
                 var builder = new EmbedBuilder
                 {
-                    Title = post.Data.IsNsfw ? "Thinking... (NSFW)" : "Thinking...",
+                    Title = post.Data.IsNsfw ? "Thinking... (NSFW)" : "Hmm...",
                     Color = ColorHelper.GetRandomColor(),
                     ImageUrl = post.Data.Url
                 };
