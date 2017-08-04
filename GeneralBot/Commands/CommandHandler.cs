@@ -33,7 +33,7 @@ namespace GeneralBot.Commands
         }
 
         /// <summary>
-        ///     Post command execution handling.
+        ///     Post-command execution handling.
         /// </summary>
         private async Task OnCommandExecutedAsync(CommandInfo commandInfo, ICommandContext context, IResult result)
         {
