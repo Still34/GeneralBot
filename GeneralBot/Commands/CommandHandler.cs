@@ -89,16 +89,22 @@ namespace GeneralBot.Commands
             // TypeReader discovery & creation.
             var typeReaders = Assembly.GetEntryAssembly().GetTypes()
                 .Where(x => x.GetTypeInfo().BaseType == typeof(TypeReader));
+            // Query for method.
+            var typeReaderMethod = _commandService.GetType().GetMethods()
+                .FirstOrDefault(x => x.ContainsGenericParameters & (x.Name == "AddTypeReader"));
+            if (typeReaderMethod == null) throw new InvalidOperationException($"{nameof(CommandService.AddTypeReader)} method cannot be found.");
             int typeReadersCount = 0;
             foreach (var typeReader in typeReaders)
             {
+                // Get the static Type property set in the TypeReader.
                 var typeReaderType = typeReader.GetProperty("Type").GetValue(null);
-                var method = _commandService.GetType().GetMethods()
-                    .FirstOrDefault(x => x.ContainsGenericParameters & (x.Name == "AddTypeReader"))
-                    .MakeGenericMethod((Type) typeReaderType);
-                method.Invoke(_commandService, new[] {Activator.CreateInstance(typeReader)});
+                if (!(typeReaderType is Type type)) continue;
+                // Invoke the generics, with a new instance of the TypeReader.
+                var typeReaderMethodGeneric = typeReaderMethod.MakeGenericMethod(type);
+                typeReaderMethodGeneric.Invoke(_commandService, new[] {Activator.CreateInstance(typeReader)});
                 typeReadersCount++;
             }
+
             await _loggingService.LogAsync($"{typeReadersCount} custom {nameof(TypeReader)} loaded.",
                 LogSeverity.Verbose).ConfigureAwait(false);
 
