@@ -7,6 +7,7 @@ using GeneralBot.Preconditions;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using GeneralBot.Preconditions.Parameters;
 
 namespace GeneralBot.Commands.Moderator
 {

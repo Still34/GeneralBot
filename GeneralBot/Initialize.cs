@@ -35,7 +35,7 @@ namespace GeneralBot
             {
                 DefaultRunMode = RunMode.Async
             });
-            var config = ConfigureSettings();
+            var config = await ConfigureSettingsAsync();
             collection
                 // Misc Services / Configs
                 .AddSingleton(config)
@@ -79,7 +79,7 @@ namespace GeneralBot
             await services.GetRequiredService<CommandHandler>().InitAsync();
         }
 
-        private static ConfigModel ConfigureSettings()
+        private static Task<ConfigModel> ConfigureSettingsAsync()
         {
             const string config = "config.json";
             if (!File.Exists(config))
@@ -87,7 +87,7 @@ namespace GeneralBot
                 string text = JsonConvert.SerializeObject(new ConfigModel(), Formatting.Indented);
                 File.WriteAllText(config, text);
             }
-            return JsonConvert.DeserializeObject<ConfigModel>(File.ReadAllText(config));
+            return Task.FromResult(JsonConvert.DeserializeObject<ConfigModel>(File.ReadAllText(config)));
         }
     }
 }

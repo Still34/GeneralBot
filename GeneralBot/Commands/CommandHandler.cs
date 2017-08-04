@@ -12,6 +12,10 @@ using GeneralBot.Services;
 
 namespace GeneralBot.Commands
 {
+    /// <summary>
+    ///     Handler responsible for pre-post command processing, as well as the initialization of <see cref="CommandService" />
+    ///     related services.
+    /// </summary>
     internal class CommandHandler
     {
         private readonly DiscordSocketClient _client;
@@ -30,6 +34,65 @@ namespace GeneralBot.Commands
             _loggingService = loggingService;
             _client.MessageReceived += CommandHandleAsync;
             _commandService.CommandExecuted += OnCommandExecutedAsync;
+        }
+
+        /// <summary>
+        ///     <see cref="CommandService" /> initializing. This includes discovery of <see cref="TypeReader" /> and
+        ///     <see cref="ModuleBase{T}" />.
+        /// </summary>
+        public async Task InitAsync()
+        {
+            // TypeReader discovery & creation.
+            var typeReaders = Assembly.GetEntryAssembly().GetTypes()
+                .Where(x => x.GetTypeInfo().BaseType == typeof(TypeReader));
+            // Query for method.
+            var typeReaderMethod = _commandService.GetType().GetMethods()
+                .FirstOrDefault(x => x.ContainsGenericParameters & (x.Name == "AddTypeReader"));
+            if (typeReaderMethod == null)
+                throw new InvalidOperationException($"{nameof(CommandService.AddTypeReader)} method cannot be found.");
+            int typeReadersCount = 0;
+            foreach (var typeReader in typeReaders)
+            {
+                // Get the static Type property set in the TypeReader.
+                var typeReaderType = typeReader.GetProperty("Type").GetValue(null);
+                if (!(typeReaderType is Type type)) continue;
+                // Invoke the generics, with a new instance of the TypeReader.
+                var typeReaderMethodGeneric = typeReaderMethod.MakeGenericMethod(type);
+                typeReaderMethodGeneric.Invoke(_commandService, new[] {Activator.CreateInstance(typeReader)});
+                typeReadersCount++;
+            }
+
+            await _loggingService.LogAsync($"{typeReadersCount} custom {nameof(TypeReader)} loaded.",
+                LogSeverity.Verbose).ConfigureAwait(false);
+
+            // Command module discovery.
+            await _commandService.AddModulesAsync(Assembly.GetEntryAssembly());
+        }
+
+        /// <summary>
+        ///     Pre-command execution handling.
+        /// </summary>
+        private async Task CommandHandleAsync(SocketMessage msgArg)
+        {
+            // Bail when it's not an user message.
+            var msg = msgArg as SocketUserMessage;
+            if (msg == null) return;
+            // Also bail if it's a bot message to avoid "certain" situations.
+            if (msg.Author.IsBot) return;
+
+            int argPos = 0;
+            string prefix = "!";
+            // Checks if the channel is a guild channel, if so, attempts to fetch its prefix.
+            if (msg.Channel is SocketGuildChannel guildChannel)
+            {
+                var dbEntry = _coreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == guildChannel.Guild.Id);
+                if (dbEntry != null)
+                    prefix = dbEntry.CommandPrefix;
+            }
+            if (!msg.HasStringPrefix(prefix, ref argPos)) return;
+
+            var context = new SocketCommandContext(_client, msg);
+            await _commandService.ExecuteAsync(context, argPos, _services);
         }
 
         /// <summary>
@@ -78,64 +141,6 @@ namespace GeneralBot.Commands
                 $"{context.User} executed {commandInfo.Aliases.FirstOrDefault()} in {(context.Guild == null ? context.Channel.Name : $"{context.Channel.Name}/{context.Guild.Name}")}\n" +
                 $"Result: {result.ErrorReason} ({result.GetType()})",
                 severity).ConfigureAwait(false);
-        }
-
-        /// <summary>
-        ///     <see cref="CommandService" /> initializing. This includes discovery of <see cref="TypeReader" /> and
-        ///     <see cref="ModuleBase{T}" />.
-        /// </summary>
-        public async Task InitAsync()
-        {
-            // TypeReader discovery & creation.
-            var typeReaders = Assembly.GetEntryAssembly().GetTypes()
-                .Where(x => x.GetTypeInfo().BaseType == typeof(TypeReader));
-            // Query for method.
-            var typeReaderMethod = _commandService.GetType().GetMethods()
-                .FirstOrDefault(x => x.ContainsGenericParameters & (x.Name == "AddTypeReader"));
-            if (typeReaderMethod == null) throw new InvalidOperationException($"{nameof(CommandService.AddTypeReader)} method cannot be found.");
-            int typeReadersCount = 0;
-            foreach (var typeReader in typeReaders)
-            {
-                // Get the static Type property set in the TypeReader.
-                var typeReaderType = typeReader.GetProperty("Type").GetValue(null);
-                if (!(typeReaderType is Type type)) continue;
-                // Invoke the generics, with a new instance of the TypeReader.
-                var typeReaderMethodGeneric = typeReaderMethod.MakeGenericMethod(type);
-                typeReaderMethodGeneric.Invoke(_commandService, new[] {Activator.CreateInstance(typeReader)});
-                typeReadersCount++;
-            }
-
-            await _loggingService.LogAsync($"{typeReadersCount} custom {nameof(TypeReader)} loaded.",
-                LogSeverity.Verbose).ConfigureAwait(false);
-
-            // Command module discovery.
-            await _commandService.AddModulesAsync(Assembly.GetEntryAssembly());
-        }
-
-        /// <summary>
-        ///     Pre-command execution handling.
-        /// </summary>
-        private async Task CommandHandleAsync(SocketMessage msgArg)
-        {
-            // Bail when it's not an user message.
-            var msg = msgArg as SocketUserMessage;
-            if (msg == null) return;
-            // Also bail if it's a bot message to avoid "certain" situations.
-            if (msg.Author.IsBot) return;
-
-            int argPos = 0;
-            string prefix = "!";
-            // Checks if the channel is a guild channel, if so, attempts to fetch its prefix.
-            if (msg.Channel is SocketGuildChannel guildChannel)
-            {
-                var dbEntry = _coreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == guildChannel.Guild.Id);
-                if (dbEntry != null)
-                    prefix = dbEntry.CommandPrefix;
-            }
-            if (!msg.HasStringPrefix(prefix, ref argPos)) return;
-
-            var context = new SocketCommandContext(_client, msg);
-            await _commandService.ExecuteAsync(context, argPos, _services);
         }
     }
 }

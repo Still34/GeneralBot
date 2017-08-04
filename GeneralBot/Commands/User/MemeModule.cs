@@ -7,6 +7,8 @@ using GeneralBot.Commands.Results;
 
 namespace GeneralBot.Commands.User
 {
+    [Summary("Meme Commands")]
+    [Remarks("For your daily doses of memery, what more could I say?")]
     public class MemeModule : ModuleBase<SocketCommandContext>
     {
         public HttpClient HttpClient { get; set; }

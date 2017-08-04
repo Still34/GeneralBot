@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Discord.Commands;
 using Discord.WebSocket;
 
-namespace GeneralBot.Preconditions
+namespace GeneralBot.Preconditions.Parameters
 {
     /// <summary>
     /// Requires the user's, bot's hierarchy to be higher than the targeted user to execute.
