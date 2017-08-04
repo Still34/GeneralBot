@@ -7,6 +7,8 @@ namespace GeneralBot.Typereaders
 {
     public class GuildPermissionTypeReader : TypeReader
     {
+        public static Type Type { get; } = typeof(GuildPermission);
+
         public override Task<TypeReaderResult> Read(ICommandContext context, string input, IServiceProvider services)
         {
             switch (input.ToLower())
@@ -71,7 +73,8 @@ namespace GeneralBot.Typereaders
                 case var i when i.Contains("nickname"):
                     return Task.FromResult(TypeReaderResult.FromSuccess(GuildPermission.ChangeNickname));
             }
-            return Task.FromResult(TypeReaderResult.FromError(CommandError.ParseFailed, "Cannot find the desired permission."));
+            return Task.FromResult(TypeReaderResult.FromError(CommandError.ParseFailed,
+                "Cannot find the desired permission."));
         }
     }
 }

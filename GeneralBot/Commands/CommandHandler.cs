@@ -89,16 +89,15 @@ namespace GeneralBot.Commands
             // TypeReader discovery & creation.
             var typeReaders = Assembly.GetEntryAssembly().GetTypes()
                 .Where(x => x.GetTypeInfo().BaseType == typeof(TypeReader));
-            var method = typeof(CommandService).GetMethods()
-                .FirstOrDefault(x => !x.ContainsGenericParameters & (x.Name == "AddTypeReader"));
             int typeReadersCount = 0;
-            if (method != null)
+            foreach (var typeReader in typeReaders)
             {
-                foreach (var typeReader in typeReaders)
-                {
-                    typeReadersCount++;
-                    method.Invoke(_commandService, new[] {typeReader, Activator.CreateInstance(typeReader)});
-                }
+                var typeReaderType = typeReader.GetProperty("Type").GetValue(null);
+                var method = _commandService.GetType().GetMethods()
+                    .FirstOrDefault(x => x.ContainsGenericParameters & (x.Name == "AddTypeReader"))
+                    .MakeGenericMethod((Type) typeReaderType);
+                method.Invoke(_commandService, new[] {Activator.CreateInstance(typeReader)});
+                typeReadersCount++;
             }
             await _loggingService.LogAsync($"{typeReadersCount} type readers loaded.", LogSeverity.Debug)
                 .ConfigureAwait(false);

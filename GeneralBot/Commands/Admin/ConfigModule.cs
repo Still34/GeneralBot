@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Globalization;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Discord;
+using Discord.Addons.Interactive;
 using Discord.Commands;
 using Discord.WebSocket;
 using GeneralBot.Commands.Results;
+using GeneralBot.Extensions.Helpers;
 using GeneralBot.Models.Config;
 using GeneralBot.Models.Database.CoreSettings;
 using GeneralBot.Typereaders;
@@ -21,6 +24,37 @@ namespace GeneralBot.Commands.Admin
     public class ConfigModule : ModuleBase<SocketCommandContext>
     {
         public CoreContext CoreSettings { get; set; }
+        public InteractiveService InteractiveService { get; set; }
+        public HttpClient HttpClient { get; set; }
+
+        [Command("icon")]
+        [Summary("Changes the server icon.")]
+        public async Task<RuntimeResult> ChangeGuildIconAsync(Uri url = null)
+        {
+            if (url == null)
+            {
+                var response = await InteractiveService.NextMessageAsync(Context, timeout: TimeSpan.FromMinutes(5));
+                if (response == null)
+                    return CommandRuntimeResult.FromError("You did not upload your picture in time.");
+                if (!Uri.TryCreate(response.Content, UriKind.RelativeOrAbsolute, out url))
+                {
+                    var attachment = response.Attachments.FirstOrDefault();
+                    if (attachment?.Height != null)
+                    {
+                        url = new Uri(response.Attachments.FirstOrDefault().Url);
+                    }
+                    else
+                    {
+                        return CommandRuntimeResult.FromError("You did not upload any valid pictures.");
+                    }
+                }
+            }
+            using (var image = await WebHelper.GetFileAsync(HttpClient, url))
+            {
+                await Context.Guild.ModifyAsync(x => x.Icon = new Image(image));
+            }
+            return CommandRuntimeResult.FromSuccess("The server icon has been changed!");
+        }
 
         [Command("prefix")]
         [Summary("Changes the command prefix.")]

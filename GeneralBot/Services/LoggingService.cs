@@ -15,7 +15,7 @@ namespace GeneralBot.Services
         private readonly ILogger _clientLogger;
         private readonly ILogger _commandsLogger;
 
-        public LoggingService(BaseDiscordClient client, CommandService commandService, ILoggerFactory loggerFactory)
+        public LoggingService(DiscordSocketClient client, CommandService commandService, ILoggerFactory loggerFactory)
         {
             var loggerFactory1 = ConfigureLogging(loggerFactory);
             _clientLogger = loggerFactory1.CreateLogger("client");
@@ -29,7 +29,7 @@ namespace GeneralBot.Services
         {
             factory
 #if DEBUG
-                .AddConsole(LogLevel.Debug)
+                .AddConsole(LogLevel.Trace)
 #else
                 .AddConsole(LogLevel.Information)
 #endif
