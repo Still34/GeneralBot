@@ -33,7 +33,7 @@ namespace GeneralBot.Services
             var dbEntry = _coreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == guild.Id);
             if (dbEntry != null) return;
 
-            await _loggingService.LogAsync($"New guild {guild} found, registering...", LogSeverity.Info);
+            await _loggingService.LogAsync($"Guild {guild} ({guild.Id}) found, registering...", LogSeverity.Info);
             dbEntry = new GuildSettings {GuildId = guild.Id};
             await _coreSettings.GuildsSettings.AddAsync(dbEntry);
             await _coreSettings.SaveChangesAsync();
@@ -43,7 +43,7 @@ namespace GeneralBot.Services
         {
             var dbEntry = _coreSettings.GuildsSettings.Where(x => x.GuildId == guild.Id);
             if (dbEntry == null) return;
-            await _loggingService.LogAsync($"Left {guild}, unregistering...", LogSeverity.Info);
+            await _loggingService.LogAsync($"Left {guild} ({guild.Id}), unregistering...", LogSeverity.Info);
             _coreSettings.GuildsSettings.RemoveRange(dbEntry);
             await _coreSettings.SaveChangesAsync();
         }
