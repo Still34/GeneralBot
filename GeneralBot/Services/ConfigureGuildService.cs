@@ -9,6 +9,9 @@ using GeneralBot.Models.Database.CoreSettings;
 
 namespace GeneralBot.Services
 {
+    /// <summary>
+    /// Configures guild registration entries in the database and welcome events.
+    /// </summary>
     internal class ConfigureGuildService
     {
         private readonly CoreContext _coreSettings;

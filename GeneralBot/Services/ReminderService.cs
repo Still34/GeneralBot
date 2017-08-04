@@ -26,6 +26,11 @@ namespace DirectoryMaid.Services
             _timer = new Timer(ReminderCheck, null, TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(5));
         }
 
+        /// <summary>
+        ///     Gets the <see cref="EmbedBuilder" /> with a consistent reminder style.
+        /// </summary>
+        /// <param name="content"></param>
+        /// <returns></returns>
         public EmbedBuilder GetReminderEmbed(string content) => new EmbedBuilder
         {
             Author = new EmbedAuthorBuilder
@@ -38,6 +43,13 @@ namespace DirectoryMaid.Services
             ThumbnailUrl = "https://i.imgur.com/Igurn2H.png"
         }.WithCurrentTimestamp();
 
+        /// <summary>
+        ///     Creates a new reminder for the specified user.
+        /// </summary>
+        /// <param name="user">The user which will be reminded.</param>
+        /// <param name="channel">The channel for bot to send the reminder to.</param>
+        /// <param name="dateTime">When should the user be reminded?</param>
+        /// <param name="content">What to remind the user?</param>
         public async Task AddReminderAsync(IUser user, ISocketMessageChannel channel, DateTimeOffset dateTime,
             string content)
         {

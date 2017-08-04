@@ -9,6 +9,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace GeneralBot.Preconditions
 {
+    /// <summary>
+    /// Requires the guild-specific moderator permission to execute.
+    /// </summary>
     public class RequireModerator : PreconditionAttribute
     {
         public override Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command,

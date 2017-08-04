@@ -3,6 +3,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
+using Discord.Rest;
 using Discord.WebSocket;
 using GeneralBot.Extensions.Helpers;
 using Microsoft.Extensions.Logging;
@@ -14,7 +15,7 @@ namespace GeneralBot.Services
         private readonly ILogger _clientLogger;
         private readonly ILogger _commandsLogger;
 
-        public LoggingService(DiscordSocketClient client, CommandService commandService, ILoggerFactory loggerFactory)
+        public LoggingService(BaseDiscordClient client, CommandService commandService, ILoggerFactory loggerFactory)
         {
             var loggerFactory1 = ConfigureLogging(loggerFactory);
             _clientLogger = loggerFactory1.CreateLogger("client");

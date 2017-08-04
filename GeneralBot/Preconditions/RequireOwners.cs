@@ -7,6 +7,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace GeneralBot.Preconditions
 {
+    /// <summary>
+    /// Requires the owners, specified under config.json, to execute.
+    /// </summary>
     public class RequireOwners : PreconditionAttribute
     {
         public override Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command,

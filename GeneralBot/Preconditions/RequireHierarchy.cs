@@ -5,6 +5,9 @@ using Discord.WebSocket;
 
 namespace GeneralBot.Preconditions
 {
+    /// <summary>
+    /// Requires the user's, bot's hierarchy to be higher than the targeted user to execute.
+    /// </summary>
     public class RequireHierarchy : ParameterPreconditionAttribute
     {
         public override async Task<PreconditionResult> CheckPermissions(ICommandContext context,

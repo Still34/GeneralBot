@@ -32,8 +32,12 @@ namespace GeneralBot.Commands
             _commandService.CommandExecuted += OnCommandExecutedAsync;
         }
 
+        /// <summary>
+        ///     Post command execution handling.
+        /// </summary>
         private async Task OnCommandExecutedAsync(CommandInfo commandInfo, ICommandContext context, IResult result)
         {
+            // Bails if the generic result doesn't have an error reason, or if it's an unknown command error.
             if (string.IsNullOrEmpty(result.ErrorReason) || result.Error == CommandError.UnknownCommand) return;
             var embed = new EmbedBuilder();
             var severity = LogSeverity.Debug;
@@ -76,9 +80,13 @@ namespace GeneralBot.Commands
                 severity).ConfigureAwait(false);
         }
 
+        /// <summary>
+        ///     <see cref="CommandService" /> initializing. This includes discovery of <see cref="TypeReader" /> and
+        ///     <see cref="ModuleBase{T}" />.
+        /// </summary>
         public async Task InitAsync()
         {
-            // Load TypeReaders dynamically because I'm lazy.
+            // TypeReader discovery & creation.
             var typeReaders = Assembly.GetEntryAssembly().GetTypes()
                 .Where(x => x.GetTypeInfo().BaseType == typeof(TypeReader));
             var method = typeof(CommandService).GetMethods()
@@ -92,12 +100,16 @@ namespace GeneralBot.Commands
                     method.Invoke(_commandService, new[] {typeReader, Activator.CreateInstance(typeReader)});
                 }
             }
-            await _loggingService.LogAsync($"{typeReadersCount} type readers loaded.", LogSeverity.Debug).ConfigureAwait(false);
+            await _loggingService.LogAsync($"{typeReadersCount} type readers loaded.", LogSeverity.Debug)
+                .ConfigureAwait(false);
 
-            // Adds all command modules.
+            // Command module discovery.
             await _commandService.AddModulesAsync(Assembly.GetEntryAssembly());
         }
 
+        /// <summary>
+        ///     Pre-command execution handling.
+        /// </summary>
         private async Task CommandHandleAsync(SocketMessage msgArg)
         {
             // Bail when it's not an user message.
@@ -108,7 +120,7 @@ namespace GeneralBot.Commands
 
             int argPos = 0;
             string prefix = "!";
-            // Checks if the channel is a guild channel, if so, attempts to fetch prefix
+            // Checks if the channel is a guild channel, if so, attempts to fetch its prefix.
             if (msg.Channel is SocketGuildChannel guildChannel)
             {
                 var dbEntry = _coreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == guildChannel.Guild.Id);
