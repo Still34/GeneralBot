@@ -41,17 +41,14 @@ namespace GeneralBot.Commands.Admin
                 {
                     var attachment = response.Attachments.FirstOrDefault();
                     if (attachment?.Height != null)
-                    {
                         url = new Uri(response.Attachments.FirstOrDefault().Url);
-                    }
                     else
-                    {
                         return CommandRuntimeResult.FromError("You did not upload any valid pictures.");
-                    }
                 }
             }
             using (var image = await WebHelper.GetFileAsync(HttpClient, url))
             {
+                // ReSharper disable once AccessToDisposedClosure
                 await Context.Guild.ModifyAsync(x => x.Icon = new Image(image));
             }
             return CommandRuntimeResult.FromSuccess("The server icon has been changed!");
@@ -97,7 +94,8 @@ namespace GeneralBot.Commands.Admin
             public async Task WelcomeAsync()
             {
                 var dbEntry = CoreSettings.GreetingsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ??
-                              CoreSettings.GreetingsSettings.Add(new GreetingSettings {GuildId = Context.Guild.Id}).Entity;
+                              CoreSettings.GreetingsSettings.Add(new GreetingSettings {GuildId = Context.Guild.Id})
+                                  .Entity;
                 string formattedMessage = dbEntry.WelcomeMessage.Replace("{mention}", Context.User.Mention)
                     .Replace("{username}", Context.User.Username)
                     .Replace("{discrim}", Context.User.Discriminator)
@@ -120,10 +118,12 @@ namespace GeneralBot.Commands.Admin
             [Summary("Enables the welcome setting on the current guild.")]
             public async Task<RuntimeResult> EnableWelcomeAsync()
             {
-                var greetingSettings = CoreSettings.GreetingsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ??
-                              CoreSettings.GreetingsSettings.Add(new GreetingSettings() {GuildId = Context.Guild.Id}).Entity;
+                var greetingSettings =
+                    CoreSettings.GreetingsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ??
+                    CoreSettings.GreetingsSettings.Add(new GreetingSettings {GuildId = Context.Guild.Id}).Entity;
                 var guildSettings = CoreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ??
-                                    CoreSettings.GuildsSettings.Add(new GuildSettings() {GuildId = Context.Guild.Id}).Entity;
+                                    CoreSettings.GuildsSettings.Add(new GuildSettings {GuildId = Context.Guild.Id})
+                                        .Entity;
                 if (greetingSettings.IsJoinEnabled)
                     return CommandRuntimeResult.FromError("The welcome message is already enabled!");
                 greetingSettings.IsJoinEnabled = true;
@@ -139,7 +139,8 @@ namespace GeneralBot.Commands.Admin
             public async Task<RuntimeResult> DisableWelcomeAsync()
             {
                 var dbEntry = CoreSettings.GreetingsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ??
-                              CoreSettings.GreetingsSettings.Add(new GreetingSettings { GuildId = Context.Guild.Id}).Entity;
+                              CoreSettings.GreetingsSettings.Add(new GreetingSettings {GuildId = Context.Guild.Id})
+                                  .Entity;
                 if (!dbEntry.IsJoinEnabled)
                     return CommandRuntimeResult.FromError("The welcome message is already disabled!");
                 dbEntry.IsJoinEnabled = false;
@@ -155,7 +156,8 @@ namespace GeneralBot.Commands.Admin
             public async Task<RuntimeResult> ConfigMessageAsync([Remainder] string message)
             {
                 var dbEntry = CoreSettings.GreetingsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ??
-                              CoreSettings.GreetingsSettings.Add(new GreetingSettings { GuildId = Context.Guild.Id}).Entity;
+                              CoreSettings.GreetingsSettings.Add(new GreetingSettings {GuildId = Context.Guild.Id})
+                                  .Entity;
                 if (message.Length > 1024) return CommandRuntimeResult.FromError("Your welcome message is too long!");
                 dbEntry.WelcomeMessage = message;
                 CoreSettings.Update(dbEntry);
@@ -169,7 +171,8 @@ namespace GeneralBot.Commands.Admin
             public async Task<RuntimeResult> ConfigChannelAsync(SocketTextChannel channel)
             {
                 var dbEntry = CoreSettings.GreetingsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ??
-                              CoreSettings.GreetingsSettings.Add(new GreetingSettings { GuildId = Context.Guild.Id}).Entity;
+                              CoreSettings.GreetingsSettings.Add(new GreetingSettings {GuildId = Context.Guild.Id})
+                                  .Entity;
                 dbEntry.ChannelId = channel.Id;
                 CoreSettings.Update(dbEntry);
                 await CoreSettings.SaveChangesAsync();
