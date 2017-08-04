@@ -33,6 +33,7 @@ namespace GeneralBot.Commands.Admin
         {
             if (url == null)
             {
+                await ReplyAsync("", embed: EmbedHelper.FromInfo("New icon", "Please upload your new server icon."));
                 var response = await InteractiveService.NextMessageAsync(Context, timeout: TimeSpan.FromMinutes(5));
                 if (response == null)
                     return CommandRuntimeResult.FromError("You did not upload your picture in time.");

@@ -45,7 +45,7 @@ namespace GeneralBot.Commands.User
         [Summary("Snoozes the next reminder")]
         [Priority(5)]
         public async Task<RuntimeResult> SnoozeReminderAsync(
-            [Summary("Time")] [OverrideTypeReader(typeof(StringTimeSpanTypeReader))] TimeSpan dateTimeParsed)
+            [Summary("Time")] TimeSpan dateTimeParsed)
         {
             var entry = UserContext.Reminders.Where(x => x.UserId == Context.User.Id)
                 .OrderBy(x => x.Time)
@@ -87,7 +87,7 @@ namespace GeneralBot.Commands.User
         [Summary("Set a reminder")]
         [Priority(3)]
         public async Task<RuntimeResult> RemindUserAsync(
-            [Summary("Time")] [OverrideTypeReader(typeof(StringTimeSpanTypeReader))] TimeSpan dateTimeParsed,
+            [Summary("Time")] TimeSpan dateTimeParsed,
             [Summary("Content")] [Remainder] string remindContent) =>
             await RemindAsync(Context.User, DateTimeOffset.Now.Add(dateTimeParsed), remindContent);
 
@@ -97,7 +97,7 @@ namespace GeneralBot.Commands.User
         [RequireModerator]
         public async Task<RuntimeResult> RemindOtherUserAsync(
             [Summary("User")] SocketUser user,
-            [Summary("Time")] [OverrideTypeReader(typeof(StringTimeSpanTypeReader))] TimeSpan dateTimeParsed,
+            [Summary("Time")] TimeSpan dateTimeParsed,
             [Summary("Content")] [Remainder] string remindContent) =>
             await RemindAsync(user, DateTimeOffset.Now.Add(dateTimeParsed), remindContent);
 

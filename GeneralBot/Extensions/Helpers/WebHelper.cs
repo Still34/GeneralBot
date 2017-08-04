@@ -12,7 +12,7 @@ namespace GeneralBot.Extensions.Helpers
         {
             try
             {
-                using (var response = await client.GetAsync(uri))
+                using (var response = await client.GetAsync(uri).ConfigureAwait(false))
                 {
                     return response.IsSuccessStatusCode ? response.Content.Headers.ContentType.MediaType : null;
                 }
@@ -27,8 +27,8 @@ namespace GeneralBot.Extensions.Helpers
         {
             try
             {
-                var response = await client.GetAsync(uri);
-                return await response.Content.ReadAsStreamAsync();
+                var response = await client.GetAsync(uri).ConfigureAwait(false);
+                return await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
             }
             catch
             {
@@ -40,7 +40,7 @@ namespace GeneralBot.Extensions.Helpers
         {
             var regex = Regex.Match(input, @"\b\w+://\S+\b", RegexOptions.IgnoreCase);
             if (!regex.Success || !Uri.TryCreate(regex.Value, UriKind.RelativeOrAbsolute, out Uri uri)) return null;
-            string header = await GetMediaHeaderAsync(client, uri);
+            string header = await GetMediaHeaderAsync(client, uri).ConfigureAwait(false);
             return header.StartsWith("image") ? uri : null;
         }
     }

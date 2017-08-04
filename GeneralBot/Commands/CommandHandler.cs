@@ -99,8 +99,8 @@ namespace GeneralBot.Commands
                 method.Invoke(_commandService, new[] {Activator.CreateInstance(typeReader)});
                 typeReadersCount++;
             }
-            await _loggingService.LogAsync($"{typeReadersCount} type readers loaded.", LogSeverity.Debug)
-                .ConfigureAwait(false);
+            await _loggingService.LogAsync($"{typeReadersCount} custom {nameof(TypeReader)} loaded.",
+                LogSeverity.Verbose).ConfigureAwait(false);
 
             // Command module discovery.
             await _commandService.AddModulesAsync(Assembly.GetEntryAssembly());
