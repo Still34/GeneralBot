@@ -21,6 +21,22 @@ namespace GeneralBot.Commands.User
     public class InfoModule : ModuleBase<SocketCommandContext>
     {
         public ConfigModel Config { get; set; }
+        public CoreContext CoreSettings { get; set; }
+
+        [Command("invite")]
+        [RequireContext(ContextType.Guild)]
+        public async Task<RuntimeResult> GetOrCreateInviteAsync()
+        {
+            if (Context.Channel is SocketGuildChannel channel)
+            {
+                var dbEntry = CoreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ??
+                              CoreSettings.GuildsSettings.Add(new GuildSettings {GuildId = Context.Guild.Id}).Entity;
+                if (!dbEntry.AllowInvite) return CommandRuntimeResult.FromError("The admin has disabled this command.");
+                var invite = await channel.GetLastInviteAsync(true);
+                await ReplyAsync(invite.Url);
+            }
+            return CommandRuntimeResult.FromSuccess();
+        }
 
         [Command("info")]
         public async Task<RuntimeResult> GetInfoAsync()

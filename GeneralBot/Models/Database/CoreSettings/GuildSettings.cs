@@ -24,6 +24,8 @@ namespace GeneralBot.Models.Database.CoreSettings
 
         public ulong ReportChannel { get; set; } = 0;
 
+        public bool AllowInvite { get; set; }
+
         [Required]
         public GuildPermission ModeratorPermission { get; set; } = GuildPermission.KickMembers;
     }
