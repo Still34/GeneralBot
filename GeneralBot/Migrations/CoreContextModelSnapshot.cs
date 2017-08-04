@@ -16,10 +16,30 @@ namespace GeneralBot.Migrations
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.1.2");
 
+            modelBuilder.Entity("GeneralBot.Models.Database.CoreSettings.GreetingSettings", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<ulong>("ChannelId");
+
+                    b.Property<ulong>("GuildId");
+
+                    b.Property<bool>("IsJoinEnabled");
+
+                    b.Property<string>("WelcomeMessage");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("GreetingsSettings");
+                });
+
             modelBuilder.Entity("GeneralBot.Models.Database.CoreSettings.GuildSettings", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
+
+                    b.Property<bool>("AllowInvite");
 
                     b.Property<string>("CommandPrefix")
                         .IsRequired();
@@ -29,13 +49,6 @@ namespace GeneralBot.Migrations
                     b.Property<byte>("ModeratorPermission");
 
                     b.Property<ulong>("ReportChannel");
-
-                    b.Property<ulong>("WelcomeChannel");
-
-                    b.Property<bool>("WelcomeEnable");
-
-                    b.Property<string>("WelcomeMessage")
-                        .IsRequired();
 
                     b.HasKey("Id");
 

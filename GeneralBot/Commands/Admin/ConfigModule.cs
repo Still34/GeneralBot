@@ -96,8 +96,8 @@ namespace GeneralBot.Commands.Admin
             [Summary("Checks the current status of the welcome feature.")]
             public async Task WelcomeAsync()
             {
-                var dbEntry = CoreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ??
-                              CoreSettings.GuildsSettings.Add(new GuildSettings {GuildId = Context.Guild.Id}).Entity;
+                var dbEntry = CoreSettings.GreetingsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ??
+                              CoreSettings.GreetingsSettings.Add(new GreetingSettings {GuildId = Context.Guild.Id}).Entity;
                 string formattedMessage = dbEntry.WelcomeMessage.Replace("{mention}", Context.User.Mention)
                     .Replace("{username}", Context.User.Username)
                     .Replace("{discrim}", Context.User.Discriminator)
@@ -106,7 +106,7 @@ namespace GeneralBot.Commands.Admin
                 var em = new EmbedBuilder
                     {
                         Title = "Current welcome configuration:",
-                        Description = $"Currently {(dbEntry.WelcomeEnable ? "Enabled" : "Disabled")}",
+                        Description = $"Currently {(dbEntry.IsJoinEnabled ? "Enabled" : "Disabled")}",
                         Color = new Color(52, 152, 219),
                         ThumbnailUrl = Config.Icons.Announce
                     }
@@ -120,15 +120,17 @@ namespace GeneralBot.Commands.Admin
             [Summary("Enables the welcome setting on the current guild.")]
             public async Task<RuntimeResult> EnableWelcomeAsync()
             {
-                var dbEntry = CoreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ??
-                              CoreSettings.GuildsSettings.Add(new GuildSettings {GuildId = Context.Guild.Id}).Entity;
-                if (dbEntry.WelcomeEnable)
+                var greetingSettings = CoreSettings.GreetingsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ??
+                              CoreSettings.GreetingsSettings.Add(new GreetingSettings() {GuildId = Context.Guild.Id}).Entity;
+                var guildSettings = CoreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ??
+                                    CoreSettings.GuildsSettings.Add(new GuildSettings() {GuildId = Context.Guild.Id}).Entity;
+                if (greetingSettings.IsJoinEnabled)
                     return CommandRuntimeResult.FromError("The welcome message is already enabled!");
-                dbEntry.WelcomeEnable = true;
-                CoreSettings.Update(dbEntry);
+                greetingSettings.IsJoinEnabled = true;
+                CoreSettings.Update(greetingSettings);
                 await CoreSettings.SaveChangesAsync();
                 return CommandRuntimeResult.FromSuccess(
-                    $"Successfully enabled the welcome message! If you haven't configure the welcome message by using `{dbEntry.CommandPrefix}server welcome message`");
+                    $"Successfully enabled the welcome message! If you haven't configure the welcome message by using `{guildSettings.CommandPrefix}server welcome message`");
             }
 
             [Command("disable")]
@@ -136,11 +138,11 @@ namespace GeneralBot.Commands.Admin
             [Summary("Disables the welcome setting on the current guild.")]
             public async Task<RuntimeResult> DisableWelcomeAsync()
             {
-                var dbEntry = CoreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ??
-                              CoreSettings.GuildsSettings.Add(new GuildSettings {GuildId = Context.Guild.Id}).Entity;
-                if (!dbEntry.WelcomeEnable)
+                var dbEntry = CoreSettings.GreetingsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ??
+                              CoreSettings.GreetingsSettings.Add(new GreetingSettings { GuildId = Context.Guild.Id}).Entity;
+                if (!dbEntry.IsJoinEnabled)
                     return CommandRuntimeResult.FromError("The welcome message is already disabled!");
-                dbEntry.WelcomeEnable = false;
+                dbEntry.IsJoinEnabled = false;
                 CoreSettings.Update(dbEntry);
                 await CoreSettings.SaveChangesAsync();
                 return CommandRuntimeResult.FromSuccess("Successfully disabled the welcome message!");
@@ -152,8 +154,8 @@ namespace GeneralBot.Commands.Admin
             [Remarks("Placeholders: {mention}, {username}, {discrim}, {guild}, {date}")]
             public async Task<RuntimeResult> ConfigMessageAsync([Remainder] string message)
             {
-                var dbEntry = CoreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ??
-                              CoreSettings.GuildsSettings.Add(new GuildSettings {GuildId = Context.Guild.Id}).Entity;
+                var dbEntry = CoreSettings.GreetingsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ??
+                              CoreSettings.GreetingsSettings.Add(new GreetingSettings { GuildId = Context.Guild.Id}).Entity;
                 if (message.Length > 1024) return CommandRuntimeResult.FromError("Your welcome message is too long!");
                 dbEntry.WelcomeMessage = message;
                 CoreSettings.Update(dbEntry);
@@ -166,9 +168,9 @@ namespace GeneralBot.Commands.Admin
             [Summary("Changes the welcome channel on the current guild.")]
             public async Task<RuntimeResult> ConfigChannelAsync(SocketTextChannel channel)
             {
-                var dbEntry = CoreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ??
-                              CoreSettings.GuildsSettings.Add(new GuildSettings {GuildId = Context.Guild.Id}).Entity;
-                dbEntry.WelcomeChannel = channel.Id;
+                var dbEntry = CoreSettings.GreetingsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ??
+                              CoreSettings.GreetingsSettings.Add(new GreetingSettings { GuildId = Context.Guild.Id}).Entity;
+                dbEntry.ChannelId = channel.Id;
                 CoreSettings.Update(dbEntry);
                 await CoreSettings.SaveChangesAsync();
                 return CommandRuntimeResult.FromSuccess($"Welcome channel set to: {channel.Mention}");
