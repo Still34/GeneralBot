@@ -17,11 +17,12 @@ namespace GeneralBot.Models.Database.CoreSettings
         [Required]
         public bool WelcomeEnable { get; set; } = false;
 
-        [Required]
-        public ulong WelcomeChannel { get; set; }
+        public ulong WelcomeChannel { get; set; } = 0;
 
         [Required]
         public string WelcomeMessage { get; set; } = "Welcome {mention} to the guild!";
+
+        public ulong ReportChannel { get; set; } = 0;
 
         [Required]
         public GuildPermission ModeratorPermission { get; set; } = GuildPermission.KickMembers;

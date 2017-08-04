@@ -7,16 +7,23 @@ using DarkSky.Models;
 using Discord;
 using Discord.Addons.EmojiTools;
 using GeneralBot.Extensions;
+using GeneralBot.Models.Config;
 using Geocoding.Google;
 using Humanizer;
+using Icon = DarkSky.Models.Icon;
 
 namespace GeneralBot.Services
 {
     public class WeatherService
     {
+        private readonly ConfigModel _config;
         private readonly LoggingService _loggingService;
 
-        public WeatherService(LoggingService loggingService) => _loggingService = loggingService;
+        public WeatherService(LoggingService loggingService, ConfigModel config)
+        {
+            _loggingService = loggingService;
+            _config = config;
+        }
 
         public async Task<(List<EmbedBuilder> WeatherResults, List<EmbedBuilder> Alerts)> GetWeatherEmbedsAsync(
             DarkSkyResponse forecast, GoogleAddress geocode)
@@ -42,7 +49,7 @@ namespace GeneralBot.Services
                             Text = "Powered by Dark Sky",
                             IconUrl = "https://darksky.net/images/darkskylogo.png"
                         },
-                        ThumbnailUrl = weatherIcons.Url ?? "https://i.imgur.com/rUYrc0E.png"
+                        ThumbnailUrl = weatherIcons.Url
                     }.WithCurrentTimestamp();
                     embed.AddInlineField($"{weatherIcons.Emoji.Name} Summary", response.Hourly.Summary);
                     embed.AddInlineField("🌡 Temperature",
@@ -77,7 +84,7 @@ namespace GeneralBot.Services
                             Color = Color.DarkOrange,
                             Title = $"Alert for {location.Address}, click me for more details.",
                             Url = alert.Uri.AbsoluteUri,
-                            ThumbnailUrl = "https://i.imgur.com/euWbiQP.png",
+                            ThumbnailUrl = _config.Icons.Warning,
                             Description = sb.ToString()
                         };
                         alertEmbeds.Add(alertEmbed);
@@ -132,40 +139,40 @@ namespace GeneralBot.Services
             return new Color(r, g, b);
         }
 
-        public static (Emoji Emoji, string Url) GetWeatherEmoji(Icon icon)
+        public (Emoji Emoji, string Url) GetWeatherEmoji(Icon icon)
         {
             switch (icon)
             {
                 case Icon.ClearNight:
-                    return (EmojiExtensions.FromText(":full_moon_with_face:"), "https://i.imgur.com/ne9f8z5.png");
+                    return (EmojiExtensions.FromText(":full_moon_with_face:"), _config.Icons.Weather.ClearNight);
 
                 case Icon.Rain:
-                    return (EmojiExtensions.FromText(":cloud_rain:"), "https://i.imgur.com/hxWU8V1.png");
+                    return (EmojiExtensions.FromText(":cloud_rain:"), _config.Icons.Weather.Rain);
 
                 case Icon.Snow:
-                    return (EmojiExtensions.FromText(":cloud_snow:"), "https://i.imgur.com/BKyZYLL.png");
+                    return (EmojiExtensions.FromText(":cloud_snow:"), _config.Icons.Weather.Snow);
 
                 case Icon.Sleet:
-                    return (EmojiExtensions.FromText(":snowflake:"), "https://i.imgur.com/BKyZYLL.png");
+                    return (EmojiExtensions.FromText(":snowflake:"), _config.Icons.Weather.Sleet);
 
                 case Icon.Wind:
-                    return (EmojiExtensions.FromText(":wind_blowing_face:"), "https://i.imgur.com/ObyCzM8.png");
+                    return (EmojiExtensions.FromText(":wind_blowing_face:"), _config.Icons.Weather.Wind);
 
                 case Icon.Fog:
-                    return (EmojiExtensions.FromText(":foggy:"), null);
+                    return (EmojiExtensions.FromText(":foggy:"), _config.Icons.Weather.Fog);
 
                 case Icon.Cloudy:
-                    return (EmojiExtensions.FromText(":cloud:"), "https://i.imgur.com/W1qPad4.png");
+                    return (EmojiExtensions.FromText(":cloud:"), _config.Icons.Weather.Cloudy);
 
                 case Icon.PartlyCloudyDay:
                 case Icon.PartlyCloudyNight:
-                    return (EmojiExtensions.FromText(":white_sun_cloud:"), "https://i.imgur.com/qIVnCth.png");
+                    return (EmojiExtensions.FromText(":white_sun_cloud:"), _config.Icons.Weather.PartlyCloudy);
 
                 case Icon.ClearDay:
-                    return (EmojiExtensions.FromText(":sunny:"), "https://i.imgur.com/GF0URKg.png");
+                    return (EmojiExtensions.FromText(":sunny:"), _config.Icons.Weather.ClearDay);
 
                 default:
-                    return (EmojiExtensions.FromText(":sparkles:"), null);
+                    return (EmojiExtensions.FromText(":sparkles:"), _config.Icons.Weather.Default);
             }
         }
     }

@@ -3,8 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
-using Discord;
 using GeneralBot.Models.Database.CoreSettings;
+using Discord;
 
 namespace GeneralBot.Migrations
 {
@@ -16,7 +16,7 @@ namespace GeneralBot.Migrations
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.1.2");
 
-            modelBuilder.Entity("GeneralBot.Databases.Context.GuildSettings", b =>
+            modelBuilder.Entity("GeneralBot.Models.Database.CoreSettings.GuildSettings", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
@@ -27,6 +27,8 @@ namespace GeneralBot.Migrations
                     b.Property<ulong>("GuildId");
 
                     b.Property<byte>("ModeratorPermission");
+
+                    b.Property<ulong>("ReportChannel");
 
                     b.Property<ulong>("WelcomeChannel");
 

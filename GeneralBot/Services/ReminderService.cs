@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
 using GeneralBot.Extensions;
+using GeneralBot.Models.Config;
 using GeneralBot.Models.Database.UserSettings;
 
 namespace DirectoryMaid.Services
@@ -13,16 +14,18 @@ namespace DirectoryMaid.Services
     {
         private readonly DiscordSocketClient _client;
         private readonly UserContext _userContext;
+        private readonly ConfigModel _config;
         private Timer _timer;
 
         public ReminderService()
         {
         }
 
-        public ReminderService(DiscordSocketClient client, UserContext userContext)
+        public ReminderService(DiscordSocketClient client, UserContext userContext, ConfigModel config)
         {
             _client = client;
             _userContext = userContext;
+            _config = config;
             _timer = new Timer(ReminderCheck, null, TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(5));
         }
 
@@ -40,7 +43,7 @@ namespace DirectoryMaid.Services
             },
             Description = content,
             Color = Color.Blue,
-            ThumbnailUrl = "https://i.imgur.com/Igurn2H.png"
+            ThumbnailUrl = _config.Icons.Calendar 
         }.WithCurrentTimestamp();
 
         /// <summary>

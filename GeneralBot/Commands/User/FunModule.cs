@@ -27,14 +27,14 @@ namespace GeneralBot.Commands.User
         [Summary("Ask it any questions!")]
         public async Task<RuntimeResult> EightBallAsync([Remainder] string input)
         {
-            int responseCount = Config.Commands.EightBall.Responses.Count;
+            int responseCount = Config.Commands.EightBallResponses.Count;
             if (responseCount == 0)
                 // This should hopefully never happen.
             {
                 return CommandRuntimeResult.FromError(
                     "The 8ball responses are not yet set, contact the bot developers.");
             }
-            string response = Config.Commands.EightBall.Responses[Random.Next(0, responseCount)];
+            string response = Config.Commands.EightBallResponses[Random.Next(0, responseCount)];
             var embed = new EmbedBuilder
                 {
                     Author = new EmbedAuthorBuilder
@@ -43,7 +43,7 @@ namespace GeneralBot.Commands.User
                         IconUrl = Context.Client.CurrentUser.GetAvatarUrlOrDefault()
                     },
                     Color = ColorHelper.GetRandomColor(),
-                    ThumbnailUrl = Config.Commands.EightBall.Image
+                    ThumbnailUrl = Config.Icons.EightBall
                 }
                 .AddField("You asked...", input)
                 .AddField("The 8 ball says...", response);

@@ -108,7 +108,7 @@ namespace GeneralBot.Commands.Admin
                         Title = "Current welcome configuration:",
                         Description = $"Currently {(dbEntry.WelcomeEnable ? "Enabled" : "Disabled")}",
                         Color = new Color(52, 152, 219),
-                        ThumbnailUrl = Config.Commands.Welcome
+                        ThumbnailUrl = Config.Icons.Announce
                     }
                     .AddInlineField("Current message:", dbEntry.WelcomeMessage)
                     .AddInlineField("Example:", formattedMessage);

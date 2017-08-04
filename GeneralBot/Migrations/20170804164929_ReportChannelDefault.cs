@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace GeneralBot.Migrations
 {
-    public partial class Welcome : Migration
+    public partial class ReportChannelDefault : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -17,6 +17,7 @@ namespace GeneralBot.Migrations
                     CommandPrefix = table.Column<string>(nullable: false),
                     GuildId = table.Column<ulong>(nullable: false),
                     ModeratorPermission = table.Column<byte>(nullable: false),
+                    ReportChannel = table.Column<ulong>(nullable: false),
                     WelcomeChannel = table.Column<ulong>(nullable: false),
                     WelcomeEnable = table.Column<bool>(nullable: false),
                     WelcomeMessage = table.Column<string>(nullable: false)

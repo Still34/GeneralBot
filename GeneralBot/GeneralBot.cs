@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
 using GeneralBot.Models.Config;
@@ -15,19 +16,28 @@ namespace GeneralBot
 
         public async Task StartAsync()
         {
-            // Creates a new instance of the Discord client.
-            var client = new DiscordSocketClient();
+            try
+            {
+                // Creates a new instance of the Discord client.
+                var client = new DiscordSocketClient();
 
-            // Initializes all of thr required services.
-            var services = await Initialize.StartAsync(client);
+                // Initializes all of thr required services.
+                var services = await Initialize.StartAsync(client);
 
-            // Gets the credentials required to start the bot.
-            var config = services.GetRequiredService<ConfigModel>();
+                // Gets the credentials required to start the bot.
+                var config = services.GetRequiredService<ConfigModel>();
 
-            // Begins Discord login.
-            await client.LoginAsync(TokenType.Bot, config.Credentials.Discord);
-            await client.StartAsync();
-            await Task.Delay(-1);
+                // Begins Discord login.
+                await client.LoginAsync(TokenType.Bot, config.Credentials.Discord);
+                await client.StartAsync();
+                await Task.Delay(-1);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                Console.ReadKey();
+                Environment.Exit(0);
+            }
         }
     }
 }
