@@ -1,9 +1,16 @@
-﻿using System.Net;
+﻿using System;
+using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Discord;
 using Discord.Commands;
 using GeneralBot.Commands.Results;
+using GeneralBot.Extensions.Helpers;
+using GeneralBot.Models.Reddit;
+using Newtonsoft.Json;
+
 
 namespace GeneralBot.Commands.User
 {
@@ -11,6 +18,7 @@ namespace GeneralBot.Commands.User
     [Remarks("For your daily doses of memery, what more could I say?")]
     public class MemeModule : ModuleBase<SocketCommandContext>
     {
+        public Random Random { get; set; }
         public HttpClient HttpClient { get; set; }
 
         [Command("expand")]
@@ -48,6 +56,29 @@ namespace GeneralBot.Commands.User
                         "Cowsay is out of reach, please try again with another text!");
                 }
                 await ReplyAsync(output);
+                return CommandRuntimeResult.FromSuccess();
+            }
+        }
+
+        [Command("thinking")]
+        public async Task<RuntimeResult> Thinking()
+        {
+            using (var response = await HttpClient.GetAsync("https://www.reddit.com/r/Thinking/.json"))
+            {
+                if (!response.IsSuccessStatusCode)
+                    return CommandRuntimeResult.FromError("Reddit is out of reach, please try again later!");
+
+                RedditResponseModel result = JsonConvert.DeserializeObject<RedditResponseModel>(await response.Content.ReadAsStringAsync());
+                var children = Context.Channel.IsNsfw ? result.Data.Children : result.Data.Children.Where(x => !x.Data.IsNsfw).ToList();
+                var index = Random.Next(children.Count());
+                var post = children[index];
+                var builder = new EmbedBuilder
+                {
+                    Title = post.Data.IsNsfw ? "Thinking... (NSFW)" : "Thinking...",
+                    Color = ColorHelper.GetRandomColor(),
+                    ImageUrl = post.Data.Url
+                };
+                await ReplyAsync("", embed: builder);
                 return CommandRuntimeResult.FromSuccess();
             }
         }
