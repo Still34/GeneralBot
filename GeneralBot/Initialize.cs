@@ -45,7 +45,6 @@ namespace GeneralBot
                 .AddSingleton<ReminderService>()
                 .AddSingleton<WeatherService>()
                 .AddSingleton<BalanceService>()
-                .AddSingleton<AudioService>()
                 .AddSingleton<Random>()
                 .AddSingleton(new GoogleGeocoder(config.Credentials.Google))
                 .AddSingleton(new DarkSkyService(config.Credentials.DarkSky))
