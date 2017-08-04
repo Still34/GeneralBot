@@ -14,17 +14,10 @@ namespace GeneralBot.Models.Database.CoreSettings
         [Required]
         public string CommandPrefix { get; set; } = "!";
 
-        [Required]
-        public bool WelcomeEnable { get; set; } = false;
-
-        public ulong WelcomeChannel { get; set; } = 0;
-
-        [Required]
-        public string WelcomeMessage { get; set; } = "Welcome {mention} to the guild!";
-
         public ulong ReportChannel { get; set; } = 0;
 
-        [Required]
+        public bool AllowInvite { get; set; } = true;
+        
         public GuildPermission ModeratorPermission { get; set; } = GuildPermission.KickMembers;
     }
 }
