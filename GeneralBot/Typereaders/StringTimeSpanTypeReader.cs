@@ -8,7 +8,7 @@ namespace GeneralBot.Typereaders
     public class StringTimeSpanTypeReader : TypeReader
     {
         private readonly Regex _regex = new Regex(@"(\d+)\s{0,1}([a-zA-Z]*)", RegexOptions.Compiled);
-        public static Type Type { get; } = typeof(TimeSpan);
+        public static Type[] Types { get; } = {typeof(TimeSpan)};
 
         private Task<TimeSpan> DehumanizeTimespanAsync(string input)
         {
