@@ -8,9 +8,9 @@ using Discord;
 using Discord.Commands;
 using GeneralBot.Commands.Results;
 using GeneralBot.Extensions.Helpers;
+using GeneralBot.Models.Config;
 using GeneralBot.Models.Reddit;
 using Newtonsoft.Json;
-using GeneralBot.Models.Config;
 
 namespace GeneralBot.Commands.User
 {
@@ -18,9 +18,22 @@ namespace GeneralBot.Commands.User
     [Remarks("For your daily doses of memery, what more could I say?")]
     public class MemeModule : ModuleBase<SocketCommandContext>
     {
-        public Random Random { get; set; }
-        public HttpClient HttpClient { get; set; }
         public ConfigModel Config { get; set; }
+        public HttpClient HttpClient { get; set; }
+        public Random Random { get; set; }
+        private IDisposable TypingDisposable { get; set; }
+
+        protected override void BeforeExecute(CommandInfo command)
+        {
+            base.BeforeExecute(command);
+            TypingDisposable = Context.Channel.EnterTypingState();
+        }
+
+        protected override void AfterExecute(CommandInfo command)
+        {
+            base.AfterExecute(command);
+            TypingDisposable.Dispose();
+        }
 
         [Command("expand")]
         [Summary("Replies with a s t h e t i c texts.")]
@@ -77,14 +90,14 @@ namespace GeneralBot.Commands.User
                     : result.Data.Children.Where(x => !x.Data.IsNsfw).ToList();
                 int index = Random.Next(children.Count);
                 var post = children[index];
-                var title = Config.Commands.ThinkingTitles[Random.Next(Config.Commands.ThinkingTitles.Count)];
+                string title = Config.Commands.ThinkingTitles[Random.Next(Config.Commands.ThinkingTitles.Count)];
                 var builder = new EmbedBuilder
                 {
                     Title = post.Data.IsNsfw ? $"{title} (NSFW)" : title,
                     Url = "https://www.reddit.com/" + post.Data.Permalink,
                     Color = ColorHelper.GetRandomColor(),
                     ImageUrl = post.Data.Url,
-                    Footer = new EmbedFooterBuilder { Text = post.Data.Title}
+                    Footer = new EmbedFooterBuilder {Text = $"{post.Data.Title} by u/{post.Data.Author}"}
                 };
                 await ReplyAsync("", embed: builder);
                 return CommandRuntimeResult.FromSuccess();

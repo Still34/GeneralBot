@@ -60,7 +60,7 @@ namespace GeneralBot.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<bool>("AllowInvite");
+                    b.Property<bool>("IsInviteAllowed");
 
                     b.Property<string>("CommandPrefix")
                         .IsRequired();
