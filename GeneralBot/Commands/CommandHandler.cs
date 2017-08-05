@@ -7,6 +7,7 @@ using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 using GeneralBot.Commands.Results;
+using GeneralBot.Extensions;
 using GeneralBot.Extensions.Helpers;
 using GeneralBot.Models.Database.CoreSettings;
 using GeneralBot.Services;
@@ -115,7 +116,6 @@ namespace GeneralBot.Commands
             // Bails if the generic result doesn't have an error reason, or if it's an unknown command error.
             if (string.IsNullOrEmpty(result.ErrorReason) || result.Error == CommandError.UnknownCommand) return;
             var embed = new EmbedBuilder();
-            var severity = LogSeverity.Debug;
             switch (result)
             {
                 case CommandRuntimeResult customResult:
@@ -124,19 +124,15 @@ namespace GeneralBot.Commands
                         case ResultType.Unknown:
                             break;
                         case ResultType.Info:
-                            severity = LogSeverity.Info;
                             embed = EmbedHelper.FromInfo(description: customResult.Reason);
                             break;
                         case ResultType.Warning:
-                            severity = LogSeverity.Warning;
                             embed = EmbedHelper.FromWarning(description: customResult.Reason);
                             break;
                         case ResultType.Error:
-                            severity = LogSeverity.Error;
                             embed = EmbedHelper.FromError(description: customResult.Reason);
                             break;
                         case ResultType.Success:
-                            severity = LogSeverity.Verbose;
                             embed = EmbedHelper.FromSuccess(description: customResult.Reason);
                             break;
                         default:
@@ -144,16 +140,17 @@ namespace GeneralBot.Commands
                     }
                     break;
                 default:
-                    severity = LogSeverity.Error;
                     embed = EmbedHelper.FromError(description: result.ErrorReason);
                     break;
             }
             await context.Channel.SendMessageAsync("", embed: embed);
             await _loggingService.LogAsync(
-                $"{context.User} executed {commandInfo.Aliases.FirstOrDefault()} in {(context.Guild == null ? context.Channel.Name : $"{context.Channel.Name}/{context.Guild.Name}")}\n" +
-                $"Result: {result.ErrorReason}\n" +
-                result.GetType(),
-                severity).ConfigureAwait(false);
+                $"{context.User} executed \"{commandInfo.Aliases.FirstOrDefault()}\" in {context.Message.GetPostedAt()}." +
+                Environment.NewLine +
+                $"Result: {result.ErrorReason}" +
+                Environment.NewLine +
+                $"Result Type: {result.GetType()}",
+                LogSeverity.Verbose).ConfigureAwait(false);
         }
     }
 }
