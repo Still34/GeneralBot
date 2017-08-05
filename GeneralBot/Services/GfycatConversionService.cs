@@ -54,18 +54,19 @@ namespace GeneralBot.Services
 
         private async Task PerformGfyConversionAsync(string url, IMessage msg)
         {
-            await _loggingService.LogAsync($"Begins file conversion for {msg.Author} in {msg.GetPostedAt()}.\n" +
+            using (msg.Channel.EnterTypingState())
+            {
+                await _loggingService.LogAsync($"Begins file conversion for {msg.Author} in {msg.GetPostedAt()}.\n" +
                                            $"   Input: {url}", LogSeverity.Info).ConfigureAwait(false);
-
-            var gfy = await _gfycatClient.CreateGfyAsync(url).ConfigureAwait(false);
-            var completeGfy = await gfy.GetGfyWhenCompleteAsync().ConfigureAwait(false);
-            await msg.Channel
-                .SendMessageAsync(
-                    $"{msg.Author.Mention}, here's the preview of the video that you just posted!\n" +
-                    completeGfy.Url).ConfigureAwait(false);
-
-            await _loggingService.LogAsync($"Ends file conversion for {msg.Author} in {msg.GetPostedAt()}.\n" +
-                                           $"   Result: {completeGfy.Url}", LogSeverity.Info).ConfigureAwait(false);
+                var gfy = await _gfycatClient.CreateGfyAsync(url).ConfigureAwait(false);
+                var completeGfy = await gfy.GetGfyWhenCompleteAsync().ConfigureAwait(false);
+                await msg.Channel
+                    .SendMessageAsync(
+                        $"{msg.Author.Mention}, here's the preview of the video that you just posted!\n" +
+                        completeGfy.Url).ConfigureAwait(false);
+                await _loggingService.LogAsync($"Ends file conversion for {msg.Author} in {msg.GetPostedAt()}.\n" +
+                                               $"   Result: {completeGfy.Url}", LogSeverity.Info).ConfigureAwait(false);
+            }
         }
     }
 }
