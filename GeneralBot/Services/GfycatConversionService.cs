@@ -41,8 +41,9 @@ namespace GeneralBot.Services
             var dbEntry = _coreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == channel.Guild.Id);
             if (dbEntry == null || !dbEntry.IsGfyCatEnabled) return Task.CompletedTask;
             // Begins attachment search.
-            var attachments =
-                msg.Attachments.Where(att => att.Filename.EndsWith(".mov") || att.Filename.EndsWith(".webm")).ToList();
+            var attachments = msg.Attachments
+                .Where(att => att.Filename.EndsWith(".mov", StringComparison.OrdinalIgnoreCase) ||
+                              att.Filename.EndsWith(".webm", StringComparison.OrdinalIgnoreCase)).ToList();
             if (attachments.Count == 0) return Task.CompletedTask;
             foreach (var attachment in attachments)
             {
