@@ -18,7 +18,7 @@ namespace GeneralBot.Models.Database.CoreSettings
 
         public bool IsInviteAllowed { get; set; } = true;
 
-        public bool IsGfyCatEnabled { get; set; } = false;
+        public bool IsGfyCatEnabled { get; set; } = true;
         
         public GuildPermission ModeratorPermission { get; set; } = GuildPermission.KickMembers;
     }

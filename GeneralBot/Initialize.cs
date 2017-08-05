@@ -43,11 +43,11 @@ namespace GeneralBot
                 .AddSingleton<ConfigureGuildService>()
                 .AddSingleton<ConfigurePresenceService>()
                 .AddSingleton<ConfigureReadyService>()
+                .AddSingleton<GfycatConversionService>()
                 .AddSingleton<ReminderService>()
                 .AddSingleton<WeatherService>()
                 .AddSingleton<BalanceService>()
                 .AddSingleton<Random>()
-                .AddSingleton<GfycatConversionService>()
                 .AddSingleton(new GoogleGeocoder(config.Credentials.Google))
                 .AddSingleton(new DarkSkyService(config.Credentials.DarkSky))
                 .AddSingleton(new HttpClient {Timeout = TimeSpan.FromSeconds(5)})
@@ -79,6 +79,7 @@ namespace GeneralBot
             services.GetRequiredService<ConfigureGuildService>();
             services.GetRequiredService<ConfigurePresenceService>();
             services.GetRequiredService<ConfigureReadyService>();
+            services.GetRequiredService<GfycatConversionService>();
             await services.GetRequiredService<CommandHandler>().InitAsync();
         }
 
