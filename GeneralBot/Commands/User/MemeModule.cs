@@ -10,6 +10,7 @@ using GeneralBot.Commands.Results;
 using GeneralBot.Extensions.Helpers;
 using GeneralBot.Models.Reddit;
 using Newtonsoft.Json;
+using GeneralBot.Models.Config;
 
 namespace GeneralBot.Commands.User
 {
@@ -19,6 +20,7 @@ namespace GeneralBot.Commands.User
     {
         public Random Random { get; set; }
         public HttpClient HttpClient { get; set; }
+        public ConfigModel Config { get; set; }
 
         [Command("expand")]
         [Summary("Replies with a s t h e t i c texts.")]
@@ -60,6 +62,7 @@ namespace GeneralBot.Commands.User
         }
 
         [Command("thinking")]
+        [Alias("rthinking", "think", "🤔")]
         public async Task<RuntimeResult> ThinkingAsync()
         {
             using (var response = await HttpClient.GetAsync("https://www.reddit.com/r/Thinking/.json"))
@@ -74,11 +77,14 @@ namespace GeneralBot.Commands.User
                     : result.Data.Children.Where(x => !x.Data.IsNsfw).ToList();
                 int index = Random.Next(children.Count);
                 var post = children[index];
+                var title = Config.Commands.ThinkingTitles[Random.Next(Config.Commands.ThinkingTitles.Count)];
                 var builder = new EmbedBuilder
                 {
-                    Title = post.Data.IsNsfw ? "Thinking... (NSFW)" : "Hmm...",
+                    Title = post.Data.IsNsfw ? $"{title} (NSFW)" : title,
+                    Url = "https://www.reddit.com/" + post.Data.Permalink,
                     Color = ColorHelper.GetRandomColor(),
-                    ImageUrl = post.Data.Url
+                    ImageUrl = post.Data.Url,
+                    Footer = new EmbedFooterBuilder { Text = post.Data.Title}
                 };
                 await ReplyAsync("", embed: builder);
                 return CommandRuntimeResult.FromSuccess();

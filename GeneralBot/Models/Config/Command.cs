@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace GeneralBot.Models.Config
 {
@@ -22,5 +22,17 @@ namespace GeneralBot.Models.Config
             "Outlook not so good.",
             "Very doubtful."
         };
+
+        public List<string> ThinkingTitles { get; set; } = new List<string>
+        {
+            "Thinking...",
+            "Hmm..",
+            "What is it like to think in async?!?",
+            "I'm still thinking of titles...",
+            "Thinkin'",
+            "Think harder!",
+            "🤔"
+        };
+
     }
 }
