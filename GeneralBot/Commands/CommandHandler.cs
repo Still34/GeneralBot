@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -51,7 +52,7 @@ namespace GeneralBot.Commands
                 .FirstOrDefault(x => x.ContainsGenericParameters & (x.Name == "AddTypeReader"));
             if (typeReaderMethod == null)
                 throw new InvalidOperationException("TypeReader loader method cannot be found.");
-            int typeReadersCount = 0;
+            var typeReaderList = new List<string>();
             foreach (var typeReader in typeReaders)
             {
                 // Get the static Type property set in the TypeReader.
@@ -61,8 +62,8 @@ namespace GeneralBot.Commands
                     foreach (var targetType in targetTypes)
                     {
                         var typeReaderMethodGeneric = typeReaderMethod.MakeGenericMethod(targetType);
-                        typeReaderMethodGeneric.Invoke(_commandService, new[] { Activator.CreateInstance(typeReader) });
-                        typeReadersCount++;
+                        typeReaderMethodGeneric.Invoke(_commandService, new[] {Activator.CreateInstance(typeReader)});
+                        typeReaderList.Add($"TypeReader: {typeReader.Name} | Type: {targetType}");
                     }
                 }
                 else
@@ -72,9 +73,9 @@ namespace GeneralBot.Commands
                         LogSeverity.Warning);
                 }
             }
-
-            await _loggingService.LogAsync($"{typeReadersCount} {nameof(TypeReader)}(s) loaded.",
-                LogSeverity.Verbose).ConfigureAwait(false);
+            await _loggingService.LogAsync(
+                $"{typeReaderList.Count} {nameof(TypeReader)}(s) loaded." + Environment.NewLine +
+                string.Join(Environment.NewLine, typeReaderList), LogSeverity.Verbose).ConfigureAwait(false);
 
             // Command module discovery.
             await _commandService.AddModulesAsync(Assembly.GetEntryAssembly());
