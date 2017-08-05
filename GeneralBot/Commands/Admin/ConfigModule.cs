@@ -79,41 +79,51 @@ namespace GeneralBot.Commands.Admin
                 $"Successfully changed the required moderator permission to {Format.Bold(guildPermission.Humanize(LetterCasing.Title))}.");
         }
 
-        [Group("invite")]
+        [Command("invite")]
         [Summary("Change server invite command settings.")]
-        public class InviteConfigModule : ModuleBase<SocketCommandContext>
+        public async Task<RuntimeResult> ToggleInviteAsync(bool? shouldEnable = null)
         {
-            public CoreContext CoreSettings { get; set; }
-
-            [Command]
-            public async Task<RuntimeResult> ToggleInviteAsync(bool? shouldEnable = null)
+            var dbEntry = CoreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ??
+                          CoreSettings.GuildsSettings.Add(new GuildSettings {GuildId = Context.Guild.Id}).Entity;
+            string result;
+            switch (shouldEnable ?? !dbEntry.IsInviteAllowed)
             {
-                var dbEntry = CoreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ??
-                              CoreSettings.GuildsSettings.Add(new GuildSettings {GuildId = Context.Guild.Id}).Entity;
-                string result = await SetInviteAsync(shouldEnable ?? !dbEntry.IsInviteAllowed, dbEntry);
-                return CommandRuntimeResult.FromSuccess(result);
+                case true:
+                    dbEntry.IsInviteAllowed = true;
+                    result = "Invite has been **enabled**.";
+                    break;
+                default:
+                    dbEntry.IsInviteAllowed = false;
+                    result = "Invite has been **disabled**.";
+                    break;
             }
-
-            private async Task<string> SetInviteAsync(bool shouldEnable, GuildSettings settings)
-            {
-                string result;
-                switch (shouldEnable)
-                {
-                    case true:
-                        settings.IsInviteAllowed = true;
-                        result = "Invite has been **enabled**.";
-                        break;
-                    default:
-                        settings.IsInviteAllowed = false;
-                        result = "Invite has been **disabled**.";
-                        break;
-                }
-                CoreSettings.Update(settings);
-                await CoreSettings.SaveChangesAsync();
-                return result;
-            }
+            CoreSettings.Update(dbEntry);
+            await CoreSettings.SaveChangesAsync();
+            return CommandRuntimeResult.FromSuccess(result);
         }
 
+        [Command("gfycat")]
+        [Summary("Change gfycat conversion settings.")]
+        public async Task<RuntimeResult> ToggleGfycatAsync(bool? shouldEnable = null)
+        {
+            var dbEntry = CoreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ??
+                          CoreSettings.GuildsSettings.Add(new GuildSettings {GuildId = Context.Guild.Id}).Entity;
+            string result;
+            switch (shouldEnable ?? !dbEntry.IsGfyCatEnabled)
+            {
+                case true:
+                    dbEntry.IsGfyCatEnabled = true;
+                    result = "Auto gfycat conversion has been **enabled**.";
+                    break;
+                default:
+                    dbEntry.IsGfyCatEnabled = false;
+                    result = "Auto gfycat conversion has been **disabled**.";
+                    break;
+            }
+            CoreSettings.Update(dbEntry);
+            await CoreSettings.SaveChangesAsync();
+            return CommandRuntimeResult.FromSuccess(result);
+        }
 
         [Group("welcome")]
         [Alias("w", "greet")]
