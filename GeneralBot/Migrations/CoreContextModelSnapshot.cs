@@ -59,12 +59,14 @@ namespace GeneralBot.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<bool>("IsInviteAllowed");
-
                     b.Property<string>("CommandPrefix")
                         .IsRequired();
 
                     b.Property<ulong>("GuildId");
+
+                    b.Property<bool>("IsGfyCatEnabled");
+
+                    b.Property<bool>("IsInviteAllowed");
 
                     b.Property<byte>("ModeratorPermission");
 

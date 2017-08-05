@@ -17,6 +17,8 @@ namespace GeneralBot.Models.Database.CoreSettings
         public ulong ReportChannel { get; set; } = 0;
 
         public bool IsInviteAllowed { get; set; } = true;
+
+        public bool IsGfyCatEnabled { get; set; } = false;
         
         public GuildPermission ModeratorPermission { get; set; } = GuildPermission.KickMembers;
     }

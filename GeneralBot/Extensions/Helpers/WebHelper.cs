@@ -23,7 +23,7 @@ namespace GeneralBot.Extensions.Helpers
             }
         }
 
-        public static async Task<Stream> GetFileAsync(HttpClient client, Uri uri, TimeSpan? timeout = null)
+        public static async Task<Stream> GetFileStreamAsync(HttpClient client, Uri uri, TimeSpan? timeout = null)
         {
             try
             {

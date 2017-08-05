@@ -14,6 +14,7 @@ using GeneralBot.Models.Database.CoreSettings;
 using GeneralBot.Models.Database.UserSettings;
 using GeneralBot.Services;
 using Geocoding.Google;
+using Gfycat;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
@@ -46,6 +47,7 @@ namespace GeneralBot
                 .AddSingleton<WeatherService>()
                 .AddSingleton<BalanceService>()
                 .AddSingleton<Random>()
+                .AddSingleton<GfycatConversionService>()
                 .AddSingleton(new GoogleGeocoder(config.Credentials.Google))
                 .AddSingleton(new DarkSkyService(config.Credentials.DarkSky))
                 .AddSingleton(new HttpClient {Timeout = TimeSpan.FromSeconds(5)})

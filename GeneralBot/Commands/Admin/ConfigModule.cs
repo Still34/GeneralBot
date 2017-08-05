@@ -11,7 +11,6 @@ using GeneralBot.Commands.Results;
 using GeneralBot.Extensions.Helpers;
 using GeneralBot.Models.Config;
 using GeneralBot.Models.Database.CoreSettings;
-using GeneralBot.Typereaders;
 using Humanizer;
 
 namespace GeneralBot.Commands.Admin
@@ -24,8 +23,8 @@ namespace GeneralBot.Commands.Admin
     public class ConfigModule : ModuleBase<SocketCommandContext>
     {
         public CoreContext CoreSettings { get; set; }
-        public InteractiveService InteractiveService { get; set; }
         public HttpClient HttpClient { get; set; }
+        public InteractiveService InteractiveService { get; set; }
 
         [Command("icon")]
         [Summary("Changes the server icon.")]
@@ -46,7 +45,7 @@ namespace GeneralBot.Commands.Admin
                         return CommandRuntimeResult.FromError("You did not upload any valid pictures.");
                 }
             }
-            using (var image = await WebHelper.GetFileAsync(HttpClient, url))
+            using (var image = await WebHelper.GetFileStreamAsync(HttpClient, url))
             {
                 // ReSharper disable once AccessToDisposedClosure
                 await Context.Guild.ModifyAsync(x => x.Icon = new Image(image));
@@ -69,8 +68,7 @@ namespace GeneralBot.Commands.Admin
         [Command("mod-perms")]
         [Alias("mp")]
         [Summary("Changes the required permission to use mod commands.")]
-        public async Task<RuntimeResult> ModeratorPermsSetAsync(
-            [OverrideTypeReader(typeof(GuildPermissionTypeReader))] [Remainder] GuildPermission guildPermission)
+        public async Task<RuntimeResult> ModeratorPermsSetAsync([Remainder] GuildPermission guildPermission)
         {
             var dbEntry = CoreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ??
                           CoreSettings.GuildsSettings.Add(new GuildSettings {GuildId = Context.Guild.Id}).Entity;
@@ -81,13 +79,49 @@ namespace GeneralBot.Commands.Admin
                 $"Successfully changed the required moderator permission to {Format.Bold(guildPermission.Humanize(LetterCasing.Title))}.");
         }
 
+        [Group("invite")]
+        [Summary("Change server invite command settings.")]
+        public class InviteConfigModule : ModuleBase<SocketCommandContext>
+        {
+            public CoreContext CoreSettings { get; set; }
+
+            [Command]
+            public async Task<RuntimeResult> ToggleInviteAsync(bool? shouldEnable = null)
+            {
+                var dbEntry = CoreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ??
+                              CoreSettings.GuildsSettings.Add(new GuildSettings {GuildId = Context.Guild.Id}).Entity;
+                string result = await SetInviteAsync(shouldEnable ?? !dbEntry.IsInviteAllowed, dbEntry);
+                return CommandRuntimeResult.FromSuccess(result);
+            }
+
+            private async Task<string> SetInviteAsync(bool shouldEnable, GuildSettings settings)
+            {
+                string result;
+                switch (shouldEnable)
+                {
+                    case true:
+                        settings.IsInviteAllowed = true;
+                        result = "Invite has been **enabled**.";
+                        break;
+                    default:
+                        settings.IsInviteAllowed = false;
+                        result = "Invite has been **disabled**.";
+                        break;
+                }
+                CoreSettings.Update(settings);
+                await CoreSettings.SaveChangesAsync();
+                return result;
+            }
+        }
+
+
         [Group("welcome")]
         [Alias("w", "greet")]
         [Summary("Configures the welcome setting.")]
         public class WelcomeModule : ModuleBase<SocketCommandContext>
         {
-            public CoreContext CoreSettings { get; set; }
             public ConfigModel Config { get; set; }
+            public CoreContext CoreSettings { get; set; }
 
             [Command]
             [Summary("Checks the current status of the welcome feature.")]

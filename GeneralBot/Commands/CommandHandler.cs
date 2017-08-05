@@ -55,7 +55,7 @@ namespace GeneralBot.Commands
             foreach (var typeReader in typeReaders)
             {
                 // Get the static Type property set in the TypeReader.
-                var typeReaderType = typeReader.GetProperty("Type").GetValue(null);
+                var typeReaderType = typeReader.GetProperty("Type")?.GetValue(null);
                 if (!(typeReaderType is Type type)) continue;
                 // Invoke the generic with a new instance of the TypeReader.
                 var typeReaderMethodGeneric = typeReaderMethod.MakeGenericMethod(type);
@@ -140,7 +140,8 @@ namespace GeneralBot.Commands
             await context.Channel.SendMessageAsync("", embed: embed);
             await _loggingService.LogAsync(
                 $"{context.User} executed {commandInfo.Aliases.FirstOrDefault()} in {(context.Guild == null ? context.Channel.Name : $"{context.Channel.Name}/{context.Guild.Name}")}\n" +
-                $"Result: {result.ErrorReason} ({result.GetType()})",
+                $"Result: {result.ErrorReason}\n" +
+                result.GetType(),
                 severity).ConfigureAwait(false);
         }
     }

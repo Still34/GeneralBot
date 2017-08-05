@@ -79,7 +79,7 @@ namespace GeneralBot.Commands.Owners
             var attachment = message.Attachments.FirstOrDefault();
             if (attachment?.Height != null) Uri.TryCreate(attachment.Url, UriKind.RelativeOrAbsolute, out imageUri);
             if (imageUri == null) return CommandRuntimeResult.FromError("No valid images were detected.");
-            var imageStream = await WebHelper.GetFileAsync(HttpClient, imageUri);
+            var imageStream = await WebHelper.GetFileStreamAsync(HttpClient, imageUri);
             try
             {
                 // ReSharper disable once AccessToDisposedClosure

@@ -9,8 +9,8 @@ using Discord;
 namespace GeneralBot.Migrations
 {
     [DbContext(typeof(CoreContext))]
-    [Migration("20170804225813_ActivityLogging")]
-    partial class ActivityLogging
+    [Migration("20170805162250_GfycatThing")]
+    partial class GfycatThing
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -60,12 +60,14 @@ namespace GeneralBot.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<bool>("IsInviteAllowed");
-
                     b.Property<string>("CommandPrefix")
                         .IsRequired();
 
                     b.Property<ulong>("GuildId");
+
+                    b.Property<bool>("IsGfyCatEnabled");
+
+                    b.Property<bool>("IsInviteAllowed");
 
                     b.Property<byte>("ModeratorPermission");
 

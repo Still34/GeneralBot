@@ -4,10 +4,27 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace GeneralBot.Migrations
 {
-    public partial class WelcomeTable : Migration
+    public partial class GfycatThing : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "ActivityLogging",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    GuildId = table.Column<ulong>(nullable: false),
+                    LogChannel = table.Column<ulong>(nullable: false),
+                    ShouldLogJoin = table.Column<bool>(nullable: false),
+                    ShouldLogLeave = table.Column<bool>(nullable: false),
+                    ShouldLogVoice = table.Column<bool>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ActivityLogging", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "GreetingsSettings",
                 columns: table => new
@@ -30,9 +47,10 @@ namespace GeneralBot.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    AllowInvite = table.Column<bool>(nullable: false),
                     CommandPrefix = table.Column<string>(nullable: false),
                     GuildId = table.Column<ulong>(nullable: false),
+                    IsGfyCatEnabled = table.Column<bool>(nullable: false),
+                    IsInviteAllowed = table.Column<bool>(nullable: false),
                     ModeratorPermission = table.Column<byte>(nullable: false),
                     ReportChannel = table.Column<ulong>(nullable: false)
                 },
@@ -44,6 +62,9 @@ namespace GeneralBot.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "ActivityLogging");
+
             migrationBuilder.DropTable(
                 name: "GreetingsSettings");
 
