@@ -80,6 +80,7 @@ namespace GeneralBot.Commands.Admin
         }
 
         [Command("invite")]
+        [Alias("inv")]
         [Summary("Change server invite command settings.")]
         public async Task<RuntimeResult> ToggleInviteAsync(bool? shouldEnable = null)
         {
@@ -103,6 +104,7 @@ namespace GeneralBot.Commands.Admin
         }
 
         [Command("gfycat")]
+        [Alias("convert", "gfy")]
         [Summary("Change gfycat conversion settings.")]
         public async Task<RuntimeResult> ToggleGfycatAsync(bool? shouldEnable = null)
         {
