@@ -149,7 +149,7 @@ namespace GeneralBot.Commands
                 Environment.NewLine +
                 $"Result: {result.ErrorReason}" +
                 Environment.NewLine +
-                $"Result Type: {result.GetType()}",
+                $"Result Type: {result.GetType().Name}",
                 LogSeverity.Verbose).ConfigureAwait(false);
         }
     }
