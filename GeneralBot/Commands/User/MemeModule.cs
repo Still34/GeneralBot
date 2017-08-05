@@ -93,11 +93,11 @@ namespace GeneralBot.Commands.User
                 string title = Config.Commands.ThinkingTitles[Random.Next(Config.Commands.ThinkingTitles.Count)];
                 var builder = new EmbedBuilder
                 {
-                    Title = post.Data.IsNsfw ? $"{title} (NSFW)" : title,
+                    Title = post.Data.Title,
+                    Description = $"{(post.Data.IsNsfw ? $"{title} (NSFW)" : title)}\n\nPosted by u/{post.Data.Author}",
                     Url = "https://www.reddit.com/" + post.Data.Permalink,
                     Color = ColorHelper.GetRandomColor(),
-                    ImageUrl = post.Data.Url,
-                    Footer = new EmbedFooterBuilder {Text = $"{post.Data.Title} by u/{post.Data.Author}"}
+                    ThumbnailUrl = post.Data.Url,
                 };
                 await ReplyAsync("", embed: builder);
                 return CommandRuntimeResult.FromSuccess();
