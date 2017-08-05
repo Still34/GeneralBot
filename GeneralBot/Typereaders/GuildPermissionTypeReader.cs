@@ -7,7 +7,7 @@ namespace GeneralBot.Typereaders
 {
     public class GuildPermissionTypeReader : TypeReader
     {
-        public static Type Type { get; } = typeof(GuildPermission);
+        public static Type[] Types { get; } = {typeof(GuildPermission)};
 
         public override Task<TypeReaderResult> Read(ICommandContext context, string input, IServiceProvider services)
         {

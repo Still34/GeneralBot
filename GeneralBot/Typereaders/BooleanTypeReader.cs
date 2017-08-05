@@ -7,8 +7,6 @@ namespace GeneralBot.Typereaders
 {
     public class BooleanTypeReader : TypeReader
     {
-        public static Type Type { get; } = typeof(bool?);
-
         private readonly string[] _negativeKeywords =
         {
             "no",
@@ -23,6 +21,8 @@ namespace GeneralBot.Typereaders
             "on"
         };
 
+        public static Type[] Types { get; } = {typeof(bool?), typeof(bool)};
+
         public override Task<TypeReaderResult> Read(ICommandContext context, string input, IServiceProvider services)
         {
             if (bool.TryParse(input, out bool result))
@@ -31,7 +31,8 @@ namespace GeneralBot.Typereaders
                 return Task.FromResult(TypeReaderResult.FromSuccess(true));
             if (_negativeKeywords.Any(x => input.ToLower().Contains(x)))
                 return Task.FromResult(TypeReaderResult.FromSuccess(false));
-            return Task.FromResult(TypeReaderResult.FromError(CommandError.ParseFailed, "Invalid response. Try true or false."));
+            return Task.FromResult(TypeReaderResult.FromError(CommandError.ParseFailed,
+                "Invalid response. Try true or false."));
         }
     }
 }

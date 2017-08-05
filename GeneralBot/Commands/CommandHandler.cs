@@ -55,12 +55,16 @@ namespace GeneralBot.Commands
             foreach (var typeReader in typeReaders)
             {
                 // Get the static Type property set in the TypeReader.
-                var typeReaderType = typeReader.GetProperty("Type")?.GetValue(null);
-                if (!(typeReaderType is Type type)) continue;
-                // Invoke the generic with a new instance of the TypeReader.
-                var typeReaderMethodGeneric = typeReaderMethod.MakeGenericMethod(type);
-                typeReaderMethodGeneric.Invoke(_commandService, new[] {Activator.CreateInstance(typeReader)});
-                typeReadersCount++;
+                var typeReaderType = typeReader.GetProperty("Types")?.GetValue(null);
+                if (typeReaderType is Type[] targetTypes)
+                {
+                    foreach (var targetType in targetTypes)
+                    {
+                        var typeReaderMethodGeneric = typeReaderMethod.MakeGenericMethod(targetType);
+                        typeReaderMethodGeneric.Invoke(_commandService, new[] { Activator.CreateInstance(typeReader) });
+                        typeReadersCount++;
+                    }
+                }
             }
 
             await _loggingService.LogAsync($"{typeReadersCount} {nameof(TypeReader)}(s) loaded.",

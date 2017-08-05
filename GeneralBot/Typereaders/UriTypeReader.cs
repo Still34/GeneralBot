@@ -9,7 +9,7 @@ namespace GeneralBot.Typereaders
     /// </summary>
     public class UriTypeReader : TypeReader
     {
-        public static Type Type { get; } = typeof(Uri);
+        public static Type[] Types { get; } = {typeof(Uri)};
 
         public override Task<TypeReaderResult> Read(ICommandContext context, string input, IServiceProvider services) =>
             Task.FromResult(Uri.TryCreate(input, UriKind.RelativeOrAbsolute, out Uri output)
