@@ -65,6 +65,12 @@ namespace GeneralBot.Commands
                         typeReadersCount++;
                     }
                 }
+                else
+                {
+                    await _loggingService.LogAsync(
+                        $"{typeReader} does not have a {nameof(Type)} array specified, ignoring...",
+                        LogSeverity.Warning);
+                }
             }
 
             await _loggingService.LogAsync($"{typeReadersCount} {nameof(TypeReader)}(s) loaded.",
