@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
@@ -31,7 +32,8 @@ namespace GeneralBot.Commands.User
             {
                 var dbEntry = CoreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ??
                               CoreSettings.GuildsSettings.Add(new GuildSettings {GuildId = Context.Guild.Id}).Entity;
-                if (!dbEntry.IsInviteAllowed) return CommandRuntimeResult.FromError("The admin has disabled this command.");
+                if (!dbEntry.IsInviteAllowed)
+                    return CommandRuntimeResult.FromError("The admin has disabled this command.");
                 var invite = await channel.GetLastInviteAsync(true);
                 await ReplyAsync(invite.Url);
             }
@@ -93,11 +95,56 @@ namespace GeneralBot.Commands.User
             return CommandRuntimeResult.FromSuccess();
         }
 
+        /// <summary>
+        /// Modified from https://gist.github.com/foxbot/d220afcbbcadaa7fc5521493846032a7
+        /// </summary>
+        [Command("latency")]
+        [Alias("ping", "pong", "rtt")]
+        [Summary("Returns the current estimated round-trip latency over WebSocket")]
+        public async Task GetLatencyAsync()
+        {
+            ulong target;
+            var cts = new CancellationTokenSource();
+
+            Task WaitTarget(SocketMessage message)
+            {
+                if (message.Id != target) return Task.CompletedTask;
+                cts.Cancel();
+                return Task.CompletedTask;
+            }
+
+            int latency = Context.Client.Latency;
+            var stopwatch = Stopwatch.StartNew();
+            var pingMessage = await ReplyAsync($"heartbeat: {latency}ms, init: ---, rtt: ---");
+            long init = stopwatch.ElapsedMilliseconds;
+            target = pingMessage.Id;
+            stopwatch.Restart();
+            Context.Client.MessageReceived += WaitTarget;
+
+            try
+            {
+                await Task.Delay(TimeSpan.FromSeconds(30), cts.Token);
+            }
+            catch (TaskCanceledException)
+            {
+                long rtt = stopwatch.ElapsedMilliseconds;
+                stopwatch.Stop();
+                await pingMessage.ModifyAsync(x => x.Content = $"heartbeat: {latency}ms, init: {init}ms, rtt: {rtt}ms");
+                return;
+            }
+            finally
+            {
+                Context.Client.MessageReceived -= WaitTarget;
+            }
+            stopwatch.Stop();
+            await pingMessage.ModifyAsync(x => x.Content = $"heartbeat: {latency}ms, init: {init}ms, rtt: timeout");
+        }
+
         [Group("help")]
         public class HelpModule : ModuleBase<SocketCommandContext>
         {
-            public CoreContext CoreSettings { get; set; }
             public CommandService CommandService { get; set; }
+            public CoreContext CoreSettings { get; set; }
             public IServiceProvider ServiceProvider { get; set; }
 
             [Command]
