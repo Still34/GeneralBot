@@ -17,6 +17,16 @@ namespace GeneralBot.Models.Database.CoreSettings.Poll
         public ulong ResultChannel { get; set; }
 
         /// <summary>
+        /// Where is the poll being held?
+        /// </summary>
+        public ulong MainChannel { get; set; }
+
+        /// <summary>
+        /// Poll message itself.
+        /// </summary>
+        public ulong MessageId { get; set; }
+
+        /// <summary>
         /// How should the poll be run?
         /// </summary>
         public PollMethod Method { get; set; }
