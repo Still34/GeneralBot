@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Discord;
@@ -14,8 +12,8 @@ namespace GeneralBot.Services
     public class PollService
     {
         private readonly CoreContext _coreSettings;
-        private readonly LoggingService _loggingService;
         private readonly DiscordSocketClient _discordClient;
+        private readonly LoggingService _loggingService;
 
         public PollService(CoreContext coreSettings, LoggingService loggingService, DiscordSocketClient discordClient)
         {
@@ -28,26 +26,28 @@ namespace GeneralBot.Services
 
         private void PollCheck(object state)
         {
-            var entries = _coreSettings.PollsData.Where(x => DateTimeOffset.UtcNow > x.EndDate & x.EndDate != DateTimeOffset.MinValue);
+            var entries =
+                _coreSettings.PollsData.Where(x => (DateTimeOffset.UtcNow > x.EndDate) &
+                                                   (x.EndDate != DateTimeOffset.MinValue));
             foreach (var entry in entries)
             {
-                
             }
         }
 
         private async Task HandlePollResultAsync(PollData entryData)
         {
             if (!(_discordClient.GetChannel(entryData.MainChannel) is SocketTextChannel channel)) return;
-            var pollMessage = (await channel.GetMessageAsync(entryData.MessageId) as SocketUserMessage);
+            var pollMessage = await channel.GetMessageAsync(entryData.MessageId) as SocketUserMessage;
             if (pollMessage == null)
             {
                 await _loggingService.LogAsync(
-                    $"Message for poll {entryData.MessageId} could not be found, dropping entry.", LogSeverity.Warning).ConfigureAwait(false);
+                        $"Message for poll {entryData.MessageId} could not be found, dropping entry.",
+                        LogSeverity.Warning)
+                    .ConfigureAwait(false);
                 await EntryCleanupAsync(entryData);
                 return;
             }
             var pollReactions = pollMessage.Reactions;
-
         }
 
         private async Task EntryCleanupAsync(PollData entryData)
@@ -57,9 +57,8 @@ namespace GeneralBot.Services
             _coreSettings.Update(entryData);
             await _coreSettings.SaveChangesAsync();
         }
-        private Task VoteProcessAsync(Discord.Cacheable<Discord.IUserMessage, ulong> msgParam, ISocketMessageChannel channel, SocketReaction reaction)
-        {
-            throw new NotImplementedException();
-        }
+
+        private Task VoteProcessAsync(Cacheable<IUserMessage, ulong> msgParam, ISocketMessageChannel channel,
+            SocketReaction reaction) => throw new NotImplementedException();
     }
 }
