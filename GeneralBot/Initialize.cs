@@ -14,6 +14,7 @@ using GeneralBot.Models.Database.CoreSettings;
 using GeneralBot.Models.Database.UserSettings;
 using GeneralBot.Services;
 using Geocoding.Google;
+using Gfycat;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
@@ -72,22 +73,18 @@ namespace GeneralBot
 
         private static async Task ConfigureServicesAsync(IServiceProvider services)
         {
-            // Updates the databases.
             await services.GetRequiredService<UserContext>().Database.MigrateAsync();
             await services.GetRequiredService<CoreContext>().Database.MigrateAsync();
-            // Instantiates classes.
             services.GetRequiredService<LoggingService>();
             services.GetRequiredService<ConfigureGuildService>();
             services.GetRequiredService<ConfigurePresenceService>();
             services.GetRequiredService<ConfigureReadyService>();
             services.GetRequiredService<GfycatConversionService>();
-            // Initiates command handler service.
             await services.GetRequiredService<CommandHandler>().InitAsync();
         }
 
         private static Task<ConfigModel> ConfigureSettingsAsync()
         {
-            // Gets or creates the config required.
             const string config = "config.json";
             if (!File.Exists(config))
             {
