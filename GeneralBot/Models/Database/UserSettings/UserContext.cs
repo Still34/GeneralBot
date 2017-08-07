@@ -8,6 +8,7 @@ namespace GeneralBot.Models.Database.UserSettings
         public DbSet<Coordinate> Coordinates { get; set; }
         public DbSet<Profile> Profiles { get; set; }
         public DbSet<Reminder> Reminders { get; set; }
+        public DbSet<Games> Games { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) => optionsBuilder.UseSqlite(
             "Filename=./UserConfig.db");

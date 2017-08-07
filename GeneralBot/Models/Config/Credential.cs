@@ -8,5 +8,6 @@ namespace GeneralBot.Models.Config
         public (string ClientId, string Secret) Imgur { get; set; } = ("", "");
         public (string ClientId, string Secret) Gfycat { get; set; } = ("", "");
         public string TimezoneDb { get; set; } = "";
+        public string Steam { get; set; } = "";
     }
 }
