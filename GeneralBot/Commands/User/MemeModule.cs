@@ -11,9 +11,10 @@ using GeneralBot.Commands.Results;
 using GeneralBot.Extensions.Helpers;
 using GeneralBot.Models.Config;
 using GeneralBot.Models.Reddit;
-using Newtonsoft.Json;
 using ImageSharp;
 using ImageSharp.Formats;
+using Newtonsoft.Json;
+using Image = ImageSharp.Image;
 
 namespace GeneralBot.Commands.User
 {
@@ -100,7 +101,7 @@ namespace GeneralBot.Commands.User
                     Description = $"{(post.Data.IsNsfw ? $"{title} (NSFW)" : title)}\n\nPosted by u/{post.Data.Author}",
                     Url = "https://www.reddit.com/" + post.Data.Permalink,
                     Color = ColorHelper.GetRandomColor(),
-                    ThumbnailUrl = post.Data.Url,
+                    ThumbnailUrl = post.Data.Url
                 };
                 await ReplyAsync("", embed: builder);
                 return CommandRuntimeResult.FromSuccess();
@@ -108,18 +109,23 @@ namespace GeneralBot.Commands.User
         }
 
         [Command("needsmorejpeg")]
-        public async Task<RuntimeResult> NeedsMoreJpeg()
+        [Alias("jpg", "jpeg")]
+        public async Task<RuntimeResult> NeedsMoreJpegAsync()
         {
-            var message = (await Context.Channel.GetMessagesAsync().Flatten())?.FirstOrDefault(x => x.Attachments.Any());
+            var message =
+                (await Context.Channel.GetMessagesAsync().Flatten())?.FirstOrDefault(x => x.Attachments.Any());
             if (message == null)
                 return CommandRuntimeResult.FromError("No images found!");
-            var attachment = message.Attachments.FirstOrDefault() as Attachment;
-            var image = ImageSharp.Image.Load(await WebHelper.GetFileStreamAsync(HttpClient, new Uri(attachment.Url)));
-            using (var stream = new MemoryStream())
+            foreach (var attachment in message.Attachments)
             {
-                image.SaveAsJpeg(stream, new JpegEncoder { Quality = 2 });
-                stream.Seek(0, SeekOrigin.Begin);
-                await Context.Channel.SendFileAsync(stream, "needsmorejpeg.jpeg");
+                using (var attachmentStream = await WebHelper.GetFileStreamAsync(HttpClient, new Uri(attachment.Url)))
+                using (var image = Image.Load(attachmentStream))
+                using (var imageStream = new MemoryStream())
+                {
+                    image.SaveAsJpeg(imageStream, new JpegEncoder {Quality = 2});
+                    imageStream.Seek(0, SeekOrigin.Begin);
+                    await Context.Channel.SendFileAsync(imageStream, "needsmorejpeg.jpeg");
+                }
             }
             return CommandRuntimeResult.FromSuccess();
         }
