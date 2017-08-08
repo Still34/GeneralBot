@@ -1,11 +1,7 @@
-﻿using System;
-using System.Text;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using GeneralBot.Models.Config;
-using SteamWebAPI2;
-using SteamWebAPI2.Interfaces;
 using Steam.Models.SteamCommunity;
+using SteamWebAPI2.Interfaces;
 
 namespace GeneralBot.Services
 {
@@ -13,15 +9,12 @@ namespace GeneralBot.Services
     {
         private readonly SteamUser _steam;
 
-        public SteamService(ConfigModel config)
-        {
-            _steam = new SteamUser(config.Credentials.Steam);
-        }
+        public SteamService(ConfigModel config) => _steam = new SteamUser(config.Credentials.Steam);
 
-        public async Task<ulong> GetIdFromvanity(string vanityUrl)
-            => (await _steam.ResolveVanityUrlAsync(vanityUrl)).Data;
+        public async Task<ulong> GetIdFromVanityAsync(string vanityUrl)
+            => (await _steam.ResolveVanityUrlAsync(vanityUrl).ConfigureAwait(false)).Data;
 
-        public async Task<SteamCommunityProfileModel> GetProfile(ulong id)
-            => await _steam.GetCommunityProfileAsync(id);
+        public async Task<SteamCommunityProfileModel> GetProfileAsync(ulong id)
+            => await _steam.GetCommunityProfileAsync(id).ConfigureAwait(false);
     }
 }
