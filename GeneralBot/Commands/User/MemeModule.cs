@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -11,6 +12,8 @@ using GeneralBot.Extensions.Helpers;
 using GeneralBot.Models.Config;
 using GeneralBot.Models.Reddit;
 using Newtonsoft.Json;
+using ImageSharp;
+using ImageSharp.Formats;
 
 namespace GeneralBot.Commands.User
 {
@@ -102,6 +105,23 @@ namespace GeneralBot.Commands.User
                 await ReplyAsync("", embed: builder);
                 return CommandRuntimeResult.FromSuccess();
             }
+        }
+
+        [Command("needsmorejpeg")]
+        public async Task<RuntimeResult> NeedsMoreJpeg()
+        {
+            var message = (await Context.Channel.GetMessagesAsync().Flatten())?.FirstOrDefault(x => x.Attachments.Any());
+            if (message == null)
+                return CommandRuntimeResult.FromError("No images found!");
+            var attachment = message.Attachments.FirstOrDefault() as Attachment;
+            var image = ImageSharp.Image.Load(await WebHelper.GetFileStreamAsync(HttpClient, new Uri(attachment.Url)));
+            using (var stream = new MemoryStream())
+            {
+                image.SaveAsJpeg(stream, new JpegEncoder { Quality = 2 });
+                stream.Seek(0, SeekOrigin.Begin);
+                await Context.Channel.SendFileAsync(stream, "needsmorejpeg.jpeg");
+            }
+            return CommandRuntimeResult.FromSuccess();
         }
     }
 }
