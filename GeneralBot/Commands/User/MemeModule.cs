@@ -118,7 +118,8 @@ namespace GeneralBot.Commands.User
         public async Task<RuntimeResult> NeedsMoreJpegAsync()
         {
             var message =
-                (await Context.Channel.GetMessagesAsync().Flatten())?.FirstOrDefault(x => x.Attachments.Any());
+                (await Context.Channel.GetMessagesAsync().Flatten())?
+                .FirstOrDefault(x => x.Attachments.Any(a => a.Width.HasValue));
             if (message == null)
                 return CommandRuntimeResult.FromError("No images found!");
             foreach (var attachment in message.Attachments)
