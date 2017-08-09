@@ -220,9 +220,13 @@ namespace GeneralBot.Commands.Admin
             [Summary("Checks the current status of the welcome feature.")]
             public async Task WelcomeAsync()
             {
-                var dbEntry = CoreSettings.GreetingsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ??
-                              CoreSettings.GreetingsSettings.Add(new GreetingSettings {GuildId = Context.Guild.Id})
-                                  .Entity;
+                var dbEntry = CoreSettings.GreetingsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id);
+                if (dbEntry == null)
+                {
+                    dbEntry = new GreetingSettings {GuildId = Context.Guild.Id};
+                    CoreSettings.GreetingsSettings.Add(dbEntry);
+                    await CoreSettings.SaveChangesAsync();
+                }
                 string formattedMessage = dbEntry.WelcomeMessage.Replace("{mention}", Context.User.Mention)
                     .Replace("{username}", Context.User.Username)
                     .Replace("{discrim}", Context.User.Discriminator)

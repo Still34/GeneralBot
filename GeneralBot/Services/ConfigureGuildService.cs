@@ -53,10 +53,8 @@ namespace GeneralBot.Services
             await _loggingService.LogAsync($"{user.GetFullnameOrDefault()} ({user.Id}) joined {guild} ({guild.Id}).",
                 LogSeverity.Verbose);
 
-            var dbEntry = _coreSettings.GreetingsSettings.SingleOrDefault(x => x.GuildId == guild.Id) ??
-                          _coreSettings.GreetingsSettings.Add(new GreetingSettings {GuildId = guild.Id}).Entity;
-
-            if (!dbEntry.IsJoinEnabled) return;
+            var dbEntry = _coreSettings.GreetingsSettings.SingleOrDefault(x => x.GuildId == guild.Id);
+            if (dbEntry == null || !dbEntry.IsJoinEnabled) return;
             var channel = guild.GetTextChannel(dbEntry.ChannelId);
             if (channel == null) return;
             string formattedMessage = dbEntry.WelcomeMessage
