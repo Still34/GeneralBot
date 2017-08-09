@@ -16,6 +16,8 @@ using ImageSharp;
 using ImageSharp.Formats;
 using Newtonsoft.Json;
 using Image = ImageSharp.Image;
+using SixLabors.Primitives;
+using ImageSharp.PixelFormats;
 
 namespace GeneralBot.Commands.User
 {
@@ -131,6 +133,32 @@ namespace GeneralBot.Commands.User
                     image.SaveAsJpeg(imageStream, new JpegEncoder {Quality = 2});
                     imageStream.Seek(0, SeekOrigin.Begin);
                     await Context.Channel.SendFileAsync(imageStream, "needsmorejpeg.jpeg");
+                }
+            }
+            return CommandRuntimeResult.FromSuccess();
+        }
+
+        [Command("angery")]
+        [Summary("Feeling angry?")]
+        public async Task<RuntimeResult> Angery()
+        {
+            var message =
+                (await Context.Channel.GetMessagesAsync().Flatten())?
+                .FirstOrDefault(x => x.Attachments.Any(a => a.Width.HasValue));
+            if (message == null)
+                return CommandRuntimeResult.FromError("No images found!");
+            foreach (var attachment in message.Attachments)
+            {
+                using (var attachmentStream = await WebHelper.GetFileStreamAsync(HttpClient, new Uri(attachment.Url)))
+                using (var image = Image.Load(attachmentStream))
+                using (var imageStream = new MemoryStream())
+                {
+                    image.DrawPolygon(Rgba32.Red, 1000000,
+                        new PointF[] { new Point(0, 0), new Point(image.Width, image.Height)},
+                        new GraphicsOptions() { BlenderMode = PixelBlenderMode.Screen, BlendPercentage = 25 })
+                        .SaveAsPng(imageStream);
+                    imageStream.Seek(0, SeekOrigin.Begin);
+                    await Context.Channel.SendFileAsync(imageStream, "angery.png");
                 }
             }
             return CommandRuntimeResult.FromSuccess();

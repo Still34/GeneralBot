@@ -31,7 +31,7 @@ namespace GeneralBot.Commands.User
                 UserSettings.Profiles.Add(dbEntry);
                 await UserSettings.SaveChangesAsync();
             }
-            return CommandRuntimeResult.FromSuccess(
+            return CommandRuntimeResult.FromInfo(
                 $"{targetUser.Mention}'s current balance is {dbEntry.Balance}{Config.CurrencySymbol}");
         }
 
