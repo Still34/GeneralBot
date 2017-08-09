@@ -26,9 +26,7 @@ namespace GeneralBot.Services
                 !msg.Author.IsBot)
             {
                 var user = msg.Author;
-                var dbEntry = _userSettings.Profiles.SingleOrDefault(x => x.UserId == user.Id) ??
-                              _userSettings.Profiles.Add(new Profile {UserId = user.Id, LastMessage = msg.Timestamp})
-                                  .Entity;
+                var dbEntry = _userSettings.Profiles.SingleOrDefault(x => x.UserId == user.Id);
                 uint balanceIncrement = Convert.ToUInt32(new Random().Next(1, 10));
                 if (msg.Timestamp >= dbEntry.LastMessage.AddMinutes(1))
                 {

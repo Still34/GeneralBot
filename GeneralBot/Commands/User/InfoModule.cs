@@ -30,8 +30,8 @@ namespace GeneralBot.Commands.User
         {
             if (Context.Channel is SocketGuildChannel channel)
             {
-                var dbEntry = CoreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ??
-                              CoreSettings.GuildsSettings.Add(new GuildSettings {GuildId = Context.Guild.Id}).Entity;
+                var dbEntry = CoreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id);
+
                 if (!dbEntry.IsInviteAllowed)
                     return CommandRuntimeResult.FromError("The admin has disabled this command.");
                 var invite = await channel.GetLastInviteAsync(true);

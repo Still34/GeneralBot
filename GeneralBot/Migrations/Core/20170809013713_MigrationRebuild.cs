@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace GeneralBot.Migrations
+namespace GeneralBot.Migrations.Core
 {
-    public partial class GfycatThing : Migration
+    public partial class MigrationRebuild : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -12,8 +12,7 @@ namespace GeneralBot.Migrations
                 name: "ActivityLogging",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                    Id = table.Column<Guid>(nullable: false),
                     GuildId = table.Column<ulong>(nullable: false),
                     LogChannel = table.Column<ulong>(nullable: false),
                     ShouldLogJoin = table.Column<bool>(nullable: false),
@@ -29,8 +28,7 @@ namespace GeneralBot.Migrations
                 name: "GreetingsSettings",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                    Id = table.Column<Guid>(nullable: false),
                     ChannelId = table.Column<ulong>(nullable: false),
                     GuildId = table.Column<ulong>(nullable: false),
                     IsJoinEnabled = table.Column<bool>(nullable: false),
@@ -45,8 +43,7 @@ namespace GeneralBot.Migrations
                 name: "GuildsSettings",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                    Id = table.Column<Guid>(nullable: false),
                     CommandPrefix = table.Column<string>(nullable: false),
                     GuildId = table.Column<ulong>(nullable: false),
                     IsGfyCatEnabled = table.Column<bool>(nullable: false),

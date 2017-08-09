@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using GeneralBot.Models.Database.CoreSettings;
 using Discord;
 
-namespace GeneralBot.Migrations
+namespace GeneralBot.Migrations.Core
 {
     [DbContext(typeof(CoreContext))]
     partial class CoreContextModelSnapshot : ModelSnapshot
@@ -18,7 +18,7 @@ namespace GeneralBot.Migrations
 
             modelBuilder.Entity("GeneralBot.Models.Database.CoreSettings.ActivityLogging", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<ulong>("GuildId");
@@ -38,7 +38,7 @@ namespace GeneralBot.Migrations
 
             modelBuilder.Entity("GeneralBot.Models.Database.CoreSettings.GreetingSettings", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<ulong>("ChannelId");
@@ -56,7 +56,7 @@ namespace GeneralBot.Migrations
 
             modelBuilder.Entity("GeneralBot.Models.Database.CoreSettings.GuildSettings", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("CommandPrefix")

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using GeneralBot.Models.Database.UserSettings;
 
-namespace GeneralBot.Migrations.User
+namespace GeneralBot.Migrations
 {
     [DbContext(typeof(UserContext))]
     partial class UserContextModelSnapshot : ModelSnapshot
@@ -17,7 +17,7 @@ namespace GeneralBot.Migrations.User
 
             modelBuilder.Entity("GeneralBot.Models.Context.Coordinate", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<double>("Latitude");
@@ -33,7 +33,7 @@ namespace GeneralBot.Migrations.User
 
             modelBuilder.Entity("GeneralBot.Models.Database.UserSettings.Games", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("BattleTag");
@@ -53,7 +53,7 @@ namespace GeneralBot.Migrations.User
 
             modelBuilder.Entity("GeneralBot.Models.Database.UserSettings.Profile", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<uint>("Balance");
@@ -72,7 +72,7 @@ namespace GeneralBot.Migrations.User
 
             modelBuilder.Entity("GeneralBot.Models.Database.UserSettings.Reminder", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<ulong>("ChannelId");

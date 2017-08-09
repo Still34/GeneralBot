@@ -14,7 +14,6 @@ using GeneralBot.Models.Database.CoreSettings;
 using GeneralBot.Models.Database.UserSettings;
 using GeneralBot.Services;
 using Geocoding.Google;
-using Gfycat;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
@@ -43,6 +42,7 @@ namespace GeneralBot
                 .AddSingleton<ConfigureGuildService>()
                 .AddSingleton<ConfigurePresenceService>()
                 .AddSingleton<ConfigureReadyService>()
+                .AddSingleton<ActivityLogging>()
                 .AddSingleton<GoogleService>()
                 .AddSingleton<GfycatConversionService>()
                 .AddSingleton<ReminderService>()
@@ -81,6 +81,7 @@ namespace GeneralBot
             services.GetRequiredService<ConfigureGuildService>();
             services.GetRequiredService<ConfigurePresenceService>();
             services.GetRequiredService<ConfigureReadyService>();
+            services.GetRequiredService<ActivityLogging>();
             services.GetRequiredService<GfycatConversionService>();
             await services.GetRequiredService<CommandHandler>().InitAsync();
         }

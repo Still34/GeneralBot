@@ -56,8 +56,8 @@ namespace GeneralBot.Commands.User
             if (!geocodeResults.Any()) return CommandRuntimeResult.FromError("No results found.");
 
             var result = geocodeResults.FirstOrDefault();
-            var dbEntry = UserSettings.Coordinates.SingleOrDefault(x => x.UserId == Context.User.Id) ??
-                          UserSettings.Coordinates.Add(new Coordinate {UserId = Context.User.Id}).Entity;
+            var dbEntry = UserSettings.Coordinates.SingleOrDefault(x => x.UserId == Context.User.Id);
+
             dbEntry.Longitude = result.Coordinates.Longitude;
             dbEntry.Latitude = result.Coordinates.Latitude;
             UserSettings.Update(dbEntry);

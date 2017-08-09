@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using GeneralBot.Models.Database.UserSettings;
 
-namespace GeneralBot.Migrations.User
+namespace GeneralBot.Migrations
 {
     [DbContext(typeof(UserContext))]
-    [Migration("20170804152720_Reminder")]
-    partial class Reminder
+    [Migration("20170809013706_MigrationRebuild")]
+    partial class MigrationRebuild
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -18,7 +18,7 @@ namespace GeneralBot.Migrations.User
 
             modelBuilder.Entity("GeneralBot.Models.Context.Coordinate", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<double>("Latitude");
@@ -32,9 +32,29 @@ namespace GeneralBot.Migrations.User
                     b.ToTable("Coordinates");
                 });
 
+            modelBuilder.Entity("GeneralBot.Models.Database.UserSettings.Games", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("BattleTag");
+
+                    b.Property<string>("NintendoFriendCode");
+
+                    b.Property<string>("RiotId");
+
+                    b.Property<ulong>("SteamId");
+
+                    b.Property<ulong>("UserId");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Games");
+                });
+
             modelBuilder.Entity("GeneralBot.Models.Database.UserSettings.Profile", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<uint>("Balance");
@@ -53,7 +73,7 @@ namespace GeneralBot.Migrations.User
 
             modelBuilder.Entity("GeneralBot.Models.Database.UserSettings.Reminder", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<ulong>("ChannelId");
