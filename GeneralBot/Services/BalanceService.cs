@@ -26,7 +26,8 @@ namespace GeneralBot.Services
                 !msg.Author.IsBot)
             {
                 var user = msg.Author;
-                var dbEntry = _userSettings.Profiles.SingleOrDefault(x => x.UserId == user.Id);
+                var dbEntry = _userSettings.Profiles.SingleOrDefault(x => x.UserId == user.Id) ??
+                              _userSettings.Profiles.Add(new Profile {UserId = user.Id}).Entity;
                 uint balanceIncrement = Convert.ToUInt32(new Random().Next(1, 10));
                 if (msg.Timestamp >= dbEntry.LastMessage.AddMinutes(1))
                 {
@@ -35,7 +36,7 @@ namespace GeneralBot.Services
                     dbEntry.LastMessage = msg.Timestamp;
                     dbEntry.Balance = dbEntry.Balance + balanceIncrement;
                 }
-                _userSettings.Update(dbEntry);
+
                 await _userSettings.SaveChangesAsync();
             }
         }

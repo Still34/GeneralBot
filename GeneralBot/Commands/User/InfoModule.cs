@@ -31,7 +31,12 @@ namespace GeneralBot.Commands.User
             if (Context.Channel is SocketGuildChannel channel)
             {
                 var dbEntry = CoreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id);
-
+                if (dbEntry == null)
+                {
+                    dbEntry = new GuildSettings {GuildId = Context.Guild.Id};
+                    CoreSettings.GuildsSettings.Add(dbEntry);
+                    await CoreSettings.SaveChangesAsync();
+                }
                 if (!dbEntry.IsInviteAllowed)
                     return CommandRuntimeResult.FromError("The admin has disabled this command.");
                 var invite = await channel.GetLastInviteAsync(true);
@@ -96,7 +101,7 @@ namespace GeneralBot.Commands.User
         }
 
         /// <summary>
-        /// Modified from https://gist.github.com/foxbot/d220afcbbcadaa7fc5521493846032a7
+        ///     Modified from https://gist.github.com/foxbot/d220afcbbcadaa7fc5521493846032a7
         /// </summary>
         [Command("latency")]
         [Alias("ping", "pong", "rtt")]

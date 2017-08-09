@@ -1,12 +1,12 @@
-﻿using Discord;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 using GeneralBot.Commands.Results;
 using GeneralBot.Extensions;
 using GeneralBot.Preconditions;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using GeneralBot.Preconditions.Parameters;
 
 namespace GeneralBot.Commands.Moderator

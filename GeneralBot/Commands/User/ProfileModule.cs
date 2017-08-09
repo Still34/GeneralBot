@@ -24,7 +24,8 @@ namespace GeneralBot.Commands.User
         public Task<RuntimeResult> BalanceAsync(SocketUser user = null)
         {
             var targetUser = user ?? Context.User;
-            var dbEntry = UserSettings.Profiles.SingleOrDefault(x => x.UserId == targetUser.Id);
+            var dbEntry = UserSettings.Profiles.SingleOrDefault(x => x.UserId == targetUser.Id) ??
+                          UserSettings.Profiles.Add(new Profile {UserId = targetUser.Id}).Entity;
             return Task.FromResult<RuntimeResult>(
                 CommandRuntimeResult.FromSuccess(
                     $"{targetUser.Mention}'s current balance is {dbEntry.Balance}{Config.CurrencySymbol}"));
@@ -39,7 +40,8 @@ namespace GeneralBot.Commands.User
             public Task<RuntimeResult> CheckSummaryAsync(SocketUser user = null)
             {
                 var targetUser = user ?? Context.User;
-                var dbEntry = UserSettings.Profiles.SingleOrDefault(x => x.UserId == targetUser.Id);
+                var dbEntry = UserSettings.Profiles.SingleOrDefault(x => x.UserId == targetUser.Id) ??
+                              UserSettings.Profiles.Add(new Profile {UserId = targetUser.Id}).Entity;
                 return Task.FromResult<RuntimeResult>(
                     CommandRuntimeResult.FromInfo($"Current Summary: {Format.Bold(dbEntry.Summary)}"));
             }
@@ -47,9 +49,10 @@ namespace GeneralBot.Commands.User
             [Command("set")]
             public async Task<RuntimeResult> SetSummaryAsync([Remainder] string summary)
             {
-                var dbEntry = UserSettings.Profiles.SingleOrDefault(x => x.UserId == Context.User.Id);
+                var dbEntry = UserSettings.Profiles.SingleOrDefault(x => x.UserId == Context.User.Id) ??
+                              UserSettings.Profiles.Add(new Profile {UserId = Context.User.Id}).Entity;
                 dbEntry.Summary = summary;
-                UserSettings.Update(dbEntry);
+
                 await UserSettings.SaveChangesAsync();
                 return CommandRuntimeResult.FromSuccess($"Successfully set summary to {Format.Bold(summary)}");
             }
@@ -70,8 +73,7 @@ namespace GeneralBot.Commands.User
                 {
                     var targetUser = user ?? Context.User;
                     var dbEntry = UserSettings.Games.SingleOrDefault(x => x.UserId == targetUser.Id);
-
-                    if (dbEntry.SteamId == 0)
+                    if (dbEntry == null || dbEntry.SteamId == 0)
                         return CommandRuntimeResult.FromError("User hasn't setup their steam profile yet!");
 
                     var profile = await SteamService.GetProfileAsync(dbEntry.SteamId);
@@ -105,7 +107,8 @@ namespace GeneralBot.Commands.User
                 public async Task<RuntimeResult> SetSteamAsync([Remainder] string username)
                 {
                     ulong id = await SteamService.GetIdFromVanityAsync(username);
-                    var dbEntry = UserSettings.Games.SingleOrDefault(x => x.UserId == Context.User.Id);
+                    var dbEntry = UserSettings.Games.SingleOrDefault(x => x.UserId == Context.User.Id) ??
+                                  UserSettings.Games.Add(new Games {UserId = Context.User.Id}).Entity;
 
                     dbEntry.SteamId = id;
                     UserSettings.Add(dbEntry);

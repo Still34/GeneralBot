@@ -11,7 +11,6 @@ using GeneralBot.Extensions;
 using GeneralBot.Extensions.Helpers;
 using GeneralBot.Models.Database.UserSettings;
 using GeneralBot.Preconditions;
-using GeneralBot.Typereaders;
 using Humanizer;
 
 namespace GeneralBot.Commands.User
@@ -119,7 +118,8 @@ namespace GeneralBot.Commands.User
             [Summary("Content")] [Remainder] string remindContent) =>
             await RemindAsync(user, dateTime, remindContent);
 
-        private async Task<CommandRuntimeResult> RemindAsync(SocketUser user, DateTimeOffset dateTime, string remindContent)
+        private async Task<CommandRuntimeResult> RemindAsync(SocketUser user, DateTimeOffset dateTime,
+            string remindContent)
         {
             if (DateTimeOffset.Now > dateTime)
                 return CommandRuntimeResult.FromError($"{dateTime} has already passed!");

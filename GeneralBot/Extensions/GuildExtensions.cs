@@ -46,7 +46,8 @@ namespace GeneralBot.Extensions
         ///     its old counterpart's permission.
         /// </param>
         /// <returns>Return the new <see cref="ITextChannel" />.</returns>
-        public static async ValueTask<ITextChannel> CloneChannel(this ITextChannel oldChannel, bool deleteOldChannel = false, bool clonePerms = true)
+        public static async ValueTask<ITextChannel> CloneChannel(this ITextChannel oldChannel,
+            bool deleteOldChannel = false, bool clonePerms = true)
         {
             string channelName = oldChannel.Name;
             string channelTopic = oldChannel.Topic ?? "";

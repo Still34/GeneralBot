@@ -26,9 +26,9 @@ namespace GeneralBot.Commands.User
         private readonly Regex _numberRegex = new Regex("[0-9]");
         private readonly TimeSpan _responseTimeout = TimeSpan.FromMinutes(5);
         private IDisposable _typing;
-        public InteractiveService InteractiveService { get; set; }
-        public CoreContext CoreSettings { get; set; }
         public ConfigModel Config { get; set; }
+        public CoreContext CoreSettings { get; set; }
+        public InteractiveService InteractiveService { get; set; }
 
         protected override void BeforeExecute(CommandInfo command)
         {
@@ -101,7 +101,8 @@ namespace GeneralBot.Commands.User
             // #3, send the report.
             var reportChannel = await GetReportChannelAsync(guilds[selection]);
             var reportRoles = await GetModeratorRolesAsync(guilds[selection]);
-            await reportChannel.SendMessageAsync(string.Join(", ", reportRoles.Select(x=>x.Mention)) ?? "New report has been filed.",
+            await reportChannel.SendMessageAsync(
+                string.Join(", ", reportRoles.Select(x => x.Mention)) ?? "New report has been filed.",
                 embed: reportEmbed);
 
             return CommandRuntimeResult.FromSuccess("Your report has been sent.");
@@ -119,7 +120,7 @@ namespace GeneralBot.Commands.User
             if (searchChannel != null)
             {
                 dbEntry.ReportChannel = searchChannel.Id;
-                CoreSettings.Update(dbEntry);
+
                 await CoreSettings.SaveChangesAsync();
                 return searchChannel;
             }

@@ -11,7 +11,8 @@ namespace GeneralBot.Extensions
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
-        public static string GetParamUsage(this ParameterInfo param) => $"{(param.IsOptional ? '[' : '<')}{param.Summary ?? param.Name}{(param.IsOptional ? ']' : '>')}";
+        public static string GetParamUsage(this ParameterInfo param) =>
+            $"{(param.IsOptional ? '[' : '<')}{param.Summary ?? param.Name}{(param.IsOptional ? ']' : '>')}";
 
         public static string GetParamsUsage(this IEnumerable<ParameterInfo> paramInfos)
         {

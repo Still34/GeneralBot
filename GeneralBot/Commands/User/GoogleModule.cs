@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Discord.Commands;
 using GeneralBot.Commands.Results;
-using GeneralBot.Models.Config;
 using GeneralBot.Services;
 
 namespace GeneralBot.Commands.User
@@ -19,6 +18,5 @@ namespace GeneralBot.Commands.User
             await ReplyAsync("", embed: await GoogleService.SearchAsync(query));
             return CommandRuntimeResult.FromSuccess();
         }
-
     }
 }

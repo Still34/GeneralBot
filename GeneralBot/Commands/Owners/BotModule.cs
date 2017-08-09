@@ -19,8 +19,8 @@ namespace GeneralBot.Commands.Owners
     public class BotModule : ModuleBase<SocketCommandContext>
     {
         private IDisposable _typing;
-        public InteractiveService InteractiveService { get; set; }
         public HttpClient HttpClient { get; set; }
+        public InteractiveService InteractiveService { get; set; }
 
         protected override void BeforeExecute(CommandInfo command)
         {

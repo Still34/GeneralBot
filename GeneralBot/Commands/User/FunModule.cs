@@ -19,9 +19,9 @@ namespace GeneralBot.Commands.User
     [Remarks("Want to goof around? Try these!")]
     public class FunModule : ModuleBase<SocketCommandContext>
     {
-        public Random Random { get; set; }
         public ConfigModel Config { get; set; }
         public HttpClient HttpClient { get; set; }
+        public Random Random { get; set; }
 
         [Command("8ball")]
         [Summary("Ask it any questions!")]

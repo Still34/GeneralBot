@@ -5,7 +5,7 @@ using Discord.WebSocket;
 namespace GeneralBot.Services
 {
     /// <summary>
-    /// Configures the presence dynamically according to the bot's latency.
+    ///     Configures the presence dynamically according to the bot's latency.
     /// </summary>
     internal class ConfigurePresenceService
     {

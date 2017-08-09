@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using Discord;
-using System.Collections.Generic;
 
 namespace GeneralBot.Extensions.Helpers
 {
@@ -16,9 +16,7 @@ namespace GeneralBot.Extensions.Helpers
             {
                 var fields = typeof(Color).GetFields();
                 foreach (var field in fields)
-                {
                     if (field.GetValue(null) is Color color) ColorCache.Add(color);
-                }
             }
             return ColorCache[random.Next(0, ColorCache.Count)];
         }

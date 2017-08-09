@@ -13,8 +13,8 @@ namespace DirectoryMaid.Services
     public class ReminderService
     {
         private readonly DiscordSocketClient _client;
-        private readonly UserContext _userContext;
         private readonly ConfigModel _config;
+        private readonly UserContext _userContext;
         private Timer _timer;
 
         public ReminderService()
@@ -43,7 +43,7 @@ namespace DirectoryMaid.Services
             },
             Description = content,
             Color = Color.Blue,
-            ThumbnailUrl = _config.Icons.Calendar 
+            ThumbnailUrl = _config.Icons.Calendar
         }.WithCurrentTimestamp();
 
         /// <summary>

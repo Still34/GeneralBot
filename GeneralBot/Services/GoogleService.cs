@@ -6,9 +6,9 @@ using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Discord;
+using GeneralBot.Extensions.Helpers;
 using HtmlAgilityPack;
 using Humanizer;
-using GeneralBot.Extensions.Helpers;
 
 namespace GeneralBot.Services
 {
@@ -16,10 +16,7 @@ namespace GeneralBot.Services
     {
         private readonly HttpClient _httpClient;
 
-        public GoogleService(HttpClient httpClient)
-        {
-            _httpClient = httpClient;
-        }
+        public GoogleService(HttpClient httpClient) => _httpClient = httpClient;
 
         public async Task<Embed> SearchAsync(string query, int amount = 5)
         {
@@ -30,10 +27,11 @@ namespace GeneralBot.Services
                 Path = "search",
                 Query = $"q={encodedQuery}&lr=lang_en&hl=en"
             };
-            
+
             using (var response = await _httpClient.GetAsync(builder.Uri).ConfigureAwait(false))
             {
-                _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "Mozilla/5.0 (Windows NT 6.3; Win64; x64)");
+                _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent",
+                    "Mozilla/5.0 (Windows NT 6.3; Win64; x64)");
                 if (response.IsSuccessStatusCode)
                 {
                     var embed = new EmbedBuilder();
@@ -63,7 +61,9 @@ namespace GeneralBot.Services
                 var urlNode = node.SelectSingleNode(".//h3/a");
                 if (string.IsNullOrWhiteSpace(urlNode?.InnerText)) continue;
                 string parsedTitle = WebUtility.HtmlDecode(urlNode.InnerText);
-                string url = WebUtility.UrlDecode(WebUtility.HtmlDecode(urlNode.Attributes.FirstOrDefault(x => x.Name == "href").Value));
+                string url =
+                    WebUtility.UrlDecode(WebUtility.HtmlDecode(urlNode.Attributes.FirstOrDefault(x => x.Name == "href")
+                        .Value));
                 if (url.StartsWith("/url?q="))
                 {
                     url = url.Replace("/url?q=", "");
@@ -77,7 +77,8 @@ namespace GeneralBot.Services
 
         public async Task<Embed> ParseGoogleCardAsync(HtmlDocument doc, EmbedBuilder builder)
         {
-            var featuredSnippet = doc.DocumentNode.SelectSingleNode(".//ol/div[@class='g']/div[@class='_uXc hp-xpdbox']")?.ChildNodes;
+            var featuredSnippet = doc.DocumentNode
+                .SelectSingleNode(".//ol/div[@class='g']/div[@class='_uXc hp-xpdbox']")?.ChildNodes;
             if (featuredSnippet != null)
             {
                 string icon = featuredSnippet[0]?.SelectSingleNode("div/a/img")?.GetAttributeValue("src", "");
@@ -86,7 +87,8 @@ namespace GeneralBot.Services
                 if (featuredSnippet.Count > 4)
                 {
                     string description = WebUtility.HtmlDecode(featuredSnippet[2].InnerText).Replace("Wikipedia", "");
-                    builder.Title = $"{featuredSnippet[1].FirstChild.ChildNodes[0].InnerText} ({featuredSnippet[1].FirstChild.ChildNodes[1].InnerText})";
+                    builder.Title =
+                        $"{featuredSnippet[1].FirstChild.ChildNodes[0].InnerText} ({featuredSnippet[1].FirstChild.ChildNodes[1].InnerText})";
                     builder.Description = description;
                     var detailedColumn = featuredSnippet.ElementAtOrDefault(4);
                     var nutrition = detailedColumn?.SelectSingleNode("div[@class='_d6d']");
@@ -104,7 +106,8 @@ namespace GeneralBot.Services
                         builder.AddField(result.Title, result.Url);
                     return builder.Build();
                 }
-                string unparsedTitle = WebUtility.HtmlDecode(featuredSnippet.FirstOrDefault(x => x.GetAttributeValue("class", "") == "_dSg")?.InnerText);
+                string unparsedTitle = WebUtility.HtmlDecode(featuredSnippet
+                    .FirstOrDefault(x => x.GetAttributeValue("class", "") == "_dSg")?.InnerText);
                 if (unparsedTitle != null)
                 {
                     var regex = Regex.Split(unparsedTitle, @"((http|https)://\S+\b)");
@@ -118,7 +121,8 @@ namespace GeneralBot.Services
                     else
                         title = unparsedTitle.Split('-')[0];
                     builder.Title = title;
-                    builder.Description = WebUtility.HtmlDecode(featuredSnippet.FirstOrDefault(x => x.GetAttributeValue("class", "") == "_o0d").InnerText);
+                    builder.Description = WebUtility.HtmlDecode(featuredSnippet
+                        .FirstOrDefault(x => x.GetAttributeValue("class", "") == "_o0d").InnerText);
                     var results = await GetGoogleSearchAsync(doc, 4);
                     foreach (var result in results.Skip(1))
                         builder.AddField(result.Title, result.Url);
@@ -186,6 +190,5 @@ namespace GeneralBot.Services
 
             return null;
         }
-
     }
 }
