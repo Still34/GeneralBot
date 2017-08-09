@@ -14,7 +14,7 @@ namespace GeneralBot.Commands.User
 
         [Command("google")]
         [Alias("search")]
-        public async Task<RuntimeResult> Search([Remainder] string query)
+        public async Task<RuntimeResult> SearchAsync([Remainder] string query)
         {
             await ReplyAsync("", embed: await GoogleService.SearchAsync(query));
             return CommandRuntimeResult.FromSuccess();

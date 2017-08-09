@@ -3,7 +3,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
-using Discord.Rest;
 using Discord.WebSocket;
 using GeneralBot.Extensions.Helpers;
 using Microsoft.Extensions.Logging;

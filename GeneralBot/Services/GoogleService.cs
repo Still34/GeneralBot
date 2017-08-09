@@ -14,6 +14,13 @@ namespace GeneralBot.Services
 {
     public class GoogleService
     {
+        private readonly HttpClient _httpClient;
+
+        public GoogleService(HttpClient httpClient)
+        {
+            _httpClient = httpClient;
+        }
+
         public async Task<Embed> SearchAsync(string query, int amount = 5)
         {
             string encodedQuery = WebUtility.UrlEncode(query);
@@ -23,11 +30,10 @@ namespace GeneralBot.Services
                 Path = "search",
                 Query = $"q={encodedQuery}&lr=lang_en&hl=en"
             };
-
-            using (var client = new HttpClient())
-            using (var response = await client.GetAsync(builder.Uri))
+            
+            using (var response = await _httpClient.GetAsync(builder.Uri).ConfigureAwait(false))
             {
-                client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "Mozilla/5.0 (Windows NT 6.3; Win64; x64)");
+                _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "Mozilla/5.0 (Windows NT 6.3; Win64; x64)");
                 if (response.IsSuccessStatusCode)
                 {
                     var embed = new EmbedBuilder();
@@ -35,10 +41,10 @@ namespace GeneralBot.Services
                     string htmlString = await response.Content.ReadAsStringAsync();
                     var doc = new HtmlDocument();
                     doc.LoadHtml(htmlString);
-                    var card = await ParseGoogleCard(doc, embed);
+                    var card = await ParseGoogleCardAsync(doc, embed);
                     if (card != null)
                         return card;
-                    var results = await GetGoogleSearch(doc, amount);
+                    var results = await GetGoogleSearchAsync(doc, amount);
                     foreach (var result in results)
                         embed.AddField(result.Title, result.Url);
                     return embed.WithFooter(x => x.Text = $"Results for '{query}'").Build();
@@ -47,7 +53,7 @@ namespace GeneralBot.Services
             return null;
         }
 
-        public Task<List<(string Title, string Url)>> GetGoogleSearch(HtmlDocument doc, int amount = 5)
+        public Task<List<(string Title, string Url)>> GetGoogleSearchAsync(HtmlDocument doc, int amount = 5)
         {
             var list = new List<(string Title, string Url)>();
             var searchNodes = doc.DocumentNode.SelectNodes("//html//body//div[@class='g']");
@@ -69,7 +75,7 @@ namespace GeneralBot.Services
             return Task.FromResult(list);
         }
 
-        public async Task<Embed> ParseGoogleCard(HtmlDocument doc, EmbedBuilder builder)
+        public async Task<Embed> ParseGoogleCardAsync(HtmlDocument doc, EmbedBuilder builder)
         {
             var featuredSnippet = doc.DocumentNode.SelectSingleNode(".//ol/div[@class='g']/div[@class='_uXc hp-xpdbox']")?.ChildNodes;
             if (featuredSnippet != null)
@@ -93,7 +99,7 @@ namespace GeneralBot.Services
                         builder.AddInlineField(amount[0], amount[1]);
                         builder.AddInlineField(calories[0], calories[1]);
                     }
-                    var googleSearch = await GetGoogleSearch(doc, 3);
+                    var googleSearch = await GetGoogleSearchAsync(doc, 3);
                     foreach (var result in googleSearch)
                         builder.AddField(result.Title, result.Url);
                     return builder.Build();
@@ -113,7 +119,7 @@ namespace GeneralBot.Services
                         title = unparsedTitle.Split('-')[0];
                     builder.Title = title;
                     builder.Description = WebUtility.HtmlDecode(featuredSnippet.FirstOrDefault(x => x.GetAttributeValue("class", "") == "_o0d").InnerText);
-                    var results = await GetGoogleSearch(doc, 4);
+                    var results = await GetGoogleSearchAsync(doc, 4);
                     foreach (var result in results.Skip(1))
                         builder.AddField(result.Title, result.Url);
                     return builder.Build();
@@ -131,17 +137,17 @@ namespace GeneralBot.Services
                 {
                     if (word.FirstChild.ChildNodes.FirstOrDefault() == null) continue;
                     string type = word.FirstChild.ChildNodes[0].InnerText;
-                    var wordDefs = new List<string>();
+                    var wordDefinitions = new List<string>();
                     foreach (var def in word.FirstChild.ChildNodes[1].ChildNodes)
                     {
-                        if (wordDefs.Count == 3)
+                        if (wordDefinitions.Count == 3)
                             continue;
-                        wordDefs.Add($"{wordDefs.Count + 1}. {WebUtility.HtmlDecode(def.InnerText)}");
+                        wordDefinitions.Add($"{wordDefinitions.Count + 1}. {WebUtility.HtmlDecode(def.InnerText)}");
                     }
                     builder.AddField(f =>
                     {
                         f.Name = type;
-                        f.Value = string.Join("\n", wordDefs);
+                        f.Value = string.Join("\n", wordDefinitions);
                     });
                 }
                 return builder.WithFooter(x => x.Text = "Definition").Build();
