@@ -12,12 +12,14 @@ using GeneralBot.Commands.Results;
 using GeneralBot.Extensions.Helpers;
 using GeneralBot.Models.Config;
 using GeneralBot.Models.Reddit;
+using SixLabors;
+using SixLabors.Primitives;
 using ImageSharp;
 using ImageSharp.Formats;
+using ImageSharp.PixelFormats;
 using Newtonsoft.Json;
 using Image = ImageSharp.Image;
-using SixLabors.Primitives;
-using ImageSharp.PixelFormats;
+
 
 namespace GeneralBot.Commands.User
 {
@@ -140,7 +142,7 @@ namespace GeneralBot.Commands.User
 
         [Command("angery")]
         [Summary("Feeling angry?")]
-        public async Task<RuntimeResult> Angery()
+        public async Task<RuntimeResult> AngeryAsync()
         {
             var message =
                 (await Context.Channel.GetMessagesAsync().Flatten())?
