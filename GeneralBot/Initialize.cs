@@ -80,6 +80,7 @@ namespace GeneralBot
             services.GetRequiredService<LoggingService>();
             services.GetRequiredService<ConfigureGuildService>();
             services.GetRequiredService<ConfigurePresenceService>();
+            services.GetRequiredService<BalanceService>();
             services.GetRequiredService<ConfigureReadyService>();
             services.GetRequiredService<ActivityLogging>();
             services.GetRequiredService<GfycatConversionService>();
