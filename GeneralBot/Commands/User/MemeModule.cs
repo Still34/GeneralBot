@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
@@ -43,12 +44,16 @@ namespace GeneralBot.Commands.User
         [Summary("Replies with a s t h e t i c texts.")]
         public Task<RuntimeResult> ExpandMemeAsync([Remainder] string input)
         {
+            var regexMatch = Regex.Match(Context.Message.Content, $@"\b({input})\b");
+            string parsedInput = Context.Message.Resolve(regexMatch.Success
+                ? regexMatch.Index
+                : Context.Message.Content.IndexOf(input, StringComparison.OrdinalIgnoreCase));
             var sb = new StringBuilder();
-            foreach (char c in input)
+            foreach (char c in parsedInput)
             {
                 if (c == ' ') continue;
                 sb.Append(c);
-                sb.Append(" ");
+                sb.Append(' ');
             }
             return Task.FromResult<RuntimeResult>(CommandRuntimeResult.FromInfo(sb));
         }
