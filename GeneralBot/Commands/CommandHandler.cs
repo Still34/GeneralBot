@@ -22,12 +22,12 @@ namespace GeneralBot.Commands
     {
         private readonly DiscordSocketClient _client;
         private readonly CommandService _commandService;
-        private readonly CoreContext _coreSettings;
+        private readonly ICoreRepository _coreSettings;
         private readonly LoggingService _loggingService;
         private readonly IServiceProvider _services;
 
         public CommandHandler(IServiceProvider services, DiscordSocketClient client, CommandService commandService,
-            CoreContext settings, LoggingService loggingService)
+            ICoreRepository settings, LoggingService loggingService)
         {
             _services = services;
             _client = client;
@@ -98,9 +98,8 @@ namespace GeneralBot.Commands
             // Checks if the channel is a guild channel, if so, attempts to fetch its prefix.
             if (msg.Channel is SocketGuildChannel guildChannel)
             {
-                var dbEntry = _coreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == guildChannel.Guild.Id);
-                if (dbEntry != null)
-                    prefix = dbEntry.CommandPrefix;
+                var record = await _coreSettings.GetOrCreateGuildSettingsAsync(guildChannel.Guild);
+                prefix = record.CommandPrefix;
             }
             if (!msg.HasStringPrefix(prefix, ref argPos)) return;
 

@@ -12,12 +12,12 @@ namespace GeneralBot.Services
 {
     public class GfycatConversionService
     {
-        private readonly CoreContext _coreSettings;
+        private readonly ICoreRepository _coreSettings;
         private readonly GfycatClient _gfycatClient;
         private readonly LoggingService _loggingService;
 
         public GfycatConversionService(ConfigModel config, LoggingService loggingService,
-            DiscordSocketClient discordClient, CoreContext coreSettings)
+            DiscordSocketClient discordClient, ICoreRepository coreSettings)
         {
             if (string.IsNullOrWhiteSpace(config.Credentials.Gfycat.ClientId) ||
                 string.IsNullOrWhiteSpace(config.Credentials.Gfycat.Secret))
@@ -28,28 +28,27 @@ namespace GeneralBot.Services
             _gfycatClient = new GfycatClient(config.Credentials.Gfycat.ClientId, config.Credentials.Gfycat.Secret);
         }
 
-        private Task FileUploadHandlerAsync(SocketMessage msgArg)
+        private async Task FileUploadHandlerAsync(SocketMessage msgArg)
         {
             // Checks if it's a user message.
             var msg = msgArg as SocketUserMessage;
-            if (msg == null) return Task.CompletedTask;
-            if (msg.Author.IsBot) return Task.CompletedTask;
+            if (msg == null) return;
+            if (msg.Author.IsBot) return;
             // Checks if it's a guild message.
             var channel = msg.Channel as SocketGuildChannel;
-            if (channel == null) return Task.CompletedTask;
+            if (channel == null) return;
             // Checks if the guild has specified for conversion.
-            var dbEntry = _coreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == channel.Guild.Id);
-            if (dbEntry == null || !dbEntry.IsGfyCatEnabled) return Task.CompletedTask;
+            var dbEntry = await _coreSettings.GetOrCreateGuildSettingsAsync(channel.Guild);
+            if (!dbEntry.IsGfyCatEnabled) return;
             // Begins attachment search.
             var attachments = msg.Attachments
                 .Where(att => att.Filename.EndsWith(".mov", StringComparison.OrdinalIgnoreCase) ||
                               att.Filename.EndsWith(".webm", StringComparison.OrdinalIgnoreCase)).ToList();
-            if (attachments.Count == 0) return Task.CompletedTask;
+            if (attachments.Count == 0) return;
             foreach (var attachment in attachments)
             {
                 var _ = PerformGfyConversionAsync(attachment.Url, msg);
             }
-            return Task.CompletedTask;
         }
 
         private async Task PerformGfyConversionAsync(string url, IMessage msg)

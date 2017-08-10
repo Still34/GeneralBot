@@ -27,7 +27,7 @@ namespace GeneralBot.Commands.User
         private readonly TimeSpan _responseTimeout = TimeSpan.FromMinutes(5);
         private IDisposable _typing;
         public ConfigModel Config { get; set; }
-        public CoreContext CoreSettings { get; set; }
+        public CoreRepository CoreSettings { get; set; }
         public InteractiveService InteractiveService { get; set; }
 
         protected override void BeforeExecute(CommandInfo command)
@@ -111,7 +111,7 @@ namespace GeneralBot.Commands.User
         private async Task<ITextChannel> GetReportChannelAsync(SocketGuild guild)
         {
             // Attempts to get text channel from database entry.
-            var dbEntry = CoreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == guild.Id);
+            var dbEntry = await CoreSettings.GetOrCreateGuildSettingsAsync(guild);
             var reportChannel = guild.GetTextChannel(dbEntry.ReportChannel);
             if (reportChannel != null) return reportChannel;
 
@@ -120,8 +120,7 @@ namespace GeneralBot.Commands.User
             if (searchChannel != null)
             {
                 dbEntry.ReportChannel = searchChannel.Id;
-
-                await CoreSettings.SaveChangesAsync();
+                await CoreSettings.SaveRepositoryAsync();
                 return searchChannel;
             }
 
@@ -138,10 +137,10 @@ namespace GeneralBot.Commands.User
             return newChannel;
         }
 
-        private Task<IEnumerable<SocketRole>> GetModeratorRolesAsync(SocketGuild guild)
+        private async Task<IEnumerable<SocketRole>> GetModeratorRolesAsync(SocketGuild guild)
         {
-            var dbEntry = CoreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == guild.Id);
-            return Task.FromResult(guild.Roles.Where(x => x.Permissions.Has(dbEntry.ModeratorPermission)));
+            var dbEntry = await CoreSettings.GetOrCreateGuildSettingsAsync(guild);
+            return guild.Roles.Where(x => x.Permissions.Has(dbEntry.ModeratorPermission));
         }
     }
 }

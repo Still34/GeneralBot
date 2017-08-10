@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Globalization;
-using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
@@ -14,10 +13,10 @@ namespace GeneralBot.Services
     /// </summary>
     internal class ConfigureGuildService
     {
-        private readonly CoreContext _coreSettings;
+        private readonly ICoreRepository _coreSettings;
         private readonly LoggingService _loggingService;
 
-        public ConfigureGuildService(DiscordSocketClient client, CoreContext coreSettings,
+        public ConfigureGuildService(DiscordSocketClient client, ICoreRepository coreSettings,
             LoggingService loggingService)
         {
             client.GuildAvailable += RegisterGuildAsync;
@@ -28,24 +27,11 @@ namespace GeneralBot.Services
             _loggingService = loggingService;
         }
 
-        private async Task RegisterGuildAsync(SocketGuild guild)
-        {
-            var dbEntry = _coreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == guild.Id);
-            if (dbEntry != null) return;
+        private async Task RegisterGuildAsync(SocketGuild guild) =>
+            await _coreSettings.GetOrCreateGuildSettingsAsync(guild);
 
-            await _loggingService.LogAsync($"Guild {guild} ({guild.Id}) found, registering...", LogSeverity.Info);
-            await _coreSettings.GuildsSettings.AddAsync(new GuildSettings {GuildId = guild.Id});
-            await _coreSettings.SaveChangesAsync();
-        }
-
-        private async Task UnregisterGuildAsync(SocketGuild guild)
-        {
-            var guildSettings = _coreSettings.GuildsSettings.Where(x => x.GuildId == guild.Id);
-            if (guildSettings == null) return;
-            await _loggingService.LogAsync($"Left {guild} ({guild.Id}), unregistering...", LogSeverity.Info);
-            _coreSettings.GuildsSettings.RemoveRange(guildSettings);
-            await _coreSettings.SaveChangesAsync();
-        }
+        private async Task UnregisterGuildAsync(SocketGuild guild) =>
+            await _coreSettings.UnregisterGuildAsync(guild);
 
         private async Task WelcomeAsync(SocketGuildUser user)
         {
@@ -53,8 +39,8 @@ namespace GeneralBot.Services
             await _loggingService.LogAsync($"{user.GetFullnameOrDefault()} ({user.Id}) joined {guild} ({guild.Id}).",
                 LogSeverity.Verbose);
 
-            var dbEntry = _coreSettings.GreetingsSettings.SingleOrDefault(x => x.GuildId == guild.Id);
-            if (dbEntry == null || !dbEntry.IsJoinEnabled) return;
+            var dbEntry = await _coreSettings.GetOrCreateGreetingsAsync(guild);
+            if (!dbEntry.IsJoinEnabled) return;
             var channel = guild.GetTextChannel(dbEntry.ChannelId);
             if (channel == null) return;
             string formattedMessage = dbEntry.WelcomeMessage

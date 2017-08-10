@@ -22,7 +22,7 @@ namespace GeneralBot.Commands.Admin
     [RequireUserPermission(GuildPermission.Administrator)]
     public class ConfigModule : ModuleBase<SocketCommandContext>
     {
-        public CoreContext CoreSettings { get; set; }
+        public ICoreRepository CoreRepository { get; set; }
         public HttpClient HttpClient { get; set; }
         public InteractiveService InteractiveService { get; set; }
 
@@ -57,12 +57,9 @@ namespace GeneralBot.Commands.Admin
         [Summary("Changes the command prefix.")]
         public async Task<RuntimeResult> ConfigPrefixAsync(string prefix)
         {
-            var dbEntry = CoreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ??
-                          CoreSettings.GuildsSettings.Add(new GuildSettings {GuildId = Context.Guild.Id}).Entity;
-
+            var dbEntry = await CoreRepository.GetOrCreateGuildSettingsAsync(Context.Guild);
             dbEntry.CommandPrefix = prefix;
-
-            await CoreSettings.SaveChangesAsync();
+            await CoreRepository.SaveRepositoryAsync();
             return CommandRuntimeResult.FromSuccess($"Successfully changed prefix to {Format.Bold(prefix)}.");
         }
 
@@ -71,12 +68,9 @@ namespace GeneralBot.Commands.Admin
         [Summary("Changes the required permission to use mod commands.")]
         public async Task<RuntimeResult> ModeratorPermsSetAsync([Remainder] GuildPermission guildPermission)
         {
-            var dbEntry = CoreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ??
-                          CoreSettings.GuildsSettings.Add(new GuildSettings {GuildId = Context.Guild.Id}).Entity;
-
+            var dbEntry = await CoreRepository.GetOrCreateGuildSettingsAsync(Context.Guild);
             dbEntry.ModeratorPermission = guildPermission;
-
-            await CoreSettings.SaveChangesAsync();
+            await CoreRepository.SaveRepositoryAsync();
             return CommandRuntimeResult.FromSuccess(
                 $"Successfully changed the required moderator permission to {Format.Bold(guildPermission.Humanize(LetterCasing.Title))}.");
         }
@@ -86,8 +80,7 @@ namespace GeneralBot.Commands.Admin
         [Summary("Change server invite command settings.")]
         public async Task<RuntimeResult> ToggleInviteAsync(bool? shouldEnable = null)
         {
-            var dbEntry = CoreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ??
-                          CoreSettings.GuildsSettings.Add(new GuildSettings {GuildId = Context.Guild.Id}).Entity;
+            var dbEntry = await CoreRepository.GetOrCreateGuildSettingsAsync(Context.Guild);
 
             string result;
             switch (shouldEnable ?? !dbEntry.IsInviteAllowed)
@@ -102,7 +95,7 @@ namespace GeneralBot.Commands.Admin
                     break;
             }
 
-            await CoreSettings.SaveChangesAsync();
+            await CoreRepository.SaveRepositoryAsync();
             return CommandRuntimeResult.FromSuccess(result);
         }
 
@@ -111,9 +104,7 @@ namespace GeneralBot.Commands.Admin
         [Summary("Change gfycat conversion settings.")]
         public async Task<RuntimeResult> ToggleGfycatAsync(bool? shouldEnable = null)
         {
-            var dbEntry = CoreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ??
-                          CoreSettings.GuildsSettings.Add(new GuildSettings {GuildId = Context.Guild.Id}).Entity;
-
+            var dbEntry = await CoreRepository.GetOrCreateGuildSettingsAsync(Context.Guild);
             string result;
             switch (shouldEnable ?? !dbEntry.IsGfyCatEnabled)
             {
@@ -126,8 +117,7 @@ namespace GeneralBot.Commands.Admin
                     result = "Auto gfycat conversion has been **disabled**.";
                     break;
             }
-
-            await CoreSettings.SaveChangesAsync();
+            await CoreRepository.SaveRepositoryAsync();
             return CommandRuntimeResult.FromSuccess(result);
         }
 
@@ -135,15 +125,13 @@ namespace GeneralBot.Commands.Admin
         [Alias("logging")]
         public class Log : ModuleBase<SocketCommandContext>
         {
-            public CoreContext CoreSettings { get; set; }
+            public ICoreRepository CoreRepository { get; set; }
 
             [Command("voice")]
             [Alias("voicechat", "vc")]
             public async Task<RuntimeResult> ToggleVcLoggingAsync(bool? shouldEnable = null)
             {
-                var dbEntry = CoreSettings.ActivityLogging.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ??
-                              CoreSettings.ActivityLogging.Add(new ActivityLogging {GuildId = Context.Guild.Id}).Entity;
-
+                var dbEntry = await CoreRepository.GetOrCreateActivityAsync(Context.Guild);
                 string result;
                 switch (shouldEnable ?? !dbEntry.ShouldLogVoice)
                 {
@@ -156,8 +144,7 @@ namespace GeneralBot.Commands.Admin
                         result = "Voice activity logging has been **disabled**.";
                         break;
                 }
-
-                await CoreSettings.SaveChangesAsync();
+                await CoreRepository.SaveRepositoryAsync();
                 return CommandRuntimeResult.FromSuccess(result);
             }
 
@@ -165,8 +152,7 @@ namespace GeneralBot.Commands.Admin
             [Alias("userjoin", "userjoined", "joined")]
             public async Task<RuntimeResult> ToggleJoinLoggingAsync(bool? shouldEnable = null)
             {
-                var dbEntry = CoreSettings.ActivityLogging.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ??
-                              CoreSettings.ActivityLogging.Add(new ActivityLogging {GuildId = Context.Guild.Id}).Entity;
+                var dbEntry = await CoreRepository.GetOrCreateActivityAsync(Context.Guild);
                 string result;
                 switch (shouldEnable ?? !dbEntry.ShouldLogJoin)
                 {
@@ -179,7 +165,7 @@ namespace GeneralBot.Commands.Admin
                         result = "User join logging has been **disabled**.";
                         break;
                 }
-                await CoreSettings.SaveChangesAsync();
+                await CoreRepository.SaveRepositoryAsync();
                 return CommandRuntimeResult.FromSuccess(result);
             }
 
@@ -187,9 +173,7 @@ namespace GeneralBot.Commands.Admin
             [Alias("left", "userleft", "userleave")]
             public async Task<RuntimeResult> ToggleLeaveLoggingAsync(bool? shouldEnable = null)
             {
-                var dbEntry = CoreSettings.ActivityLogging.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ??
-                              CoreSettings.ActivityLogging.Add(new ActivityLogging {GuildId = Context.Guild.Id}).Entity;
-
+                var dbEntry = await CoreRepository.GetOrCreateActivityAsync(Context.Guild);
                 string result;
                 switch (shouldEnable ?? !dbEntry.ShouldLogLeave)
                 {
@@ -203,7 +187,7 @@ namespace GeneralBot.Commands.Admin
                         break;
                 }
 
-                await CoreSettings.SaveChangesAsync();
+                await CoreRepository.SaveRepositoryAsync();
                 return CommandRuntimeResult.FromSuccess(result);
             }
         }
@@ -214,19 +198,13 @@ namespace GeneralBot.Commands.Admin
         public class WelcomeModule : ModuleBase<SocketCommandContext>
         {
             public ConfigModel Config { get; set; }
-            public CoreContext CoreSettings { get; set; }
+            public ICoreRepository CoreRepository { get; set; }
 
             [Command]
             [Summary("Checks the current status of the welcome feature.")]
             public async Task WelcomeAsync()
             {
-                var dbEntry = CoreSettings.GreetingsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id);
-                if (dbEntry == null)
-                {
-                    dbEntry = new GreetingSettings {GuildId = Context.Guild.Id};
-                    CoreSettings.GreetingsSettings.Add(dbEntry);
-                    await CoreSettings.SaveChangesAsync();
-                }
+                var dbEntry = await CoreRepository.GetOrCreateGreetingsAsync(Context.Guild);
                 string formattedMessage = dbEntry.WelcomeMessage.Replace("{mention}", Context.User.Mention)
                     .Replace("{username}", Context.User.Username)
                     .Replace("{discrim}", Context.User.Discriminator)
@@ -249,18 +227,12 @@ namespace GeneralBot.Commands.Admin
             [Summary("Enables the welcome setting on the current guild.")]
             public async Task<RuntimeResult> EnableWelcomeAsync()
             {
-                var greetingSettings =
-                    CoreSettings.GreetingsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ??
-                    CoreSettings.GreetingsSettings.Add(new GreetingSettings {GuildId = Context.Guild.Id}).Entity;
-
-                var guildSettings = CoreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ??
-                                    CoreSettings.GuildsSettings.Add(new GuildSettings {GuildId = Context.Guild.Id})
-                                        .Entity;
+                var greetingSettings = await CoreRepository.GetOrCreateGreetingsAsync(Context.Guild);
+                var guildSettings = await CoreRepository.GetOrCreateGuildSettingsAsync(Context.Guild);
                 if (greetingSettings.IsJoinEnabled)
                     return CommandRuntimeResult.FromError("The welcome message is already enabled!");
                 greetingSettings.IsJoinEnabled = true;
-
-                await CoreSettings.SaveChangesAsync();
+                await CoreRepository.SaveRepositoryAsync();
                 return CommandRuntimeResult.FromSuccess(
                     $"Successfully enabled the welcome message! If you haven't configure the welcome message by using `{guildSettings.CommandPrefix}server welcome message`");
             }
@@ -270,14 +242,11 @@ namespace GeneralBot.Commands.Admin
             [Summary("Disables the welcome setting on the current guild.")]
             public async Task<RuntimeResult> DisableWelcomeAsync()
             {
-                var dbEntry =
-                    CoreSettings.GreetingsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ??
-                    CoreSettings.GreetingsSettings.Add(new GreetingSettings {GuildId = Context.Guild.Id}).Entity;
+                var dbEntry = await CoreRepository.GetOrCreateGreetingsAsync(Context.Guild);
                 if (!dbEntry.IsJoinEnabled)
                     return CommandRuntimeResult.FromError("The welcome message is already disabled!");
                 dbEntry.IsJoinEnabled = false;
-
-                await CoreSettings.SaveChangesAsync();
+                await CoreRepository.SaveRepositoryAsync();
                 return CommandRuntimeResult.FromSuccess("Successfully disabled the welcome message!");
             }
 
@@ -287,13 +256,10 @@ namespace GeneralBot.Commands.Admin
             [Remarks("Placeholders: {mention}, {username}, {discrim}, {guild}, {date}")]
             public async Task<RuntimeResult> ConfigMessageAsync([Remainder] string message)
             {
-                var dbEntry =
-                    CoreSettings.GreetingsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ??
-                    CoreSettings.GreetingsSettings.Add(new GreetingSettings {GuildId = Context.Guild.Id}).Entity;
+                var dbEntry = await CoreRepository.GetOrCreateGreetingsAsync(Context.Guild);
                 if (message.Length > 1024) return CommandRuntimeResult.FromError("Your welcome message is too long!");
                 dbEntry.WelcomeMessage = message;
-
-                await CoreSettings.SaveChangesAsync();
+                await CoreRepository.SaveRepositoryAsync();
                 return CommandRuntimeResult.FromSuccess($"Welcome message set to: {Format.Bold(message)}");
             }
 
@@ -302,12 +268,9 @@ namespace GeneralBot.Commands.Admin
             [Summary("Changes the welcome channel on the current guild.")]
             public async Task<RuntimeResult> ConfigChannelAsync(SocketTextChannel channel)
             {
-                var dbEntry =
-                    CoreSettings.GreetingsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id) ??
-                    CoreSettings.GreetingsSettings.Add(new GreetingSettings {GuildId = Context.Guild.Id}).Entity;
+                var dbEntry = await CoreRepository.GetOrCreateGreetingsAsync(Context.Guild);
                 dbEntry.ChannelId = channel.Id;
-
-                await CoreSettings.SaveChangesAsync();
+                await CoreRepository.SaveRepositoryAsync();
                 return CommandRuntimeResult.FromSuccess($"Welcome channel set to: {channel.Mention}");
             }
         }

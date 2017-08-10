@@ -5,7 +5,7 @@ namespace GeneralBot.Models.Database.UserSettings
 {
     public class UserContext : DbContext
     {
-        public UserContext(DbContextOptions options) : base(options)
+        public UserContext(DbContextOptions<UserContext> options) : base(options)
         {
         }
 

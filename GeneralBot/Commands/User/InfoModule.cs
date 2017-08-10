@@ -22,7 +22,7 @@ namespace GeneralBot.Commands.User
     public class InfoModule : ModuleBase<SocketCommandContext>
     {
         public ConfigModel Config { get; set; }
-        public CoreContext CoreSettings { get; set; }
+        public ICoreRepository CoreSettings { get; set; }
 
         [Command("invite")]
         [RequireContext(ContextType.Guild)]
@@ -30,13 +30,7 @@ namespace GeneralBot.Commands.User
         {
             if (Context.Channel is SocketGuildChannel channel)
             {
-                var dbEntry = CoreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id);
-                if (dbEntry == null)
-                {
-                    dbEntry = new GuildSettings {GuildId = Context.Guild.Id};
-                    CoreSettings.GuildsSettings.Add(dbEntry);
-                    await CoreSettings.SaveChangesAsync();
-                }
+                var dbEntry = await CoreSettings.GetOrCreateGuildSettingsAsync(Context.Guild);
                 if (!dbEntry.IsInviteAllowed)
                     return CommandRuntimeResult.FromError("The admin has disabled this command.");
                 var invite = await channel.GetLastInviteAsync(true);
@@ -149,7 +143,7 @@ namespace GeneralBot.Commands.User
         public class HelpModule : ModuleBase<SocketCommandContext>
         {
             public CommandService CommandService { get; set; }
-            public CoreContext CoreSettings { get; set; }
+            public ICoreRepository CoreSettings { get; set; }
             public IServiceProvider ServiceProvider { get; set; }
 
             [Command]
@@ -178,7 +172,7 @@ namespace GeneralBot.Commands.User
                     }
                     embed.AddField(x =>
                     {
-                        x.Name = $"{GetCommandPrefix(Context.Guild)}{BuildCommandInfo(commandInfo)}";
+                        x.Name = $"{GetCommandPrefixAsync(Context.Guild)}{BuildCommandInfo(commandInfo)}";
                         x.Value = commandInfo.Summary ?? "No summary.";
                     });
                 }
@@ -186,9 +180,9 @@ namespace GeneralBot.Commands.User
                 return CommandRuntimeResult.FromSuccess();
             }
 
-            private string GetCommandPrefix(SocketGuild guild) => guild == null
+            private async Task<string> GetCommandPrefixAsync(SocketGuild guild) => guild == null
                 ? "!"
-                : CoreSettings.GuildsSettings.SingleOrDefault(x => x.GuildId == Context.Guild.Id).CommandPrefix;
+                : (await CoreSettings.GetOrCreateGuildSettingsAsync(guild))?.CommandPrefix;
 
             private static string BuildCommandInfo(CommandInfo cmdInfo) =>
                 $"{cmdInfo.Aliases.First()} {cmdInfo.Parameters.GetParamsUsage()}";

@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
 using GeneralBot.Extensions;
@@ -9,11 +8,11 @@ namespace GeneralBot.Services
 {
     internal class ActivityService
     {
-        private readonly CoreContext _coreContext;
+        private readonly ICoreRepository _coreRepository;
 
-        public ActivityService(DiscordSocketClient client, CoreContext coreContext)
+        public ActivityService(DiscordSocketClient client, ICoreRepository coreContext)
         {
-            _coreContext = coreContext;
+            _coreRepository = coreContext;
             client.UserJoined += UserJoinedAnnounceAsync;
             client.UserLeft += UserLeftAnnounceAsync;
             client.UserVoiceStateUpdated += UserVoiceAnnounceAsync;
@@ -24,8 +23,8 @@ namespace GeneralBot.Services
         {
             if (!(user is SocketGuildUser guildUser)) return;
             var guild = guildUser.Guild;
-            var dbEntry = _coreContext.ActivityLogging.SingleOrDefault(x => x.GuildId == guild.Id);
-            if (dbEntry == null || !dbEntry.ShouldLogVoice) return;
+            var dbEntry = await _coreRepository.GetOrCreateActivityAsync(guild);
+            if (!dbEntry.ShouldLogVoice) return;
             var logChannel = guild.GetTextChannel(dbEntry.LogChannel);
             if (logChannel == null) return;
             var embed = new EmbedBuilder
@@ -62,8 +61,8 @@ namespace GeneralBot.Services
         private async Task UserLeftAnnounceAsync(SocketGuildUser guildUser)
         {
             var guild = guildUser.Guild;
-            var dbEntry = _coreContext.ActivityLogging.SingleOrDefault(x => x.GuildId == guild.Id);
-            if (dbEntry == null || !dbEntry.ShouldLogLeave) return;
+            var dbEntry = await _coreRepository.GetOrCreateActivityAsync(guild);
+            if (!dbEntry.ShouldLogLeave) return;
             var logChannel = guild.GetTextChannel(dbEntry.LogChannel);
             if (logChannel == null) return;
             var embed = new EmbedBuilder
@@ -82,8 +81,8 @@ namespace GeneralBot.Services
         private async Task UserJoinedAnnounceAsync(SocketGuildUser guildUser)
         {
             var guild = guildUser.Guild;
-            var dbEntry = _coreContext.ActivityLogging.SingleOrDefault(x => x.GuildId == guild.Id);
-            if (dbEntry == null || !dbEntry.ShouldLogJoin) return;
+            var dbEntry = await _coreRepository.GetOrCreateActivityAsync(guild);
+            if (!dbEntry.ShouldLogJoin) return;
             var logChannel = guild.GetTextChannel(dbEntry.LogChannel);
             if (logChannel == null) return;
             var embed = new EmbedBuilder

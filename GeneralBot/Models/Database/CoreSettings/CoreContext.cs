@@ -4,7 +4,7 @@ namespace GeneralBot.Models.Database.CoreSettings
 {
     public class CoreContext : DbContext
     {
-        public CoreContext(DbContextOptions options) : base(options)
+        public CoreContext(DbContextOptions<CoreContext> options) : base(options)
         {
         }
 
