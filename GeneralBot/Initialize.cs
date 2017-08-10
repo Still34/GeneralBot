@@ -62,6 +62,8 @@ namespace GeneralBot
                 // Database Contexts
                 .AddDbContext<CoreContext>()
                 .AddDbContext<UserContext>()
+                .AddScoped<ICoreRepository, CoreRepository>()
+                .AddScoped<IUserRepository, UserRepository>()
                 // Logging
                 .AddSingleton<LoggingService>()
                 .AddLogging()

@@ -5,12 +5,20 @@ namespace GeneralBot.Models.Database.UserSettings
 {
     public class UserContext : DbContext
     {
+        public UserContext(DbContextOptions options) : base(options)
+        {
+        }
+
         public DbSet<Coordinate> Coordinates { get; set; }
+        public DbSet<Games> Games { get; set; }
         public DbSet<Profile> Profiles { get; set; }
         public DbSet<Reminder> Reminders { get; set; }
-        public DbSet<Games> Games { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) => optionsBuilder.UseSqlite(
-            "Filename=./UserConfig.db");
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            base.OnConfiguring(optionsBuilder);
+            optionsBuilder.UseSqlite(
+                "Filename=./UserConfig.db");
+        }
     }
 }

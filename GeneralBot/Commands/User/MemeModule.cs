@@ -12,14 +12,12 @@ using GeneralBot.Commands.Results;
 using GeneralBot.Extensions.Helpers;
 using GeneralBot.Models.Config;
 using GeneralBot.Models.Reddit;
-using SixLabors;
-using SixLabors.Primitives;
 using ImageSharp;
 using ImageSharp.Formats;
 using ImageSharp.PixelFormats;
 using Newtonsoft.Json;
+using SixLabors.Primitives;
 using Image = ImageSharp.Image;
-
 
 namespace GeneralBot.Commands.User
 {
@@ -156,8 +154,8 @@ namespace GeneralBot.Commands.User
                 using (var imageStream = new MemoryStream())
                 {
                     image.DrawPolygon(Rgba32.Red, 1000000,
-                        new PointF[] { new Point(0, 0), new Point(image.Width, image.Height)},
-                        new GraphicsOptions() { BlenderMode = PixelBlenderMode.Screen, BlendPercentage = 25 })
+                            new PointF[] {new Point(0, 0), new Point(image.Width, image.Height)},
+                            new GraphicsOptions {BlenderMode = PixelBlenderMode.Screen, BlendPercentage = 25})
                         .SaveAsPng(imageStream);
                     imageStream.Seek(0, SeekOrigin.Begin);
                     await Context.Channel.SendFileAsync(imageStream, "angery.png");
