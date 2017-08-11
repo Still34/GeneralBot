@@ -8,8 +8,8 @@ namespace GeneralBot.Models.Database.CoreSettings
 {
     public class CoreRepository : ICoreRepository
     {
-        private readonly LoggingService _logging;
         private readonly CoreContext _coreContext;
+        private readonly LoggingService _logging;
 
         public CoreRepository(CoreContext coreContext, LoggingService logging)
         {
@@ -28,7 +28,8 @@ namespace GeneralBot.Models.Database.CoreSettings
             var record = _coreContext.GreetingsSettings.SingleOrDefault(x => x.GuildId == guild.Id);
             if (record == null)
             {
-                await _logging.LogAsync($"Registering greetings settings for {guild.Name} ({guild.Id})...", LogSeverity.Info).ConfigureAwait(false);
+                await _logging.LogAsync($"Registering greetings settings for {guild.Name} ({guild.Id})...",
+                    LogSeverity.Info).ConfigureAwait(false);
                 record = new GreetingSettings {GuildId = guild.Id};
                 _coreContext.GreetingsSettings.Add(record);
                 await SaveRepositoryAsync().ConfigureAwait(false);
@@ -58,7 +59,8 @@ namespace GeneralBot.Models.Database.CoreSettings
             var record = _coreContext.ActivityLogging.SingleOrDefault(x => x.GuildId == guild.Id);
             if (record == null)
             {
-                await _logging.LogAsync($"Registering logging settings for {guild.Name} ({guild.Id})...", LogSeverity.Info).ConfigureAwait(false);
+                await _logging.LogAsync($"Registering logging settings for {guild.Name} ({guild.Id})...",
+                    LogSeverity.Info).ConfigureAwait(false);
                 record = new ActivityLogging {GuildId = guild.Id};
                 _coreContext.ActivityLogging.Add(record);
                 await SaveRepositoryAsync().ConfigureAwait(false);
@@ -68,11 +70,11 @@ namespace GeneralBot.Models.Database.CoreSettings
 
         public async Task UnregisterGuildAsync(IGuild guild)
         {
-            var guildRecords =  _coreContext.GuildsSettings.Where(x => x.GuildId == guild.Id);
+            var guildRecords = _coreContext.GuildsSettings.Where(x => x.GuildId == guild.Id);
             if (guildRecords != null) _coreContext.RemoveRange(guildRecords);
-            var activityRecords =  _coreContext.ActivityLogging.Where(x => x.GuildId == guild.Id);
+            var activityRecords = _coreContext.ActivityLogging.Where(x => x.GuildId == guild.Id);
             if (activityRecords != null) _coreContext.RemoveRange(activityRecords);
-            var greetingSettings =  _coreContext.GreetingsSettings.Where(x => x.GuildId == guild.Id);
+            var greetingSettings = _coreContext.GreetingsSettings.Where(x => x.GuildId == guild.Id);
             if (greetingSettings != null) _coreContext.RemoveRange(greetingSettings);
             await SaveRepositoryAsync().ConfigureAwait(false);
         }
@@ -101,7 +103,8 @@ namespace GeneralBot.Models.Database.CoreSettings
             var record = _coreContext.GuildsSettings.SingleOrDefault(x => x.GuildId == guild.Id);
             if (record == null)
             {
-                await _logging.LogAsync($"Registering guild settings for {guild.Name} ({guild.Id})...", LogSeverity.Info).ConfigureAwait(false);
+                await _logging.LogAsync($"Registering guild settings for {guild.Name} ({guild.Id})...",
+                    LogSeverity.Info).ConfigureAwait(false);
                 record = new GuildSettings {GuildId = guild.Id};
                 _coreContext.GuildsSettings.Add(record);
                 await SaveRepositoryAsync().ConfigureAwait(false);

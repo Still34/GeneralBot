@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Discord.Commands;
 using GeneralBot.Commands.Results;
 using GeneralBot.Extensions.Helpers;
-using GeneralBot.Models.Context;
 using GeneralBot.Models.Database.UserSettings;
 using Geocoding.Google;
 
@@ -56,7 +55,8 @@ namespace GeneralBot.Commands.User
             if (!geocodeResults.Any()) return CommandRuntimeResult.FromError("No results found.");
 
             var result = geocodeResults.FirstOrDefault();
-            await UserSettings.AddOrUpdateCoordinatesAsync(Context.User, result.Coordinates.Longitude, result.Coordinates.Latitude);
+            await UserSettings.AddOrUpdateCoordinatesAsync(Context.User, result.Coordinates.Longitude,
+                result.Coordinates.Latitude);
             return CommandRuntimeResult.FromSuccess($"Your location has been set to {result.FormattedAddress}!");
         }
 

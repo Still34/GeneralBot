@@ -9,7 +9,6 @@ using GeneralBot.Extensions.Helpers;
 using GeneralBot.Models.Config;
 using GeneralBot.Models.Database.UserSettings;
 using GeneralBot.Services;
-using GeneralBot.Extensions;
 
 namespace GeneralBot.Commands.User
 {
@@ -121,10 +120,11 @@ namespace GeneralBot.Commands.User
                 {
                     var targetUser = user ?? Context.User;
                     var record = UserRepository.GetGame(targetUser);
-                    if (record == null || record.BattleTag == null)
-                        return Task.FromResult<RuntimeResult>(CommandRuntimeResult.FromError("User hasn't setup their BattleTag yet!"));
-
-                    return Task.FromResult<RuntimeResult>(CommandRuntimeResult.FromInfo($"{targetUser.Mention}'s BattleTag: {Format.Bold(record.BattleTag)}"));
+                    return Task.FromResult<RuntimeResult>(record?.BattleTag == null
+                        ? CommandRuntimeResult.FromError("User hasn't setup their BattleTag yet!")
+                        : CommandRuntimeResult.FromInfo(
+                            $"{targetUser.Mention}'s BattleTag: {Format.Bold(record.BattleTag)}")
+                    );
                 }
 
                 [Command("set")]
@@ -137,7 +137,7 @@ namespace GeneralBot.Commands.User
                         $"Successfully set BattleTag to {Format.Bold(username)}");
                 }
 
-                //To Do: Add overwatch statistics based on battletag.
+                //TODO: Add overwatch statistics based on battletag.
             }
 
             [Group("riot")]
@@ -151,10 +151,10 @@ namespace GeneralBot.Commands.User
                 {
                     var targetUser = user ?? Context.User;
                     var record = UserRepository.GetGame(targetUser);
-                    if (record == null || record.RiotId == null)
-                        return Task.FromResult<RuntimeResult>(CommandRuntimeResult.FromError("User hasn't setup their Riot Id yet!"));
-
-                    return Task.FromResult<RuntimeResult>(CommandRuntimeResult.FromInfo($"{targetUser.Mention}'s Riot Id: {Format.Bold(record.RiotId)}"));
+                    return Task.FromResult<RuntimeResult>(record?.RiotId == null
+                        ? CommandRuntimeResult.FromError("User hasn't setup their Riot Id yet!")
+                        : CommandRuntimeResult.FromInfo(
+                            $"{targetUser.Mention}'s Riot Id: {Format.Bold(record.RiotId)}"));
                 }
 
                 [Command("set")]
@@ -167,24 +167,24 @@ namespace GeneralBot.Commands.User
                         $"Successfully set Riot Id to {Format.Bold(username)}");
                 }
 
-                //To Do: Add league stats based on riot acc.    
+                //TODO: Add league stats based on riot acc.    
             }
 
             [Group("nintendo")]
-            [Alias("switch", "wii", "friendcode")]
+            //[Alias("switch", "3ds", "friendcode")]
             public class Nintendo : ModuleBase<SocketCommandContext>
             {
                 public IUserRepository UserRepository { get; set; }
-
+                //TODO: Impl Switch/3DS variants.
                 [Command]
                 public Task<RuntimeResult> CheckFriendCodeAsync(SocketUser user = null)
                 {
                     var targetUser = user ?? Context.User;
                     var record = UserRepository.GetGame(targetUser);
-                    if (record == null || record.NintendoFriendCode == null)
-                        return Task.FromResult<RuntimeResult>(CommandRuntimeResult.FromError("User hasn't setup their Nintendo Friend Code yet!"));
-
-                    return Task.FromResult<RuntimeResult>(CommandRuntimeResult.FromInfo($"{targetUser.Mention}'s Nintendo Friend Code: {Format.Bold(record.NintendoFriendCode)}"));
+                    return Task.FromResult<RuntimeResult>(record?.NintendoFriendCode == null
+                        ? CommandRuntimeResult.FromError("User hasn't setup their Nintendo Friend Code yet!")
+                        : CommandRuntimeResult.FromInfo(
+                            $"{targetUser.Mention}'s Nintendo Friend Code: {Format.Bold(record.NintendoFriendCode)}"));
                 }
 
                 [Command("set")]

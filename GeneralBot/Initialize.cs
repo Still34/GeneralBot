@@ -89,6 +89,7 @@ namespace GeneralBot
             await services.GetRequiredService<CommandHandler>().InitAsync();
         }
 
+        // TODO: Implement ASP.NET Core config.
         private static Task<ConfigModel> ConfigureSettingsAsync()
         {
             const string config = "config.json";

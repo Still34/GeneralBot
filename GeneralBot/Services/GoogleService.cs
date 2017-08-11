@@ -14,6 +14,7 @@ namespace GeneralBot.Services
 {
     public class GoogleService
     {
+        // TODO: Clean this place up.
         private readonly HttpClient _httpClient;
 
         public GoogleService(HttpClient httpClient) => _httpClient = httpClient;

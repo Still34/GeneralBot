@@ -16,18 +16,20 @@ namespace GeneralBot.Models.Database.UserSettings
         public async Task SaveRepositoryAsync() => await _userContext.SaveChangesAsync().ConfigureAwait(false);
 
         public Games GetGame(IUser user) => _userContext.Games.SingleOrDefault(x => x.UserId == user.Id);
+
         public async Task<Games> GetOrCreateGameAsync(IUser user)
         {
             var record = GetGame(user);
             if (record != null) return record;
 
-            record = new Games(){UserId = user.Id};
+            record = new Games {UserId = user.Id};
             await _userContext.Games.AddAsync(record).ConfigureAwait(false);
             await SaveRepositoryAsync().ConfigureAwait(false);
             return record;
         }
 
         public IEnumerable<Games> GetAllGames() => _userContext.Games;
+
         public async Task AddReminderAsync(Reminder reminder)
         {
             await _userContext.Reminders.AddAsync(reminder).ConfigureAwait(false);
@@ -53,6 +55,7 @@ namespace GeneralBot.Models.Database.UserSettings
             _userContext.Reminders.Where(x => x.UserId == user.Id);
 
         public IEnumerable<Reminder> GetAllReminders() => _userContext.Reminders;
+
         public async Task RemoveReminderAsync(Reminder reminder)
         {
             if (reminder != null)
