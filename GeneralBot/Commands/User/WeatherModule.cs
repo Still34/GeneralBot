@@ -32,7 +32,7 @@ namespace GeneralBot.Commands.User
         private IDisposable _typing;
         public DarkSkyService DarkSkyService { get; set; }
         public GoogleGeocoder Geocoder { get; set; }
-        public UserContext UserContext { get; set; }
+        public IUserRepository UserRepository { get; set; }
         public WeatherService Weather { get; set; }
 
         protected override void BeforeExecute(CommandInfo command)
@@ -52,14 +52,14 @@ namespace GeneralBot.Commands.User
         [Priority(2)]
         public async Task<RuntimeResult> GetWeatherForLocationAsync([Summary("User")] SocketUser user = null)
         {
-            var userInfo = user ?? Context.User;
-            var dbEntry = UserContext.Coordinates.SingleOrDefault(x => x.UserId == userInfo.Id);
-            if (dbEntry == null)
+            var targetUser = user ?? Context.User;
+            var record = UserRepository.GetCoordinates(targetUser);
+            if (record == null)
             {
                 return CommandRuntimeResult.FromError(
                     "Location is not set yet! Please set the location first!");
             }
-            var geocodeResults = await Geocoder.ReverseGeocodeAsync(dbEntry.Latitude, dbEntry.Longitude);
+            var geocodeResults = await Geocoder.ReverseGeocodeAsync(record.Latitude, record.Longitude);
             var geocode = geocodeResults.FirstOrDefault();
             if (geocode == null)
             {

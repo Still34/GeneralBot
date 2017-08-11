@@ -14,17 +14,17 @@ namespace DirectoryMaid.Services
     {
         private readonly DiscordSocketClient _client;
         private readonly ConfigModel _config;
-        private readonly UserContext _userContext;
+        private readonly IUserRepository _userRepository;
         private Timer _timer;
 
         public ReminderService()
         {
         }
 
-        public ReminderService(DiscordSocketClient client, UserContext userContext, ConfigModel config)
+        public ReminderService(DiscordSocketClient client, IUserRepository userContext, ConfigModel config)
         {
             _client = client;
-            _userContext = userContext;
+            _userRepository = userContext;
             _config = config;
             _timer = new Timer(ReminderCheck, null, TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(5));
         }
@@ -56,25 +56,23 @@ namespace DirectoryMaid.Services
         public async Task AddReminderAsync(IUser user, IMessageChannel channel, DateTimeOffset dateTime,
             string content)
         {
-            await _userContext.AddAsync(new Reminder
+            await _userRepository.AddReminderAsync(new Reminder
             {
                 ChannelId = channel.Id,
                 Content = content,
                 Time = dateTime,
                 UserId = user.Id
-            });
-            await _userContext.SaveChangesAsync();
+            }).ConfigureAwait(false);
         }
 
         private void ReminderCheck(object state)
         {
-            var remindEntries = _userContext.Reminders.Where(x => DateTimeOffset.Now > x.Time);
+            var remindEntries = _userRepository.GetAllReminders().Where(x => DateTimeOffset.Now > x.Time).ToList();
             if (!remindEntries.Any()) return;
             foreach (var entry in remindEntries)
             {
-                RemindUserAsync(entry).ConfigureAwait(false).GetAwaiter().GetResult();
-                _userContext.Remove(entry);
-                _userContext.SaveChanges();
+                RemindUserAsync(entry).ConfigureAwait(false);
+                _userRepository.RemoveReminderAsync(entry).ConfigureAwait(false);
             }
         }
 

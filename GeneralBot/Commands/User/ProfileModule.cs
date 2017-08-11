@@ -17,20 +17,14 @@ namespace GeneralBot.Commands.User
     {
         public ConfigModel Config { get; set; }
         public HttpClient HttpClient { get; set; }
-        public UserContext UserSettings { get; set; }
+        public IUserRepository UserRepository { get; set; }
 
         [Command("balance")]
         [Summary("Shows the specified user's balance.")]
         public async Task<RuntimeResult> BalanceAsync(SocketUser user = null)
         {
             var targetUser = user ?? Context.User;
-            var dbEntry = UserSettings.Profiles.SingleOrDefault(x => x.UserId == targetUser.Id);
-            if (dbEntry == null)
-            {
-                dbEntry = new Profile {UserId = targetUser.Id};
-                UserSettings.Profiles.Add(dbEntry);
-                await UserSettings.SaveChangesAsync();
-            }
+            var dbEntry = await UserRepository.GetOrCreateProfileAsync(targetUser);
             return CommandRuntimeResult.FromInfo(
                 $"{targetUser.Mention}'s current balance is {dbEntry.Balance}{Config.CurrencySymbol}");
         }
@@ -38,30 +32,22 @@ namespace GeneralBot.Commands.User
         [Group("summary")]
         public class Summary : ModuleBase<SocketCommandContext>
         {
-            public UserContext UserSettings { get; set; }
+            public IUserRepository UserRepository { get; set; }
 
             [Command]
             public async Task<RuntimeResult> CheckSummaryAsync(SocketUser user = null)
             {
                 var targetUser = user ?? Context.User;
-                var dbEntry = UserSettings.Profiles.SingleOrDefault(x => x.UserId == targetUser.Id);
-                if (dbEntry == null)
-                {
-                    dbEntry = new Profile {UserId = targetUser.Id};
-                    UserSettings.Profiles.Add(dbEntry);
-                    await UserSettings.SaveChangesAsync();
-                }
+                var dbEntry = await UserRepository.GetOrCreateProfileAsync(targetUser);
                 return CommandRuntimeResult.FromInfo($"Current Summary: {Format.Bold(dbEntry.Summary)}");
             }
 
             [Command("set")]
             public async Task<RuntimeResult> SetSummaryAsync([Remainder] string summary)
             {
-                var dbEntry = UserSettings.Profiles.SingleOrDefault(x => x.UserId == Context.User.Id) ??
-                              UserSettings.Profiles.Add(new Profile {UserId = Context.User.Id}).Entity;
+                var dbEntry = await UserRepository.GetOrCreateProfileAsync(Context.User);
                 dbEntry.Summary = summary;
-
-                await UserSettings.SaveChangesAsync();
+                await UserRepository.SaveRepositoryAsync();
                 return CommandRuntimeResult.FromSuccess($"Successfully set summary to {Format.Bold(summary)}");
             }
         }
@@ -74,13 +60,13 @@ namespace GeneralBot.Commands.User
             public class Steam : ModuleBase<SocketCommandContext>
             {
                 public SteamService SteamService { get; set; }
-                public UserContext UserSettings { get; set; }
+                public IUserRepository UserRepository { get; set; }
 
                 [Command]
                 public async Task<RuntimeResult> CheckSteamAsync(SocketUser user = null)
                 {
                     var targetUser = user ?? Context.User;
-                    var dbEntry = UserSettings.Games.SingleOrDefault(x => x.UserId == targetUser.Id);
+                    var dbEntry = UserRepository.GetGame(targetUser);
                     if (dbEntry == null || dbEntry.SteamId == 0)
                         return CommandRuntimeResult.FromError("User hasn't setup their steam profile yet!");
 
@@ -115,10 +101,9 @@ namespace GeneralBot.Commands.User
                 public async Task<RuntimeResult> SetSteamAsync([Remainder] string username)
                 {
                     ulong id = await SteamService.GetIdFromVanityAsync(username);
-                    var dbEntry = UserSettings.Games.SingleOrDefault(x => x.UserId == Context.User.Id) ??
-                                  UserSettings.Games.Add(new Games {UserId = Context.User.Id}).Entity;
+                    var dbEntry = await UserRepository.GetOrCreateGameAsync(Context.User);
                     dbEntry.SteamId = id;
-                    await UserSettings.SaveChangesAsync();
+                    await UserRepository.SaveRepositoryAsync();
                     return CommandRuntimeResult.FromSuccess(
                         $"Successfully set steam to {Format.Bold((await SteamService.GetProfileAsync(id))?.CustomURL ?? id.ToString())}");
                 }

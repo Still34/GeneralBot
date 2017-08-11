@@ -15,7 +15,7 @@ namespace GeneralBot.Commands.User
     {
         private IDisposable _typing;
         public GoogleGeocoder Geocoding { get; set; }
-        public UserContext UserSettings { get; set; }
+        public IUserRepository UserSettings { get; set; }
 
         protected override void BeforeExecute(CommandInfo command)
         {
@@ -56,13 +56,7 @@ namespace GeneralBot.Commands.User
             if (!geocodeResults.Any()) return CommandRuntimeResult.FromError("No results found.");
 
             var result = geocodeResults.FirstOrDefault();
-            var dbEntry = UserSettings.Coordinates.SingleOrDefault(x => x.UserId == Context.User.Id) ??
-                          UserSettings.Coordinates.Add(new Coordinate {UserId = Context.User.Id}).Entity;
-
-            dbEntry.Longitude = result.Coordinates.Longitude;
-            dbEntry.Latitude = result.Coordinates.Latitude;
-
-            await UserSettings.SaveChangesAsync();
+            await UserSettings.AddOrUpdateCoordinatesAsync(Context.User, result.Coordinates.Longitude, result.Coordinates.Latitude);
             return CommandRuntimeResult.FromSuccess($"Your location has been set to {result.FormattedAddress}!");
         }
 
@@ -71,11 +65,10 @@ namespace GeneralBot.Commands.User
         [Summary("Removes *all* of your location data.")]
         public async Task<RuntimeResult> LocationRemoveAsync()
         {
-            var dbEntry = UserSettings.Coordinates.Where(x => x.UserId == Context.User.Id);
+            var dbEntry = UserSettings.GetCoordinates(Context.User);
             if (dbEntry == null)
                 return CommandRuntimeResult.FromError("You do not have a location set up yet!");
-            UserSettings.RemoveRange(dbEntry);
-            await UserSettings.SaveChangesAsync();
+            await UserSettings.RemoveCoordinatesAsync(Context.User);
             return CommandRuntimeResult.FromSuccess("You have successfully removed your location!");
         }
     }

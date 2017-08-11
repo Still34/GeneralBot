@@ -22,20 +22,19 @@ namespace GeneralBot.Commands.User
     public class RemindModule : ModuleBase<SocketCommandContext>
     {
         public ReminderService ReminderService { get; set; }
-        public UserContext UserContext { get; set; }
+        public IUserRepository UserRepository { get; set; }
 
         [Command("remove")]
         [Summary("Remove the next reminder for yourself")]
         [Priority(10)]
         public async Task<RuntimeResult> RemoveRemindAsync()
         {
-            var entry = UserContext.Reminders.Where(x => x.UserId == Context.User.Id)
+            var entry = UserRepository.GetReminders(Context.User)
                 .OrderBy(x => x.Time)
                 .FirstOrDefault();
             if (entry == null)
                 return CommandRuntimeResult.FromError("You do not have a reminder set yet!");
-            UserContext.Remove(entry);
-            await UserContext.SaveChangesAsync();
+            await UserRepository.RemoveReminderAsync(entry);
             return CommandRuntimeResult.FromSuccess(
                 $@"Removed the reminder ""{entry.Content}"" that was planned at {entry.Time}.");
         }
@@ -46,12 +45,12 @@ namespace GeneralBot.Commands.User
         public async Task<RuntimeResult> SnoozeReminderAsync(
             [Summary("Time")] TimeSpan dateTimeParsed)
         {
-            var entry = UserContext.Reminders.Where(x => x.UserId == Context.User.Id)
+            var entry = UserRepository.GetReminders(Context.User)
                 .OrderBy(x => x.Time)
                 .FirstOrDefault();
             if (entry == null) return CommandRuntimeResult.FromError("You do not have a reminder set yet!");
             entry.Time = entry.Time.Add(dateTimeParsed);
-            await UserContext.SaveChangesAsync();
+            await UserRepository.SaveRepositoryAsync();
             return CommandRuntimeResult.FromSuccess(
                 $"Your next reminder '{entry.Content}' has been delayed for {dateTimeParsed.Humanize()}!");
         }
@@ -61,7 +60,7 @@ namespace GeneralBot.Commands.User
         [Priority(4)]
         public async Task<RuntimeResult> ListRemindersAsync()
         {
-            var entries = UserContext.Reminders.Where(x => x.UserId == Context.User.Id)
+            var entries = UserRepository.GetReminders(Context.User)
                 .OrderBy(x => x.Time);
             if (!entries.Any()) return CommandRuntimeResult.FromError("You do not have a reminder set yet!");
 

@@ -10,9 +10,9 @@ namespace GeneralBot.Services
     public class BalanceService
     {
         private readonly LoggingService _loggingService;
-        private readonly UserContext _userSettings;
+        private readonly IUserRepository _userSettings;
 
-        public BalanceService(DiscordSocketClient client, UserContext usersettings, LoggingService loggingService)
+        public BalanceService(DiscordSocketClient client, IUserRepository usersettings, LoggingService loggingService)
         {
             client.MessageReceived += AwardBalanceAsync;
             _userSettings = usersettings;
@@ -26,8 +26,7 @@ namespace GeneralBot.Services
                 !msg.Author.IsBot)
             {
                 var user = msg.Author;
-                var dbEntry = _userSettings.Profiles.SingleOrDefault(x => x.UserId == user.Id) ??
-                              _userSettings.Profiles.Add(new Profile {UserId = user.Id}).Entity;
+                var dbEntry = await _userSettings.GetOrCreateProfileAsync(user);
                 uint balanceIncrement = Convert.ToUInt32(new Random().Next(1, 10));
                 if (msg.Timestamp >= dbEntry.LastMessage.AddMinutes(1))
                 {
@@ -36,8 +35,7 @@ namespace GeneralBot.Services
                     dbEntry.LastMessage = msg.Timestamp;
                     dbEntry.Balance = dbEntry.Balance + balanceIncrement;
                 }
-
-                await _userSettings.SaveChangesAsync();
+                await _userSettings.SaveRepositoryAsync();
             }
         }
     }
