@@ -21,7 +21,7 @@ namespace GeneralBot
                 // Creates a new instance of the Discord client.
                 var client = new DiscordSocketClient();
 
-                // Initializes all of thr required services.
+                // Initializes all of the required services.
                 var services = await Initialize.StartAsync(client);
 
                 // Gets the credentials required to start the bot.

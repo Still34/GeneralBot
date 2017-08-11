@@ -9,6 +9,7 @@ using GeneralBot.Extensions.Helpers;
 using GeneralBot.Models.Config;
 using GeneralBot.Models.Database.UserSettings;
 using GeneralBot.Services;
+using GeneralBot.Extensions;
 
 namespace GeneralBot.Commands.User
 {
@@ -106,6 +107,94 @@ namespace GeneralBot.Commands.User
                     await UserRepository.SaveRepositoryAsync();
                     return CommandRuntimeResult.FromSuccess(
                         $"Successfully set steam to {Format.Bold((await SteamService.GetProfileAsync(id))?.CustomURL ?? id.ToString())}");
+                }
+            }
+
+            [Group("battletag")]
+            [Alias("bnet", "blizzard", "battlenet", "battle-net", "battle-tag", "btag")]
+            public class BattleNet : ModuleBase<SocketCommandContext>
+            {
+                public IUserRepository UserRepository { get; set; }
+
+                [Command]
+                public Task<RuntimeResult> CheckBattleTagAsync(SocketUser user = null)
+                {
+                    var targetUser = user ?? Context.User;
+                    var dbEntry = UserRepository.GetGame(targetUser);
+                    if (dbEntry == null || dbEntry.BattleTag == null)
+                        return Task.FromResult<RuntimeResult>(CommandRuntimeResult.FromError("User hasn't setup their BattleTag yet!"));
+
+                    return Task.FromResult<RuntimeResult>(CommandRuntimeResult.FromInfo($"{targetUser.Mention}'s BattleTag: {Format.Bold(dbEntry.BattleTag)}"));
+                }
+
+                [Command("set")]
+                public async Task<RuntimeResult> SetBattleTagAsync([Remainder] string username)
+                {
+                    var dbEntry = await UserRepository.GetOrCreateGameAsync(Context.User);
+                    dbEntry.BattleTag = username;
+                    await UserRepository.SaveRepositoryAsync();
+                    return CommandRuntimeResult.FromSuccess(
+                        $"Successfully set BattleTag to {Format.Bold(username)}");
+                }
+
+                //To Do: Add overwatch statistics based on battletag.
+            }
+
+            [Group("riot")]
+            [Alias("league", "league-of-legends", "leagueoflegends", "lol")]
+            public class Riot : ModuleBase<SocketCommandContext>
+            {
+                public IUserRepository UserRepository { get; set; }
+
+                [Command]
+                public Task<RuntimeResult> CheckRiotAsync(SocketUser user = null)
+                {
+                    var targetUser = user ?? Context.User;
+                    var dbEntry = UserRepository.GetGame(targetUser);
+                    if (dbEntry == null || dbEntry.RiotId == null)
+                        return Task.FromResult<RuntimeResult>(CommandRuntimeResult.FromError("User hasn't setup their Riot Id yet!"));
+
+                    return Task.FromResult<RuntimeResult>(CommandRuntimeResult.FromInfo($"{targetUser.Mention}'s Riot Id: {Format.Bold(dbEntry.RiotId)}"));
+                }
+
+                [Command("set")]
+                public async Task<RuntimeResult> SetRiotAsync([Remainder] string username)
+                {
+                    var dbEntry = await UserRepository.GetOrCreateGameAsync(Context.User);
+                    dbEntry.RiotId = username;
+                    await UserRepository.SaveRepositoryAsync();
+                    return CommandRuntimeResult.FromSuccess(
+                        $"Successfully set Riot Id to {Format.Bold(username)}");
+                }
+
+                //To Do: Add league stats based on riot acc.    
+            }
+
+            [Group("nintendo")]
+            [Alias("switch", "wii", "friendcode")]
+            public class Nintendo : ModuleBase<SocketCommandContext>
+            {
+                public IUserRepository UserRepository { get; set; }
+
+                [Command]
+                public Task<RuntimeResult> CheckFriendCodeAsync(SocketUser user = null)
+                {
+                    var targetUser = user ?? Context.User;
+                    var dbEntry = UserRepository.GetGame(targetUser);
+                    if (dbEntry == null || dbEntry.NintendoFriendCode == null)
+                        return Task.FromResult<RuntimeResult>(CommandRuntimeResult.FromError("User hasn't setup their Nintendo Friend Code yet!"));
+
+                    return Task.FromResult<RuntimeResult>(CommandRuntimeResult.FromInfo($"{targetUser.Mention}'s Nintendo Friend Code: {Format.Bold(dbEntry.NintendoFriendCode)}"));
+                }
+
+                [Command("set")]
+                public async Task<RuntimeResult> SetFriendCodeAsync([Remainder] string username)
+                {
+                    var dbEntry = await UserRepository.GetOrCreateGameAsync(Context.User);
+                    dbEntry.NintendoFriendCode = username;
+                    await UserRepository.SaveRepositoryAsync();
+                    return CommandRuntimeResult.FromSuccess(
+                        $"Successfully set Nintendo Friend Code to {Format.Bold(username)}");
                 }
             }
         }
