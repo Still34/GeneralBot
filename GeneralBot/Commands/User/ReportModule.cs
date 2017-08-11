@@ -111,15 +111,15 @@ namespace GeneralBot.Commands.User
         private async Task<ITextChannel> GetReportChannelAsync(SocketGuild guild)
         {
             // Attempts to get text channel from database entry.
-            var dbEntry = await CoreSettings.GetOrCreateGuildSettingsAsync(guild);
-            var reportChannel = guild.GetTextChannel(dbEntry.ReportChannel);
+            var record = await CoreSettings.GetOrCreateGuildSettingsAsync(guild);
+            var reportChannel = guild.GetTextChannel(record.ReportChannel);
             if (reportChannel != null) return reportChannel;
 
             // Attempts to get text channel by name.
             var searchChannel = guild.TextChannels.FirstOrDefault(x => x.Name.ToLower().Contains(ReportChannelName));
             if (searchChannel != null)
             {
-                dbEntry.ReportChannel = searchChannel.Id;
+                record.ReportChannel = searchChannel.Id;
                 await CoreSettings.SaveRepositoryAsync();
                 return searchChannel;
             }
@@ -139,8 +139,8 @@ namespace GeneralBot.Commands.User
 
         private async Task<IEnumerable<SocketRole>> GetModeratorRolesAsync(SocketGuild guild)
         {
-            var dbEntry = await CoreSettings.GetOrCreateGuildSettingsAsync(guild);
-            return guild.Roles.Where(x => x.Permissions.Has(dbEntry.ModeratorPermission));
+            var record = await CoreSettings.GetOrCreateGuildSettingsAsync(guild);
+            return guild.Roles.Where(x => x.Permissions.Has(record.ModeratorPermission));
         }
     }
 }

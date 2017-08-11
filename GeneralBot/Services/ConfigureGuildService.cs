@@ -39,11 +39,11 @@ namespace GeneralBot.Services
             await _loggingService.LogAsync($"{user.GetFullnameOrDefault()} ({user.Id}) joined {guild} ({guild.Id}).",
                 LogSeverity.Verbose);
 
-            var dbEntry = await _coreSettings.GetOrCreateGreetingsAsync(guild);
-            if (!dbEntry.IsJoinEnabled) return;
-            var channel = guild.GetTextChannel(dbEntry.ChannelId);
+            var record = await _coreSettings.GetOrCreateGreetingsAsync(guild);
+            if (!record.IsJoinEnabled) return;
+            var channel = guild.GetTextChannel(record.ChannelId);
             if (channel == null) return;
-            string formattedMessage = dbEntry.WelcomeMessage
+            string formattedMessage = record.WelcomeMessage
                 .Replace("{mention}", user.Mention)
                 .Replace("{username}", user.Username)
                 .Replace("{discrim}", user.Discriminator)

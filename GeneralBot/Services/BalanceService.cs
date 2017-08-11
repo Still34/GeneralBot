@@ -28,14 +28,14 @@ namespace GeneralBot.Services
                 !msg.Author.IsBot)
             {
                 var user = msg.Author;
-                var dbEntry = await _userSettings.GetOrCreateProfileAsync(user);
+                var record = await _userSettings.GetOrCreateProfileAsync(user);
                 uint balanceIncrement = Convert.ToUInt32(_random.Next(1, 10));
-                if (msg.Timestamp >= dbEntry.LastMessage.AddMinutes(1))
+                if (msg.Timestamp >= record.LastMessage.AddMinutes(1))
                 {
                     await _loggingService.LogAsync($"Increasing {user}'s balance by {balanceIncrement}...",
                         LogSeverity.Debug).ConfigureAwait(false);
-                    dbEntry.LastMessage = msg.Timestamp;
-                    dbEntry.Balance = dbEntry.Balance + balanceIncrement;
+                    record.LastMessage = msg.Timestamp;
+                    record.Balance = record.Balance + balanceIncrement;
                     await _userSettings.SaveRepositoryAsync();
                 }
             }

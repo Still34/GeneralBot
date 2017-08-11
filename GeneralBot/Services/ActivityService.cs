@@ -23,9 +23,9 @@ namespace GeneralBot.Services
         {
             if (!(user is SocketGuildUser guildUser)) return;
             var guild = guildUser.Guild;
-            var dbEntry = await _coreRepository.GetOrCreateActivityAsync(guild);
-            if (!dbEntry.ShouldLogVoice) return;
-            var logChannel = guild.GetTextChannel(dbEntry.LogChannel);
+            var record = await _coreRepository.GetOrCreateActivityAsync(guild);
+            if (!record.ShouldLogVoice) return;
+            var logChannel = guild.GetTextChannel(record.LogChannel);
             if (logChannel == null) return;
             var embed = new EmbedBuilder
             {
@@ -61,9 +61,9 @@ namespace GeneralBot.Services
         private async Task UserLeftAnnounceAsync(SocketGuildUser guildUser)
         {
             var guild = guildUser.Guild;
-            var dbEntry = await _coreRepository.GetOrCreateActivityAsync(guild);
-            if (!dbEntry.ShouldLogLeave) return;
-            var logChannel = guild.GetTextChannel(dbEntry.LogChannel);
+            var record = await _coreRepository.GetOrCreateActivityAsync(guild);
+            if (!record.ShouldLogLeave) return;
+            var logChannel = guild.GetTextChannel(record.LogChannel);
             if (logChannel == null) return;
             var embed = new EmbedBuilder
             {
@@ -81,9 +81,9 @@ namespace GeneralBot.Services
         private async Task UserJoinedAnnounceAsync(SocketGuildUser guildUser)
         {
             var guild = guildUser.Guild;
-            var dbEntry = await _coreRepository.GetOrCreateActivityAsync(guild);
-            if (!dbEntry.ShouldLogJoin) return;
-            var logChannel = guild.GetTextChannel(dbEntry.LogChannel);
+            var record = await _coreRepository.GetOrCreateActivityAsync(guild);
+            if (!record.ShouldLogJoin) return;
+            var logChannel = guild.GetTextChannel(record.LogChannel);
             if (logChannel == null) return;
             var embed = new EmbedBuilder
             {

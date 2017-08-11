@@ -65,8 +65,8 @@ namespace GeneralBot.Commands.User
         [Summary("Removes *all* of your location data.")]
         public async Task<RuntimeResult> LocationRemoveAsync()
         {
-            var dbEntry = UserSettings.GetCoordinates(Context.User);
-            if (dbEntry == null)
+            var record = UserSettings.GetCoordinates(Context.User);
+            if (record == null)
                 return CommandRuntimeResult.FromError("You do not have a location set up yet!");
             await UserSettings.RemoveCoordinatesAsync(Context.User);
             return CommandRuntimeResult.FromSuccess("You have successfully removed your location!");

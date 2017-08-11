@@ -25,9 +25,9 @@ namespace GeneralBot.Commands.User
         public async Task<RuntimeResult> BalanceAsync(SocketUser user = null)
         {
             var targetUser = user ?? Context.User;
-            var dbEntry = await UserRepository.GetOrCreateProfileAsync(targetUser);
+            var record = await UserRepository.GetOrCreateProfileAsync(targetUser);
             return CommandRuntimeResult.FromInfo(
-                $"{targetUser.Mention}'s current balance is {dbEntry.Balance}{Config.CurrencySymbol}");
+                $"{targetUser.Mention}'s current balance is {record.Balance}{Config.CurrencySymbol}");
         }
 
         [Group("summary")]
@@ -39,15 +39,15 @@ namespace GeneralBot.Commands.User
             public async Task<RuntimeResult> CheckSummaryAsync(SocketUser user = null)
             {
                 var targetUser = user ?? Context.User;
-                var dbEntry = await UserRepository.GetOrCreateProfileAsync(targetUser);
-                return CommandRuntimeResult.FromInfo($"Current Summary: {Format.Bold(dbEntry.Summary)}");
+                var record = await UserRepository.GetOrCreateProfileAsync(targetUser);
+                return CommandRuntimeResult.FromInfo($"Current Summary: {Format.Bold(record.Summary)}");
             }
 
             [Command("set")]
             public async Task<RuntimeResult> SetSummaryAsync([Remainder] string summary)
             {
-                var dbEntry = await UserRepository.GetOrCreateProfileAsync(Context.User);
-                dbEntry.Summary = summary;
+                var record = await UserRepository.GetOrCreateProfileAsync(Context.User);
+                record.Summary = summary;
                 await UserRepository.SaveRepositoryAsync();
                 return CommandRuntimeResult.FromSuccess($"Successfully set summary to {Format.Bold(summary)}");
             }
@@ -67,11 +67,11 @@ namespace GeneralBot.Commands.User
                 public async Task<RuntimeResult> CheckSteamAsync(SocketUser user = null)
                 {
                     var targetUser = user ?? Context.User;
-                    var dbEntry = UserRepository.GetGame(targetUser);
-                    if (dbEntry == null || dbEntry.SteamId == 0)
+                    var record = UserRepository.GetGame(targetUser);
+                    if (record == null || record.SteamId == 0)
                         return CommandRuntimeResult.FromError("User hasn't setup their steam profile yet!");
 
-                    var profile = await SteamService.GetProfileAsync(dbEntry.SteamId);
+                    var profile = await SteamService.GetProfileAsync(record.SteamId);
                     var builder = new EmbedBuilder
                         {
                             Author = new EmbedAuthorBuilder
@@ -102,8 +102,8 @@ namespace GeneralBot.Commands.User
                 public async Task<RuntimeResult> SetSteamAsync([Remainder] string username)
                 {
                     ulong id = await SteamService.GetIdFromVanityAsync(username);
-                    var dbEntry = await UserRepository.GetOrCreateGameAsync(Context.User);
-                    dbEntry.SteamId = id;
+                    var record = await UserRepository.GetOrCreateGameAsync(Context.User);
+                    record.SteamId = id;
                     await UserRepository.SaveRepositoryAsync();
                     return CommandRuntimeResult.FromSuccess(
                         $"Successfully set steam to {Format.Bold((await SteamService.GetProfileAsync(id))?.CustomURL ?? id.ToString())}");
@@ -120,18 +120,18 @@ namespace GeneralBot.Commands.User
                 public Task<RuntimeResult> CheckBattleTagAsync(SocketUser user = null)
                 {
                     var targetUser = user ?? Context.User;
-                    var dbEntry = UserRepository.GetGame(targetUser);
-                    if (dbEntry == null || dbEntry.BattleTag == null)
+                    var record = UserRepository.GetGame(targetUser);
+                    if (record == null || record.BattleTag == null)
                         return Task.FromResult<RuntimeResult>(CommandRuntimeResult.FromError("User hasn't setup their BattleTag yet!"));
 
-                    return Task.FromResult<RuntimeResult>(CommandRuntimeResult.FromInfo($"{targetUser.Mention}'s BattleTag: {Format.Bold(dbEntry.BattleTag)}"));
+                    return Task.FromResult<RuntimeResult>(CommandRuntimeResult.FromInfo($"{targetUser.Mention}'s BattleTag: {Format.Bold(record.BattleTag)}"));
                 }
 
                 [Command("set")]
                 public async Task<RuntimeResult> SetBattleTagAsync([Remainder] string username)
                 {
-                    var dbEntry = await UserRepository.GetOrCreateGameAsync(Context.User);
-                    dbEntry.BattleTag = username;
+                    var record = await UserRepository.GetOrCreateGameAsync(Context.User);
+                    record.BattleTag = username;
                     await UserRepository.SaveRepositoryAsync();
                     return CommandRuntimeResult.FromSuccess(
                         $"Successfully set BattleTag to {Format.Bold(username)}");
@@ -150,18 +150,18 @@ namespace GeneralBot.Commands.User
                 public Task<RuntimeResult> CheckRiotAsync(SocketUser user = null)
                 {
                     var targetUser = user ?? Context.User;
-                    var dbEntry = UserRepository.GetGame(targetUser);
-                    if (dbEntry == null || dbEntry.RiotId == null)
+                    var record = UserRepository.GetGame(targetUser);
+                    if (record == null || record.RiotId == null)
                         return Task.FromResult<RuntimeResult>(CommandRuntimeResult.FromError("User hasn't setup their Riot Id yet!"));
 
-                    return Task.FromResult<RuntimeResult>(CommandRuntimeResult.FromInfo($"{targetUser.Mention}'s Riot Id: {Format.Bold(dbEntry.RiotId)}"));
+                    return Task.FromResult<RuntimeResult>(CommandRuntimeResult.FromInfo($"{targetUser.Mention}'s Riot Id: {Format.Bold(record.RiotId)}"));
                 }
 
                 [Command("set")]
                 public async Task<RuntimeResult> SetRiotAsync([Remainder] string username)
                 {
-                    var dbEntry = await UserRepository.GetOrCreateGameAsync(Context.User);
-                    dbEntry.RiotId = username;
+                    var record = await UserRepository.GetOrCreateGameAsync(Context.User);
+                    record.RiotId = username;
                     await UserRepository.SaveRepositoryAsync();
                     return CommandRuntimeResult.FromSuccess(
                         $"Successfully set Riot Id to {Format.Bold(username)}");
@@ -180,18 +180,18 @@ namespace GeneralBot.Commands.User
                 public Task<RuntimeResult> CheckFriendCodeAsync(SocketUser user = null)
                 {
                     var targetUser = user ?? Context.User;
-                    var dbEntry = UserRepository.GetGame(targetUser);
-                    if (dbEntry == null || dbEntry.NintendoFriendCode == null)
+                    var record = UserRepository.GetGame(targetUser);
+                    if (record == null || record.NintendoFriendCode == null)
                         return Task.FromResult<RuntimeResult>(CommandRuntimeResult.FromError("User hasn't setup their Nintendo Friend Code yet!"));
 
-                    return Task.FromResult<RuntimeResult>(CommandRuntimeResult.FromInfo($"{targetUser.Mention}'s Nintendo Friend Code: {Format.Bold(dbEntry.NintendoFriendCode)}"));
+                    return Task.FromResult<RuntimeResult>(CommandRuntimeResult.FromInfo($"{targetUser.Mention}'s Nintendo Friend Code: {Format.Bold(record.NintendoFriendCode)}"));
                 }
 
                 [Command("set")]
                 public async Task<RuntimeResult> SetFriendCodeAsync([Remainder] string username)
                 {
-                    var dbEntry = await UserRepository.GetOrCreateGameAsync(Context.User);
-                    dbEntry.NintendoFriendCode = username;
+                    var record = await UserRepository.GetOrCreateGameAsync(Context.User);
+                    record.NintendoFriendCode = username;
                     await UserRepository.SaveRepositoryAsync();
                     return CommandRuntimeResult.FromSuccess(
                         $"Successfully set Nintendo Friend Code to {Format.Bold(username)}");

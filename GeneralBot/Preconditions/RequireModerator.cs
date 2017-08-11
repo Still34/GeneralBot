@@ -20,11 +20,11 @@ namespace GeneralBot.Preconditions
             if (guildUser == null)
                 return PreconditionResult.FromError("This command must be used in a guild.");
             var settings = services.GetRequiredService<ICoreRepository>();
-            var dbEntry = await settings.GetOrCreateGuildSettingsAsync(context.Guild);
-            return guildUser.GuildPermissions.Has(dbEntry.ModeratorPermission)
+            var record = await settings.GetOrCreateGuildSettingsAsync(context.Guild);
+            return guildUser.GuildPermissions.Has(record.ModeratorPermission)
                 ? PreconditionResult.FromSuccess()
                 : PreconditionResult.FromError(
-                    $"Insufficient permission. Required permission: {dbEntry.ModeratorPermission.Humanize()}.");
+                    $"Insufficient permission. Required permission: {record.ModeratorPermission.Humanize()}.");
         }
     }
 }

@@ -38,8 +38,8 @@ namespace GeneralBot.Services
             var channel = msg.Channel as SocketGuildChannel;
             if (channel == null) return;
             // Checks if the guild has specified for conversion.
-            var dbEntry = await _coreSettings.GetOrCreateGuildSettingsAsync(channel.Guild);
-            if (!dbEntry.IsGfyCatEnabled) return;
+            var record = await _coreSettings.GetOrCreateGuildSettingsAsync(channel.Guild);
+            if (!record.IsGfyCatEnabled) return;
             // Begins attachment search.
             var attachments = msg.Attachments
                 .Where(att => att.Filename.EndsWith(".mov", StringComparison.OrdinalIgnoreCase) ||
