@@ -6,7 +6,7 @@ using GeneralBot.Models.Database.CoreSettings;
 
 namespace GeneralBot.Services
 {
-    internal class ActivityService
+    public class ActivityService
     {
         private readonly ICoreRepository _coreRepository;
 
@@ -31,29 +31,31 @@ namespace GeneralBot.Services
             {
                 Author = new EmbedAuthorBuilder
                 {
-                    IconUrl = user.GetAvatarUrlOrDefault(),
-                    Name = "Voice Event"
+                    IconUrl = user.GetAvatarUrlOrDefault()
                 }
             };
             if (afterVoiceState.VoiceChannel != null && beforeVoiceState.VoiceChannel == null)
             {
                 embed.Color = Color.Blue;
-                embed.Description = $"`{user}` joined {afterVoiceState.VoiceChannel?.Name}!";
+                embed.Title = "Voice Joined";
+                embed.Description = $"{user} ({user.Id}) joined {Format.Bold(afterVoiceState.VoiceChannel?.Name)}!";
                 await logChannel.SendMessageAsync("", embed: embed).ConfigureAwait(false);
                 return;
             }
             if (beforeVoiceState.VoiceChannel != null && afterVoiceState.VoiceChannel == null)
             {
                 embed.Color = Color.Orange;
-                embed.Description = $"`{user}` left {beforeVoiceState.VoiceChannel?.Name}!";
+                embed.Title = "Voice Left";
+                embed.Description = $"{user} ({user.Id}) left {Format.Bold(beforeVoiceState.VoiceChannel?.Name)}!";
                 await logChannel.SendMessageAsync("", embed: embed).ConfigureAwait(false);
                 return;
             }
             if (afterVoiceState.VoiceChannel != null && beforeVoiceState.VoiceChannel != null)
             {
                 embed.Color = Color.DarkerGrey;
+                embed.Title = "Voice Changed Channel";
                 embed.Description =
-                    $"`{user}` moved from {beforeVoiceState.VoiceChannel?.Name} to {afterVoiceState.VoiceChannel?.Name}!";
+                    $"{user} ({user.Id}) moved from {Format.Bold(beforeVoiceState.VoiceChannel?.Name)} to {Format.Bold(afterVoiceState.VoiceChannel?.Name)}!";
                 await logChannel.SendMessageAsync("", embed: embed).ConfigureAwait(false);
             }
         }
@@ -73,7 +75,7 @@ namespace GeneralBot.Services
                     Name = "User Joined"
                 },
                 Color = Color.Red,
-                Description = $"`{guildUser}` ({guildUser.Id}) left the server."
+                Description = $"{guildUser} ({guildUser.Id}) left the server."
             };
             await logChannel.SendMessageAsync("", embed: embed).ConfigureAwait(false);
         }
@@ -93,7 +95,7 @@ namespace GeneralBot.Services
                     Name = "User Joined"
                 },
                 Color = Color.Green,
-                Description = $"`{guildUser}` ({guildUser.Id}) joined the server."
+                Description = $"{guildUser} ({guildUser.Id}) joined the server."
             };
             await logChannel.SendMessageAsync("", embed: embed).ConfigureAwait(false);
         }

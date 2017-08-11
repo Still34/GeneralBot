@@ -136,13 +136,13 @@ namespace GeneralBot.Commands.Admin
                     var targetChannel = Context.Guild.GetTextChannel(record.LogChannel);
                     return targetChannel == null
                         ? CommandRuntimeResult.FromError("You have not set up a valid log channel yet!")
-                        : CommandRuntimeResult.FromInfo($"The current log channel is: {targetChannel.Name}");
+                        : CommandRuntimeResult.FromInfo($"The current log channel is: {Format.Bold(targetChannel.Name)}");
                 }
                 if (record.LogChannel == channel.Id)
                     return CommandRuntimeResult.FromInfo("The current log channel is already the specified channel!");
                 record.LogChannel = channel.Id;
                 await CoreRepository.SaveRepositoryAsync();
-                return CommandRuntimeResult.FromSuccess($"The current log channel has been set to {channel.Name}!");
+                return CommandRuntimeResult.FromSuccess($"The current log channel has been set to {Format.Bold(channel.Name)}!");
             }
 
             [Command("voice")]

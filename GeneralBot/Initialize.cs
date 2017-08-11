@@ -42,7 +42,7 @@ namespace GeneralBot
                 .AddSingleton<ConfigureGuildService>()
                 .AddSingleton<ConfigurePresenceService>()
                 .AddSingleton<ConfigureReadyService>()
-                .AddSingleton<ActivityLogging>()
+                .AddSingleton<ActivityService>()
                 .AddSingleton<GoogleService>()
                 .AddSingleton<GfycatConversionService>()
                 .AddSingleton<ReminderService>()
@@ -84,7 +84,7 @@ namespace GeneralBot
             services.GetRequiredService<ConfigurePresenceService>();
             services.GetRequiredService<BalanceService>();
             services.GetRequiredService<ConfigureReadyService>();
-            services.GetRequiredService<ActivityLogging>();
+            services.GetRequiredService<ActivityService>();
             services.GetRequiredService<GfycatConversionService>();
             await services.GetRequiredService<CommandHandler>().InitAsync();
         }
