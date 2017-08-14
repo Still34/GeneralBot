@@ -27,7 +27,7 @@
     <PackageReference Include="Geocoding.Core" Version="4.0.0" />
     <PackageReference Include="Geocoding.Google" Version="4.0.0" />
     <PackageReference Include="Gfycat.Net" Version="1.0.8.50" />
-    <PackageReference Include="HtmlAgilityPack" Version="1.5.2-beta3" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.5.2-beta6" />
     <PackageReference Include="ImageSharp" Version="1.0.0-alpha9-00173" />
     <PackageReference Include="ImageSharp.Drawing" Version="1.0.0-alpha9-00168" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="1.1.2" />
@@ -37,11 +37,10 @@
     <!--<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="1.1.2" />-->
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="1.1.2" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="1.1.2" />
-    <PackageReference Include="Serilog.Extensions.Logging.File" Version="1.0.1" />
+    <PackageReference Include="Serilog.Extensions.Logging.File" Version="1.1.1-dev-00019" />
     <PackageReference Include="Humanizer.Core" Version="2.2.0" />
     <PackageReference Include="SteamWebAPI2" Version="4.0.1" />
-    <PackageReference Include="System.ValueTuple" Version="4.4.0-preview2-25405-01" />
-    <PackageReference Include="YoutubeExplode" Version="3.2.0" />
+    <PackageReference Include="System.ValueTuple" Version="4.4.0" />
   </ItemGroup>
 
 </Project>
