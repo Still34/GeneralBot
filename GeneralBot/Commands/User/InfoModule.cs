@@ -22,7 +22,7 @@ namespace GeneralBot.Commands.User
     public class InfoModule : ModuleBase<SocketCommandContext>
     {
         public ConfigModel Config { get; set; }
-        public ICoreRepository CoreSettings { get; set; }
+        public ICoreRepository CoreRepository { get; set; }
 
         [Command("invite")]
         [RequireContext(ContextType.Guild)]
@@ -30,7 +30,7 @@ namespace GeneralBot.Commands.User
         {
             if (Context.Channel is SocketGuildChannel channel)
             {
-                var record = await CoreSettings.GetOrCreateGuildSettingsAsync(Context.Guild);
+                var record = await CoreRepository.GetOrCreateGuildSettingsAsync(Context.Guild);
                 if (!record.IsInviteAllowed)
                     return CommandRuntimeResult.FromError("The admin has disabled this command.");
                 var invite = await channel.GetLastInviteAsync(true);

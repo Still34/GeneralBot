@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Discord;
+using GeneralBot.Models.Config;
 using GeneralBot.Services;
 
 namespace GeneralBot.Models.Database.CoreSettings
@@ -80,6 +81,11 @@ namespace GeneralBot.Models.Database.CoreSettings
         }
 
         public async Task SaveRepositoryAsync() => await _coreContext.SaveChangesAsync().ConfigureAwait(false);
+
+        public string GetCommandPrefix(IGuild guild)
+        {
+            return _coreContext.GuildsSettings.SingleOrDefault(x => x.GuildId == guild.Id)?.CommandPrefix;
+        }
 
         public IEnumerable<ActivityLogging> GetAllActivitySettings() => _coreContext.ActivityLogging;
 

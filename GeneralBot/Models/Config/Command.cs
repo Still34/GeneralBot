@@ -34,5 +34,6 @@ namespace GeneralBot.Models.Config
             "🤔"
         };
 
+        public string DefaultPrefix { get; set; } = "!";
     }
 }

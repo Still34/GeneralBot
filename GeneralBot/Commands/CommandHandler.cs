@@ -9,6 +9,7 @@ using Discord.WebSocket;
 using GeneralBot.Commands.Results;
 using GeneralBot.Extensions;
 using GeneralBot.Extensions.Helpers;
+using GeneralBot.Models.Config;
 using GeneralBot.Models.Database.CoreSettings;
 using GeneralBot.Services;
 
@@ -22,18 +23,20 @@ namespace GeneralBot.Commands
     {
         private readonly DiscordSocketClient _client;
         private readonly CommandService _commandService;
+        private readonly ConfigModel _config;
         private readonly ICoreRepository _coreSettings;
         private readonly LoggingService _loggingService;
         private readonly IServiceProvider _services;
 
         public CommandHandler(IServiceProvider services, DiscordSocketClient client, CommandService commandService,
-            ICoreRepository settings, LoggingService loggingService)
+            ICoreRepository settings, LoggingService loggingService, ConfigModel config)
         {
             _services = services;
             _client = client;
             _commandService = commandService;
             _coreSettings = settings;
             _loggingService = loggingService;
+            _config = config;
             _client.MessageReceived += CommandHandleAsync;
             _commandService.CommandExecuted += OnCommandExecutedAsync;
         }
@@ -94,12 +97,12 @@ namespace GeneralBot.Commands
             if (msg.Author.IsBot) return;
 
             int argPos = 0;
-            string prefix = "!";
+            string prefix = _config.Commands.DefaultPrefix;
             // Checks if the channel is a guild channel, if so, attempts to fetch its prefix.
             if (msg.Channel is SocketGuildChannel guildChannel)
             {
-                var record = await _coreSettings.GetOrCreateGuildSettingsAsync(guildChannel.Guild);
-                prefix = record.CommandPrefix;
+                string guildPrefix = _coreSettings.GetCommandPrefix(guildChannel.Guild);
+                if (!string.IsNullOrEmpty(guildPrefix)) prefix = guildPrefix;
             }
             if (!msg.HasStringPrefix(prefix, ref argPos)) return;
 

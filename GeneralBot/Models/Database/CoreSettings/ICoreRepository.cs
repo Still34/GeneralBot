@@ -9,6 +9,8 @@ namespace GeneralBot.Models.Database.CoreSettings
         Task UnregisterGuildAsync(IGuild guildId);
         Task SaveRepositoryAsync();
 
+        string GetCommandPrefix(IGuild guild);
+
         IEnumerable<ActivityLogging> GetAllActivitySettings();
         ActivityLogging GetActivitySettings(IGuild guild);
         Task AddActivitySettingsAsync(ActivityLogging activitySettings);
