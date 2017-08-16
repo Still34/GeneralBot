@@ -17,6 +17,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="CoreSettings.db" />
+    <None Remove="UserConfig.db" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="DarkSkyCore" Version="3.0.0" />
     <PackageReference Include="Discord.Addons.EmojiTools" Version="2.0.1" />
     <PackageReference Include="Discord.Addons.Interactive" Version="1.0.1" />

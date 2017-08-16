@@ -13,7 +13,7 @@ namespace GeneralBot.Models.Database.UserSettings
         public UserRepository(UserContext userContext) => _userContext = userContext;
 
 
-        public async Task SaveRepositoryAsync() => await _userContext.SaveChangesAsync().ConfigureAwait(false);
+        public Task SaveRepositoryAsync() => _userContext.SaveChangesAsync();
 
         public Games GetGame(IUser user) => _userContext.Games.SingleOrDefault(x => x.UserId == user.Id);
 
@@ -56,23 +56,19 @@ namespace GeneralBot.Models.Database.UserSettings
 
         public IEnumerable<Reminder> GetAllReminders() => _userContext.Reminders;
 
-        public async Task RemoveReminderAsync(Reminder reminder)
+        public Task RemoveReminderAsync(Reminder reminder)
         {
-            if (reminder != null)
-            {
-                _userContext.Reminders.Remove(reminder);
-                await SaveRepositoryAsync().ConfigureAwait(false);
-            }
+            if (reminder == null) return Task.CompletedTask;
+            _userContext.Reminders.Remove(reminder);
+            return SaveRepositoryAsync();
         }
 
-        public async Task RemoveRemindersAsync(IUser user)
+        public Task RemoveRemindersAsync(IUser user)
         {
             var records = _userContext.Reminders.Where(x => x.UserId == user.Id);
-            if (records != null)
-            {
-                _userContext.Reminders.RemoveRange(records);
-                await SaveRepositoryAsync().ConfigureAwait(false);
-            }
+            if (records == null) return Task.CompletedTask;
+            _userContext.Reminders.RemoveRange(records);
+            return SaveRepositoryAsync();
         }
 
         public async Task<Coordinate> AddOrUpdateCoordinatesAsync(IUser user, double longitude, double latitude)
@@ -95,14 +91,12 @@ namespace GeneralBot.Models.Database.UserSettings
         public Coordinate GetCoordinates(IUser user) =>
             _userContext.Coordinates.SingleOrDefault(x => x.UserId == user.Id);
 
-        public async Task RemoveCoordinatesAsync(IUser user)
+        public Task RemoveCoordinatesAsync(IUser user)
         {
             var record = _userContext.Coordinates.Where(x => x.UserId == user.Id);
-            if (record != null)
-            {
-                _userContext.Coordinates.RemoveRange(record);
-                await SaveRepositoryAsync().ConfigureAwait(false);
-            }
+            if (record == null) return Task.CompletedTask;
+            _userContext.Coordinates.RemoveRange(record);
+            return SaveRepositoryAsync();
         }
 
         public IEnumerable<Coordinate> GetAllCoordinates() => _userContext.Coordinates;

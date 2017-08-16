@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Discord;
-using GeneralBot.Models.Config;
 using GeneralBot.Services;
 
 namespace GeneralBot.Models.Database.CoreSettings
@@ -18,10 +17,10 @@ namespace GeneralBot.Models.Database.CoreSettings
             _logging = logging;
         }
 
-        public async Task RemoveGreetingsSettingsAsync(GreetingSettings greetingSettings)
+        public Task RemoveGreetingsSettingsAsync(GreetingSettings greetingSettings)
         {
             _coreContext.GreetingsSettings.Remove(greetingSettings);
-            await SaveRepositoryAsync().ConfigureAwait(false);
+            return SaveRepositoryAsync();
         }
 
         public async Task<GreetingSettings> GetOrCreateGreetingsAsync(IGuild guild)
@@ -49,10 +48,10 @@ namespace GeneralBot.Models.Database.CoreSettings
             await SaveRepositoryAsync().ConfigureAwait(false);
         }
 
-        public async Task RemoveActivitySettingsAsync(ActivityLogging activitySettings)
+        public Task RemoveActivitySettingsAsync(ActivityLogging activitySettings)
         {
             _coreContext.ActivityLogging.Remove(activitySettings);
-            await SaveRepositoryAsync().ConfigureAwait(false);
+            return SaveRepositoryAsync();
         }
 
         public async Task<ActivityLogging> GetOrCreateActivityAsync(IGuild guild)
@@ -69,7 +68,7 @@ namespace GeneralBot.Models.Database.CoreSettings
             return record;
         }
 
-        public async Task UnregisterGuildAsync(IGuild guild)
+        public Task UnregisterGuildAsync(IGuild guild)
         {
             var guildRecords = _coreContext.GuildsSettings.Where(x => x.GuildId == guild.Id);
             if (guildRecords != null) _coreContext.RemoveRange(guildRecords);
@@ -77,10 +76,10 @@ namespace GeneralBot.Models.Database.CoreSettings
             if (activityRecords != null) _coreContext.RemoveRange(activityRecords);
             var greetingSettings = _coreContext.GreetingsSettings.Where(x => x.GuildId == guild.Id);
             if (greetingSettings != null) _coreContext.RemoveRange(greetingSettings);
-            await SaveRepositoryAsync().ConfigureAwait(false);
+            return SaveRepositoryAsync();
         }
 
-        public async Task SaveRepositoryAsync() => await _coreContext.SaveChangesAsync().ConfigureAwait(false);
+        public Task SaveRepositoryAsync() => _coreContext.SaveChangesAsync();
 
         public string GetCommandPrefix(IGuild guild)
         {
@@ -98,10 +97,10 @@ namespace GeneralBot.Models.Database.CoreSettings
             await SaveRepositoryAsync().ConfigureAwait(false);
         }
 
-        public async Task RemoveGuildSettingsAsync(GuildSettings greetingSettings)
+        public Task RemoveGuildSettingsAsync(GuildSettings greetingSettings)
         {
             _coreContext.GuildsSettings.Remove(greetingSettings);
-            await SaveRepositoryAsync().ConfigureAwait(false);
+            return SaveRepositoryAsync();
         }
 
         public async Task<GuildSettings> GetOrCreateGuildSettingsAsync(IGuild guild)
