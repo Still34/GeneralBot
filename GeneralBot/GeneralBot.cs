@@ -12,7 +12,10 @@ namespace GeneralBot
     /// </summary>
     public class GeneralBot
     {
-        private static void Main() => new GeneralBot().StartAsync().GetAwaiter().GetResult();
+        // ReSharper disable once AsyncConverter.AsyncAwaitMayBeElidedHighlighting
+        // ReSharper disable once AsyncConverter.ConfigureAwaitHighlighting
+        // ReSharper disable once UnusedMember.Local
+        private static async Task MainAsync() => await new GeneralBot().StartAsync();
 
         public async Task StartAsync()
         {
@@ -22,15 +25,15 @@ namespace GeneralBot
                 var client = new DiscordSocketClient();
 
                 // Initializes all of the required services.
-                var services = await Initialize.StartAsync(client);
+                var services = await Initialize.StartAsync(client).ConfigureAwait(false);
 
                 // Gets the credentials required to start the bot.
                 var config = services.GetRequiredService<ConfigModel>();
 
                 // Begins Discord login.
-                await client.LoginAsync(TokenType.Bot, config.Credentials.Discord);
-                await client.StartAsync();
-                await Task.Delay(-1);
+                await client.LoginAsync(TokenType.Bot, config.Credentials.Discord).ConfigureAwait(false);
+                await client.StartAsync().ConfigureAwait(false);
+                await Task.Delay(-1).ConfigureAwait(false);
             }
             catch (Exception e)
             {

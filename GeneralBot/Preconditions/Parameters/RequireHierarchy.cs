@@ -19,14 +19,14 @@ namespace GeneralBot.Preconditions.Parameters
 
             SocketGuildUser targetUser = null;
             if (value is SocketGuildUser targetGuildUser) targetUser = targetGuildUser;
-            if (value is ulong userId) targetUser = await context.Guild.GetUserAsync(userId) as SocketGuildUser;
+            if (value is ulong userId) targetUser = await context.Guild.GetUserAsync(userId).ConfigureAwait(false) as SocketGuildUser;
             if (targetUser == null)
                 return PreconditionResult.FromSuccess();
 
             if (user.Hierarchy < targetUser.Hierarchy)
                 return PreconditionResult.FromError("You cannot target anyone else whose roles are higher than yours.");
 
-            var currentUser = await context.Guild.GetCurrentUserAsync() as SocketGuildUser;
+            var currentUser = await context.Guild.GetCurrentUserAsync().ConfigureAwait(false) as SocketGuildUser;
             if (currentUser?.Hierarchy < targetUser.Hierarchy)
                 return PreconditionResult.FromError("The bot's role is lower than the targeted user.");
 

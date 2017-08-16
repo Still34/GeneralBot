@@ -21,7 +21,7 @@ namespace GeneralBot.Services
             _client.Ready += ReadyReportAsync;
         }
 
-        private async Task ReadyReportAsync()
+        private Task ReadyReportAsync()
         {
             var guilds = _client.Guilds.ToList();
             var sb = new StringBuilder();
@@ -35,7 +35,7 @@ namespace GeneralBot.Services
                 sb.AppendLine($"|--------User Count: {guild.MemberCount}");
                 sb.AppendLine($"|--------Joined at: {guild.CurrentUser.JoinedAt}");
             }
-            await _loggingService.LogAsync(sb, LogSeverity.Info).ConfigureAwait(false);
+            return _loggingService.LogAsync(sb, LogSeverity.Info);
         }
     }
 }

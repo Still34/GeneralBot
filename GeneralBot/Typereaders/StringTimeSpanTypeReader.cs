@@ -45,7 +45,7 @@ namespace GeneralBot.Typereaders
         public override async Task<TypeReaderResult> Read(ICommandContext context, string input,
             IServiceProvider services)
         {
-            var dateTimeParsed = await DehumanizeTimespanAsync(input);
+            var dateTimeParsed = await DehumanizeTimespanAsync(input).ConfigureAwait(false);
             return dateTimeParsed == TimeSpan.Zero
                 ? TypeReaderResult.FromError(CommandError.ParseFailed,
                     @"Invalid time format. Format example: `4d3h2m1s` (4 days 3 hours 2 minutes 1 second).")

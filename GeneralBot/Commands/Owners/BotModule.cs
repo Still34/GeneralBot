@@ -38,7 +38,7 @@ namespace GeneralBot.Commands.Owners
         [Summary("Changes the bot's username.")]
         public async Task<RuntimeResult> ConfigUsernameAsync([Remainder] string username)
         {
-            await Context.Client.CurrentUser.ModifyAsync(x => { x.Username = username; });
+            await Context.Client.CurrentUser.ModifyAsync(x => { x.Username = username; }).ConfigureAwait(false);
             return CommandRuntimeResult.FromSuccess($"Successfully changed username to {Format.Bold(username)}.");
         }
 
@@ -51,7 +51,7 @@ namespace GeneralBot.Commands.Owners
                 Color = color,
                 Description = $"Luminance value = {color.GetLuminanceFromColor()}"
             };
-            await ReplyAsync("", embed: embed);
+            await ReplyAsync("", embed: embed).ConfigureAwait(false);
             return CommandRuntimeResult.FromSuccess();
         }
 
@@ -59,7 +59,7 @@ namespace GeneralBot.Commands.Owners
         [Summary("Changes the bot's playing status.")]
         public async Task<RuntimeResult> ConfigGameAsync([Remainder] string game)
         {
-            await Context.Client.SetGameAsync(game);
+            await Context.Client.SetGameAsync(game).ConfigureAwait(false);
             return CommandRuntimeResult.FromSuccess($"Successfully changed game to {Format.Bold(game)}.");
         }
 
@@ -67,23 +67,23 @@ namespace GeneralBot.Commands.Owners
         [Summary("Changes the bot's avatar.")]
         public async Task<RuntimeResult> AvatarConfigureAsync()
         {
-            await ReplyAsync("", embed: EmbedHelper.FromInfo(description: "Please upload the new avatar."));
+            await ReplyAsync("", embed: EmbedHelper.FromInfo(description: "Please upload the new avatar.")).ConfigureAwait(false);
             var message = await InteractiveService.NextMessageAsync(Context,
-                new EnsureFromUserCriterion(Context.User.Id), TimeSpan.FromMinutes(5));
+                new EnsureFromUserCriterion(Context.User.Id), TimeSpan.FromMinutes(5)).ConfigureAwait(false);
             Uri imageUri = null;
             if (!string.IsNullOrEmpty(message.Content))
             {
-                var image = await WebHelper.GetImageUriAsync(HttpClient, message.Content);
+                var image = await WebHelper.GetImageUriAsync(HttpClient, message.Content).ConfigureAwait(false);
                 if (image != null) imageUri = image;
             }
             var attachment = message.Attachments.FirstOrDefault();
             if (attachment?.Height != null) Uri.TryCreate(attachment.Url, UriKind.RelativeOrAbsolute, out imageUri);
             if (imageUri == null) return CommandRuntimeResult.FromError("No valid images were detected.");
-            var imageStream = await WebHelper.GetFileStreamAsync(HttpClient, imageUri);
+            var imageStream = await WebHelper.GetFileStreamAsync(HttpClient, imageUri).ConfigureAwait(false);
             try
             {
                 // ReSharper disable once AccessToDisposedClosure
-                await Context.Client.CurrentUser.ModifyAsync(x => x.Avatar = new Image(imageStream));
+                await Context.Client.CurrentUser.ModifyAsync(x => x.Avatar = new Image(imageStream)).ConfigureAwait(false);
             }
             finally
             {

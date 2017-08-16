@@ -56,8 +56,8 @@ namespace GeneralBot.Commands.User
                 guildCount++;
             }
             await ReplyAsync("",
-                embed: EmbedHelper.FromInfo(EmbedTitle, guildBuilder.ToString().Truncate(2000)));
-            var selectionMessage = await InteractiveService.NextMessageAsync(Context, timeout: _responseTimeout);
+                embed: EmbedHelper.FromInfo(EmbedTitle, guildBuilder.ToString().Truncate(2000))).ConfigureAwait(false);
+            var selectionMessage = await InteractiveService.NextMessageAsync(Context, timeout: _responseTimeout).ConfigureAwait(false);
             if (selectionMessage == null)
                 return CommandRuntimeResult.FromError($"You did not reply in {_responseTimeout.Humanize()}.");
             if (!int.TryParse(_numberRegex.Match(selectionMessage.Content)?.Value, out int selection) ||
@@ -68,8 +68,8 @@ namespace GeneralBot.Commands.User
             // TODO: Allow users to upload more than one image.
             await ReplyAsync("",
                 embed: EmbedHelper.FromInfo(EmbedTitle,
-                    "Please describe the incident in details, preferably with evidence."));
-            var reportMessage = await InteractiveService.NextMessageAsync(Context, timeout: _responseTimeout);
+                    "Please describe the incident in details, preferably with evidence.")).ConfigureAwait(false);
+            var reportMessage = await InteractiveService.NextMessageAsync(Context, timeout: _responseTimeout).ConfigureAwait(false);
             if (reportMessage == null)
                 return CommandRuntimeResult.FromError($"You did not reply in {_responseTimeout.Humanize()}.");
             string reportContent = reportMessage.Content;
@@ -91,19 +91,19 @@ namespace GeneralBot.Commands.User
             if (reportMessage.Attachments.Any())
                 reportEmbed.AddField("Attachments", string.Join(", ", reportMessage.Attachments.Select(x => x.Url)));
             reportEmbed.AddField("Report time", DateTimeOffset.UtcNow);
-            await ReplyAsync("Please review your report. Enter Y to confirm.", embed: reportEmbed);
-            var confirmMessage = await InteractiveService.NextMessageAsync(Context, timeout: _responseTimeout);
+            await ReplyAsync("Please review your report. Enter Y to confirm.", embed: reportEmbed).ConfigureAwait(false);
+            var confirmMessage = await InteractiveService.NextMessageAsync(Context, timeout: _responseTimeout).ConfigureAwait(false);
             if (confirmMessage == null)
                 return CommandRuntimeResult.FromError($"You did not reply in {_responseTimeout.Humanize()}.");
             if (!confirmMessage.Content.ToLower().Contains("y"))
                 return CommandRuntimeResult.FromInfo("Dropping report...");
 
             // #3, send the report.
-            var reportChannel = await GetReportChannelAsync(guilds[selection]);
-            var reportRoles = await GetModeratorRolesAsync(guilds[selection]);
+            var reportChannel = await GetReportChannelAsync(guilds[selection]).ConfigureAwait(false);
+            var reportRoles = await GetModeratorRolesAsync(guilds[selection]).ConfigureAwait(false);
             await reportChannel.SendMessageAsync(
                 string.Join(", ", reportRoles.Select(x => x.Mention)) ?? "New report has been filed.",
-                embed: reportEmbed);
+                embed: reportEmbed).ConfigureAwait(false);
 
             return CommandRuntimeResult.FromSuccess("Your report has been sent.");
         }
@@ -111,7 +111,7 @@ namespace GeneralBot.Commands.User
         private async Task<ITextChannel> GetReportChannelAsync(SocketGuild guild)
         {
             // Attempts to get text channel from database entry.
-            var record = await CoreSettings.GetOrCreateGuildSettingsAsync(guild);
+            var record = await CoreSettings.GetOrCreateGuildSettingsAsync(guild).ConfigureAwait(false);
             var reportChannel = guild.GetTextChannel(record.ReportChannel);
             if (reportChannel != null) return reportChannel;
 
@@ -120,26 +120,26 @@ namespace GeneralBot.Commands.User
             if (searchChannel != null)
             {
                 record.ReportChannel = searchChannel.Id;
-                await CoreSettings.SaveRepositoryAsync();
+                await CoreSettings.SaveRepositoryAsync().ConfigureAwait(false);
                 return searchChannel;
             }
 
             // Attempts to create a new text channel.
-            var newChannel = await guild.CreateTextChannelAsync(ReportChannelName);
+            var newChannel = await guild.CreateTextChannelAsync(ReportChannelName).ConfigureAwait(false);
             await newChannel.AddPermissionOverwriteAsync(guild.EveryoneRole,
-                new OverwritePermissions(readMessages: PermValue.Deny));
-            var modRoles = await GetModeratorRolesAsync(guild);
+                new OverwritePermissions(readMessages: PermValue.Deny)).ConfigureAwait(false);
+            var modRoles = await GetModeratorRolesAsync(guild).ConfigureAwait(false);
             foreach (var modRole in modRoles)
             {
                 await newChannel.AddPermissionOverwriteAsync(modRole,
-                    new OverwritePermissions(readMessages: PermValue.Allow));
+                    new OverwritePermissions(readMessages: PermValue.Allow)).ConfigureAwait(false);
             }
             return newChannel;
         }
 
         private async Task<IEnumerable<SocketRole>> GetModeratorRolesAsync(SocketGuild guild)
         {
-            var record = await CoreSettings.GetOrCreateGuildSettingsAsync(guild);
+            var record = await CoreSettings.GetOrCreateGuildSettingsAsync(guild).ConfigureAwait(false);
             return guild.Roles.Where(x => x.Permissions.Has(record.ModeratorPermission));
         }
     }

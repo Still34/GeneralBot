@@ -53,17 +53,14 @@ namespace DirectoryMaid.Services
         /// <param name="channel">The channel for bot to send the reminder to.</param>
         /// <param name="dateTime">When should the user be reminded?</param>
         /// <param name="content">What to remind the user?</param>
-        public async Task AddReminderAsync(IUser user, IMessageChannel channel, DateTimeOffset dateTime,
-            string content)
+        public Task AddReminderAsync(IUser user, IMessageChannel channel, DateTimeOffset dateTime,
+            string content) => _userRepository.AddReminderAsync(new Reminder
         {
-            await _userRepository.AddReminderAsync(new Reminder
-            {
-                ChannelId = channel.Id,
-                Content = content,
-                Time = dateTime,
-                UserId = user.Id
-            }).ConfigureAwait(false);
-        }
+            ChannelId = channel.Id,
+            Content = content,
+            Time = dateTime,
+            UserId = user.Id
+        });
 
         private void ReminderCheck(object state)
         {
@@ -81,7 +78,8 @@ namespace DirectoryMaid.Services
             var channel = _client.GetChannel(reminder.ChannelId);
             var user = _client.GetUser(reminder.UserId);
             if (channel is IMessageChannel msgChannel && user != null)
-                await msgChannel.SendMessageAsync(user.Mention, embed: GetReminderEmbed(reminder.Content));
+                await msgChannel.SendMessageAsync(user.Mention, embed: GetReminderEmbed(reminder.Content))
+                    .ConfigureAwait(false);
         }
     }
 }

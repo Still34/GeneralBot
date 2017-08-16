@@ -30,11 +30,11 @@ namespace GeneralBot.Commands.User
         {
             if (Context.Channel is SocketGuildChannel channel)
             {
-                var record = await CoreRepository.GetOrCreateGuildSettingsAsync(Context.Guild);
+                var record = await CoreRepository.GetOrCreateGuildSettingsAsync(Context.Guild).ConfigureAwait(false);
                 if (!record.IsInviteAllowed)
                     return CommandRuntimeResult.FromError("The admin has disabled this command.");
-                var invite = await channel.GetLastInviteAsync(true);
-                await ReplyAsync(invite.Url);
+                var invite = await channel.GetLastInviteAsync(true).ConfigureAwait(false);
+                await ReplyAsync(invite.Url).ConfigureAwait(false);
             }
             return CommandRuntimeResult.FromSuccess();
         }
@@ -81,7 +81,7 @@ namespace GeneralBot.Commands.User
             embedBuilder.AddInlineField("Latency", Context.Client.Latency + "ms");
 
             // Discord application creation date
-            var appInfo = await Context.Client.GetApplicationInfoAsync();
+            var appInfo = await Context.Client.GetApplicationInfoAsync().ConfigureAwait(false);
             embedBuilder.AddInlineField("Created On", appInfo.CreatedAt.UtcDateTime);
 
             // Last updated on based on file modification date
@@ -90,7 +90,7 @@ namespace GeneralBot.Commands.User
 
             // Lib version
             embedBuilder.AddInlineField("Discord.NET Version", DiscordConfig.Version);
-            await ReplyAsync("", embed: embedBuilder);
+            await ReplyAsync("", embed: embedBuilder).ConfigureAwait(false);
             return CommandRuntimeResult.FromSuccess();
         }
 
@@ -114,7 +114,7 @@ namespace GeneralBot.Commands.User
 
             int latency = Context.Client.Latency;
             var stopwatch = Stopwatch.StartNew();
-            var pingMessage = await ReplyAsync($"heartbeat: {latency}ms, init: ---, rtt: ---");
+            var pingMessage = await ReplyAsync($"heartbeat: {latency}ms, init: ---, rtt: ---").ConfigureAwait(false);
             long init = stopwatch.ElapsedMilliseconds;
             target = pingMessage.Id;
             stopwatch.Restart();
@@ -122,13 +122,13 @@ namespace GeneralBot.Commands.User
 
             try
             {
-                await Task.Delay(TimeSpan.FromSeconds(30), cts.Token);
+                await Task.Delay(TimeSpan.FromSeconds(30), cts.Token).ConfigureAwait(false);
             }
             catch (TaskCanceledException)
             {
                 long rtt = stopwatch.ElapsedMilliseconds;
                 stopwatch.Stop();
-                await pingMessage.ModifyAsync(x => x.Content = $"heartbeat: {latency}ms, init: {init}ms, rtt: {rtt}ms");
+                await pingMessage.ModifyAsync(x => x.Content = $"heartbeat: {latency}ms, init: {init}ms, rtt: {rtt}ms").ConfigureAwait(false);
                 return;
             }
             finally
@@ -136,7 +136,7 @@ namespace GeneralBot.Commands.User
                 Context.Client.MessageReceived -= WaitTarget;
             }
             stopwatch.Stop();
-            await pingMessage.ModifyAsync(x => x.Content = $"heartbeat: {latency}ms, init: {init}ms, rtt: timeout");
+            await pingMessage.ModifyAsync(x => x.Content = $"heartbeat: {latency}ms, init: {init}ms, rtt: timeout").ConfigureAwait(false);
         }
 
         [Group("help")]
@@ -150,7 +150,7 @@ namespace GeneralBot.Commands.User
             [Summary("Need help for a specific command? Use this!")]
             public async Task<RuntimeResult> HelpSpecificCommandAsync(string input)
             {
-                var commandInfos = await GetCommandInfosAsync(input);
+                var commandInfos = await GetCommandInfosAsync(input).ConfigureAwait(false);
                 if (commandInfos.Count == 0)
                     return CommandRuntimeResult.FromError("I could not find any related commands!");
 
@@ -176,13 +176,13 @@ namespace GeneralBot.Commands.User
                         x.Value = commandInfo.Summary ?? "No summary.";
                     });
                 }
-                await ReplyAsync("", embed: embed);
+                await ReplyAsync("", embed: embed).ConfigureAwait(false);
                 return CommandRuntimeResult.FromSuccess();
             }
 
             private async Task<string> GetCommandPrefixAsync(SocketGuild guild) => guild == null
                 ? "!"
-                : (await CoreSettings.GetOrCreateGuildSettingsAsync(guild))?.CommandPrefix;
+                : (await CoreSettings.GetOrCreateGuildSettingsAsync(guild).ConfigureAwait(false))?.CommandPrefix;
 
             private static string BuildCommandInfo(CommandInfo cmdInfo) =>
                 $"{cmdInfo.Aliases.First()} {cmdInfo.Parameters.GetParamsUsage()}";
@@ -193,7 +193,7 @@ namespace GeneralBot.Commands.User
                 foreach (var module in CommandService.Modules)
                 foreach (var command in module.Commands)
                 {
-                    var check = await command.CheckPreconditionsAsync(Context, ServiceProvider);
+                    var check = await command.CheckPreconditionsAsync(Context, ServiceProvider).ConfigureAwait(false);
                     if (!check.IsSuccess) continue;
                     if (command.Aliases.Any(x => x.ContainsCaseInsensitive(input)) ||
                         module.IsSubmodule &&

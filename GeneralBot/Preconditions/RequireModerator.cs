@@ -20,7 +20,7 @@ namespace GeneralBot.Preconditions
             if (guildUser == null)
                 return PreconditionResult.FromError("This command must be used in a guild.");
             var settings = services.GetRequiredService<ICoreRepository>();
-            var record = await settings.GetOrCreateGuildSettingsAsync(context.Guild);
+            var record = await settings.GetOrCreateGuildSettingsAsync(context.Guild).ConfigureAwait(false);
             return guildUser.GuildPermissions.Has(record.ModeratorPermission)
                 ? PreconditionResult.FromSuccess()
                 : PreconditionResult.FromError(

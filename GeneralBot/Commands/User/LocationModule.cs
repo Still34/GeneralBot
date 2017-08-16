@@ -33,7 +33,7 @@ namespace GeneralBot.Commands.User
         [Summary("Looks up a location and returns its information.")]
         public async Task<RuntimeResult> LocationLookupAsync([Remainder] string location)
         {
-            var geocodeResults = (await Geocoding.GeocodeAsync(location)).ToList();
+            var geocodeResults = (await Geocoding.GeocodeAsync(location).ConfigureAwait(false)).ToList();
             if (!geocodeResults.Any()) return CommandRuntimeResult.FromError("No results found.");
 
             var embed = EmbedHelper.FromInfo();
@@ -42,7 +42,7 @@ namespace GeneralBot.Commands.User
                 if (embed.Fields.Count > 10) break;
                 embed.AddField(geocodeResult.FormattedAddress, geocodeResult.Coordinates);
             }
-            await ReplyAsync("", embed: embed);
+            await ReplyAsync("", embed: embed).ConfigureAwait(false);
             return CommandRuntimeResult.FromSuccess();
         }
 
@@ -51,12 +51,12 @@ namespace GeneralBot.Commands.User
         [Summary("Set your current location for time and weather commands.")]
         public async Task<RuntimeResult> LocationSetAsync([Remainder] string location)
         {
-            var geocodeResults = (await Geocoding.GeocodeAsync(location)).ToList();
+            var geocodeResults = (await Geocoding.GeocodeAsync(location).ConfigureAwait(false)).ToList();
             if (!geocodeResults.Any()) return CommandRuntimeResult.FromError("No results found.");
 
             var result = geocodeResults.FirstOrDefault();
             await UserSettings.AddOrUpdateCoordinatesAsync(Context.User, result.Coordinates.Longitude,
-                result.Coordinates.Latitude);
+                result.Coordinates.Latitude).ConfigureAwait(false);
             return CommandRuntimeResult.FromSuccess($"Your location has been set to {result.FormattedAddress}!");
         }
 
@@ -68,7 +68,7 @@ namespace GeneralBot.Commands.User
             var record = UserSettings.GetCoordinates(Context.User);
             if (record == null)
                 return CommandRuntimeResult.FromError("You do not have a location set up yet!");
-            await UserSettings.RemoveCoordinatesAsync(Context.User);
+            await UserSettings.RemoveCoordinatesAsync(Context.User).ConfigureAwait(false);
             return CommandRuntimeResult.FromSuccess("You have successfully removed your location!");
         }
     }

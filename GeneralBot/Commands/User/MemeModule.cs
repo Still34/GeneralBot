@@ -65,22 +65,21 @@ namespace GeneralBot.Commands.User
         public async Task<RuntimeResult> CowsayAsync([Remainder] string text)
         {
             string parsedInput = WebUtility.HtmlEncode(text);
-            using (var response =
-                await HttpClient.GetAsync($"http://cowsay.morecode.org/say?message={parsedInput}&format=text"))
+            using (var response = await HttpClient.GetAsync($"http://cowsay.morecode.org/say?message={parsedInput}&format=text").ConfigureAwait(false))
             {
                 if (!response.IsSuccessStatusCode)
                 {
                     return CommandRuntimeResult.FromError(
                         "I cannot reach cowsay at the moment, please try again later!");
                 }
-                string output = await response.Content.ReadAsStringAsync();
+                string output = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 // This should likely never happen, but just in case.
                 if (string.IsNullOrEmpty(output))
                 {
                     return CommandRuntimeResult.FromError(
                         "Cowsay is out of reach, please try again with another text!");
                 }
-                await ReplyAsync(output);
+                await ReplyAsync(output).ConfigureAwait(false);
                 return CommandRuntimeResult.FromSuccess();
             }
         }
@@ -89,13 +88,13 @@ namespace GeneralBot.Commands.User
         [Alias("rthinking", "think", "🤔")]
         public async Task<RuntimeResult> ThinkingAsync()
         {
-            using (var response = await HttpClient.GetAsync("https://www.reddit.com/r/Thinking/.json"))
+            using (var response = await HttpClient.GetAsync("https://www.reddit.com/r/Thinking/.json").ConfigureAwait(false))
             {
                 if (!response.IsSuccessStatusCode)
                     return CommandRuntimeResult.FromError("Reddit is out of reach, please try again later!");
 
                 var result =
-                    JsonConvert.DeserializeObject<RedditResponseModel>(await response.Content.ReadAsStringAsync());
+                    JsonConvert.DeserializeObject<RedditResponseModel>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
                 var children = Context.Channel.IsNsfw
                     ? result.Data.Children
                     : result.Data.Children.Where(x => !x.Data.IsNsfw).ToList();
@@ -110,7 +109,7 @@ namespace GeneralBot.Commands.User
                     Color = ColorHelper.GetRandomColor(),
                     ThumbnailUrl = post.Data.Url
                 };
-                await ReplyAsync("", embed: builder);
+                await ReplyAsync("", embed: builder).ConfigureAwait(false);
                 return CommandRuntimeResult.FromSuccess();
             }
         }
@@ -120,19 +119,19 @@ namespace GeneralBot.Commands.User
         public async Task<RuntimeResult> NeedsMoreJpegAsync()
         {
             var message =
-                (await Context.Channel.GetMessagesAsync().Flatten())?
+                (await Context.Channel.GetMessagesAsync().Flatten().ConfigureAwait(false))?
                 .FirstOrDefault(x => x.Attachments.Any(a => a.Width.HasValue));
             if (message == null)
                 return CommandRuntimeResult.FromError("No images found!");
             foreach (var attachment in message.Attachments)
             {
-                using (var attachmentStream = await WebHelper.GetFileStreamAsync(HttpClient, new Uri(attachment.Url)))
+                using (var attachmentStream = await WebHelper.GetFileStreamAsync(HttpClient, new Uri(attachment.Url)).ConfigureAwait(false))
                 using (var image = Image.Load(attachmentStream))
                 using (var imageStream = new MemoryStream())
                 {
                     image.SaveAsJpeg(imageStream, new JpegEncoder {Quality = 2});
                     imageStream.Seek(0, SeekOrigin.Begin);
-                    await Context.Channel.SendFileAsync(imageStream, "needsmorejpeg.jpeg");
+                    await Context.Channel.SendFileAsync(imageStream, "needsmorejpeg.jpeg").ConfigureAwait(false);
                 }
             }
             return CommandRuntimeResult.FromSuccess();
@@ -143,13 +142,13 @@ namespace GeneralBot.Commands.User
         public async Task<RuntimeResult> AngeryAsync()
         {
             var message =
-                (await Context.Channel.GetMessagesAsync().Flatten())?
+                (await Context.Channel.GetMessagesAsync().Flatten().ConfigureAwait(false))?
                 .FirstOrDefault(x => x.Attachments.Any(a => a.Width.HasValue));
             if (message == null)
                 return CommandRuntimeResult.FromError("No images found!");
             foreach (var attachment in message.Attachments)
             {
-                using (var attachmentStream = await WebHelper.GetFileStreamAsync(HttpClient, new Uri(attachment.Url)))
+                using (var attachmentStream = await WebHelper.GetFileStreamAsync(HttpClient, new Uri(attachment.Url)).ConfigureAwait(false))
                 using (var image = Image.Load(attachmentStream))
                 using (var imageStream = new MemoryStream())
                 {
@@ -158,7 +157,7 @@ namespace GeneralBot.Commands.User
                             new GraphicsOptions {BlenderMode = PixelBlenderMode.Screen, BlendPercentage = 25})
                         .SaveAsPng(imageStream);
                     imageStream.Seek(0, SeekOrigin.Begin);
-                    await Context.Channel.SendFileAsync(imageStream, "angery.png");
+                    await Context.Channel.SendFileAsync(imageStream, "angery.png").ConfigureAwait(false);
                 }
             }
             return CommandRuntimeResult.FromSuccess();

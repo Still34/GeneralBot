@@ -47,7 +47,7 @@ namespace GeneralBot.Commands.User
                 }
                 .AddField("You asked...", input)
                 .AddField("The 8 ball says...", response);
-            await ReplyAsync("", embed: embed);
+            await ReplyAsync("", embed: embed).ConfigureAwait(false);
             return CommandRuntimeResult.FromSuccess();
         }
 
@@ -69,7 +69,7 @@ namespace GeneralBot.Commands.User
                 Color = ColorHelper.GetRandomColor(),
                 Description = regexParsed[Random.Next(0, regexParsed.Length)]
             };
-            await ReplyAsync("", embed: embed);
+            await ReplyAsync("", embed: embed).ConfigureAwait(false);
             return CommandRuntimeResult.FromSuccess();
         }
 
@@ -80,14 +80,14 @@ namespace GeneralBot.Commands.User
         {
             string parsedTerm = WebUtility.HtmlEncode(term);
             using (var response =
-                await HttpClient.GetAsync($"http://api.urbandictionary.com/v0/define?term={parsedTerm}"))
+                await HttpClient.GetAsync($"http://api.urbandictionary.com/v0/define?term={parsedTerm}").ConfigureAwait(false))
             {
                 if (!response.IsSuccessStatusCode)
                 {
                     return CommandRuntimeResult.FromError(
                         "Urban cannot be reached at the moment, please try again later!");
                 }
-                string responseParsed = await response.Content.ReadAsStringAsync();
+                string responseParsed = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 var search = JsonConvert.DeserializeObject<UrbanResponse>(responseParsed);
                 var result = search.Results?.FirstOrDefault();
                 if (result == null)
@@ -102,7 +102,7 @@ namespace GeneralBot.Commands.User
                     .AddField("Example:", result.Example)
                     .AddInlineField("Likes:", $":thumbsup: {result.Likes}")
                     .AddInlineField("Dislikes:", $":thumbsdown: {result.Dislikes}");
-                await ReplyAsync("", embed: builder);
+                await ReplyAsync("", embed: builder).ConfigureAwait(false);
                 return CommandRuntimeResult.FromSuccess();
             }
         }

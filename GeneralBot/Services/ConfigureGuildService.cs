@@ -27,19 +27,19 @@ namespace GeneralBot.Services
             _loggingService = loggingService;
         }
 
-        private async Task RegisterGuildAsync(SocketGuild guild) =>
-            await _coreSettings.GetOrCreateGuildSettingsAsync(guild);
+        private Task RegisterGuildAsync(SocketGuild guild) =>
+            _coreSettings.GetOrCreateGuildSettingsAsync(guild);
 
-        private async Task UnregisterGuildAsync(SocketGuild guild) =>
-            await _coreSettings.UnregisterGuildAsync(guild);
+        private Task UnregisterGuildAsync(SocketGuild guild) =>
+            _coreSettings.UnregisterGuildAsync(guild);
 
         private async Task WelcomeAsync(SocketGuildUser user)
         {
             var guild = user.Guild;
             await _loggingService.LogAsync($"{user.GetFullnameOrDefault()} ({user.Id}) joined {guild} ({guild.Id}).",
-                LogSeverity.Verbose);
+                LogSeverity.Verbose).ConfigureAwait(false);
 
-            var record = await _coreSettings.GetOrCreateGreetingsAsync(guild);
+            var record = await _coreSettings.GetOrCreateGreetingsAsync(guild).ConfigureAwait(false);
             if (!record.IsJoinEnabled) return;
             var channel = guild.GetTextChannel(record.ChannelId);
             if (channel == null) return;

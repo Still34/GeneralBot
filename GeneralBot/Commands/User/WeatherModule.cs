@@ -59,7 +59,7 @@ namespace GeneralBot.Commands.User
                 return CommandRuntimeResult.FromError(
                     "Location is not set yet! Please set the location first!");
             }
-            var geocodeResults = await Geocoder.ReverseGeocodeAsync(record.Latitude, record.Longitude);
+            var geocodeResults = await Geocoder.ReverseGeocodeAsync(record.Latitude, record.Longitude).ConfigureAwait(false);
             var geocode = geocodeResults.FirstOrDefault();
             if (geocode == null)
             {
@@ -70,11 +70,11 @@ namespace GeneralBot.Commands.User
                 geocode.Coordinates.Latitude,
                 geocode.Coordinates.Longitude,
                 _darkSkyParams
-            );
-            var embeds = await Weather.GetWeatherEmbedsAsync(forecast, geocode);
-            await ReplyAsync("", embed: embeds.WeatherResults.FirstOrDefault());
+            ).ConfigureAwait(false);
+            var embeds = await Weather.GetWeatherEmbedsAsync(forecast, geocode).ConfigureAwait(false);
+            await ReplyAsync("", embed: embeds.WeatherResults.FirstOrDefault()).ConfigureAwait(false);
             foreach (var alert in embeds.Alerts)
-                await ReplyAsync("", embed: alert);
+                await ReplyAsync("", embed: alert).ConfigureAwait(false);
             return CommandRuntimeResult.FromSuccess();
         }
 
@@ -83,18 +83,18 @@ namespace GeneralBot.Commands.User
         [Priority(1)]
         public async Task<RuntimeResult> GetWeatherForLocationAsync([Summary("Location")] [Remainder] string location)
         {
-            var geocodeResults = await Geocoder.GeocodeAsync(location);
+            var geocodeResults = await Geocoder.GeocodeAsync(location).ConfigureAwait(false);
             var geocode = geocodeResults.FirstOrDefault();
             if (geocode == null)
                 return CommandRuntimeResult.FromError($"I could not find {location}! Try another location.");
             var forecast = await DarkSkyService.GetForecast(
                 geocode.Coordinates.Latitude,
                 geocode.Coordinates.Longitude,
-                _darkSkyParams);
-            var embeds = await Weather.GetWeatherEmbedsAsync(forecast, geocode);
-            await ReplyAsync("", embed: embeds.WeatherResults.FirstOrDefault());
+                _darkSkyParams).ConfigureAwait(false);
+            var embeds = await Weather.GetWeatherEmbedsAsync(forecast, geocode).ConfigureAwait(false);
+            await ReplyAsync("", embed: embeds.WeatherResults.FirstOrDefault()).ConfigureAwait(false);
             foreach (var alert in embeds.Alerts)
-                await ReplyAsync("", embed: alert);
+                await ReplyAsync("", embed: alert).ConfigureAwait(false);
             return CommandRuntimeResult.FromSuccess();
         }
     }

@@ -2,11 +2,12 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp1.1</TargetFramework>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.1</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -18,29 +19,27 @@
   <ItemGroup>
     <PackageReference Include="DarkSkyCore" Version="3.0.0" />
     <PackageReference Include="Discord.Addons.EmojiTools" Version="2.0.1" />
-    <PackageReference Include="Discord.Addons.Interactive" Version="1.0.0" />
-    <PackageReference Include="Discord.Net" Version="1.0.1-build-00794" />
+    <PackageReference Include="Discord.Addons.Interactive" Version="1.0.1" />
     <PackageReference Include="Discord.Net.Commands" Version="1.0.1-build-00794" />
     <PackageReference Include="Discord.Net.Core" Version="1.0.1-build-00794" />
-    <PackageReference Include="Discord.Net.Rest" Version="1.0.1-build-00794" />
     <PackageReference Include="Discord.Net.WebSocket" Version="1.0.1-build-00794" />
     <PackageReference Include="Geocoding.Core" Version="4.0.0" />
     <PackageReference Include="Geocoding.Google" Version="4.0.0" />
     <PackageReference Include="Gfycat.Net" Version="1.0.8.50" />
     <PackageReference Include="HtmlAgilityPack" Version="1.5.2-beta6" />
-    <PackageReference Include="ImageSharp" Version="1.0.0-alpha9-00173" />
-    <PackageReference Include="ImageSharp.Drawing" Version="1.0.0-alpha9-00168" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="1.1.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="1.1.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="1.1.1" />
+    <PackageReference Include="ImageSharp" Version="1.0.0-alpha9-00182" />
+    <PackageReference Include="ImageSharp.Drawing" Version="1.0.0-alpha9-00177" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="2.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="2.0.0" />
     <!--<PackageReference Include="Microsoft.Extensions.Configuration" Version="1.1.2" />-->
     <!--<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="1.1.2" />-->
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="1.1.2" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="1.1.2" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="2.0.0" />
     <PackageReference Include="Serilog.Extensions.Logging.File" Version="1.1.1-dev-00019" />
     <PackageReference Include="Humanizer.Core" Version="2.2.0" />
     <PackageReference Include="SteamWebAPI2" Version="4.0.1" />
-    <PackageReference Include="System.ValueTuple" Version="4.4.0" />
+    <PackageReference Include="System.ValueTuple" Version="4.5.0-preview2-25615-01" />
   </ItemGroup>
 
 </Project>

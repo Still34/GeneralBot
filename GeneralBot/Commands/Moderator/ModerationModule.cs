@@ -26,7 +26,7 @@ namespace GeneralBot.Commands.Moderator
             [RequireHierarchy] SocketGuildUser user,
             [Remainder] string reason = null)
         {
-            await user.KickAsync(reason);
+            await user.KickAsync(reason).ConfigureAwait(false);
             return CommandRuntimeResult.FromSuccess($"User {user} has been kicked from the server.");
         }
 
@@ -40,7 +40,7 @@ namespace GeneralBot.Commands.Moderator
             int days = 0,
             [Remainder] string reason = null)
         {
-            await Context.Guild.AddBanAsync(user, days, reason);
+            await Context.Guild.AddBanAsync(user, days, reason).ConfigureAwait(false);
             return CommandRuntimeResult.FromSuccess($"User {user} has been banned from the server.");
         }
 
@@ -54,7 +54,7 @@ namespace GeneralBot.Commands.Moderator
             int days = 0,
             [Remainder] string reason = null)
         {
-            await Context.Guild.AddBanAsync(userId, days, reason);
+            await Context.Guild.AddBanAsync(userId, days, reason).ConfigureAwait(false);
             return CommandRuntimeResult.FromSuccess($"User {userId} has been banned from the server.");
         }
 
@@ -68,8 +68,8 @@ namespace GeneralBot.Commands.Moderator
             int days = 0,
             [Remainder] string reason = null)
         {
-            await Context.Guild.AddBanAsync(user, days, reason);
-            await Context.Guild.RemoveBanAsync(user);
+            await Context.Guild.AddBanAsync(user, days, reason).ConfigureAwait(false);
+            await Context.Guild.RemoveBanAsync(user).ConfigureAwait(false);
             return CommandRuntimeResult.FromSuccess($"User {user} has been banned from the server.");
         }
 
@@ -83,8 +83,8 @@ namespace GeneralBot.Commands.Moderator
             int days = 0,
             [Remainder] string reason = null)
         {
-            await Context.Guild.AddBanAsync(userId, days, reason);
-            await Context.Guild.RemoveBanAsync(userId);
+            await Context.Guild.AddBanAsync(userId, days, reason).ConfigureAwait(false);
+            await Context.Guild.RemoveBanAsync(userId).ConfigureAwait(false);
             return CommandRuntimeResult.FromSuccess($"User {userId} has been banned from the server.");
         }
 
@@ -95,7 +95,7 @@ namespace GeneralBot.Commands.Moderator
         public async Task<RuntimeResult> NicknameChangeAsync([RequireHierarchy] SocketGuildUser user,
             [Remainder] string nickname)
         {
-            await user.ModifyAsync(x => x.Nickname = nickname);
+            await user.ModifyAsync(x => x.Nickname = nickname).ConfigureAwait(false);
             return CommandRuntimeResult.FromSuccess($"Successfully changed {user}'s name to {nickname}.");
         }
 
@@ -106,7 +106,7 @@ namespace GeneralBot.Commands.Moderator
         public async Task<RuntimeResult> BlockUserAsync([RequireHierarchy] SocketGuildUser user)
         {
             if (Context.Channel is SocketTextChannel channel)
-                await channel.AddPermissionOverwriteAsync(user, new OverwritePermissions(readMessages: PermValue.Deny));
+                await channel.AddPermissionOverwriteAsync(user, new OverwritePermissions(readMessages: PermValue.Deny)).ConfigureAwait(false);
             return CommandRuntimeResult.FromSuccess($"Successfully blocked {user.Mention}.");
         }
 
@@ -117,7 +117,7 @@ namespace GeneralBot.Commands.Moderator
         public async Task<RuntimeResult> UnblockUserAsync([RequireHierarchy] SocketGuildUser user)
         {
             if (Context.Channel is SocketTextChannel channel)
-                await channel.RemovePermissionOverwriteAsync(user);
+                await channel.RemovePermissionOverwriteAsync(user).ConfigureAwait(false);
             return CommandRuntimeResult.FromSuccess($"Successfully unblocked {user.Mention}");
         }
 
@@ -133,9 +133,9 @@ namespace GeneralBot.Commands.Moderator
             [Command("all")]
             public async Task<RuntimeResult> CleanAllAsync(int amount = 25)
             {
-                var messages = (await GetMessageAsync(amount)).ToList();
+                var messages = (await GetMessageAsync(amount).ConfigureAwait(false)).ToList();
                 if (messages.Count == 0) return CommandRuntimeResult.FromError(MessagesNotFound);
-                await DeleteMessagesAsync(messages);
+                await DeleteMessagesAsync(messages).ConfigureAwait(false);
                 return CommandRuntimeResult.FromSuccess(
                     $"Deleted {Format.Bold(messages.Count.ToString())} message(s)!");
             }
@@ -143,9 +143,9 @@ namespace GeneralBot.Commands.Moderator
             [Command("user")]
             public async Task<RuntimeResult> CleanUserAsync(SocketUser user, int amount = 25)
             {
-                var messages = (await GetMessageAsync(amount)).Where(x => x.Author.Id == user.Id).ToList();
+                var messages = (await GetMessageAsync(amount).ConfigureAwait(false)).Where(x => x.Author.Id == user.Id).ToList();
                 if (messages.Count == 0) return CommandRuntimeResult.FromError(MessagesNotFound);
-                await DeleteMessagesAsync(messages);
+                await DeleteMessagesAsync(messages).ConfigureAwait(false);
                 return CommandRuntimeResult.FromSuccess(
                     $"Deleted {Format.Bold(messages.Count.ToString())} message(s) from user {Format.Bold(user.Mention)}!");
             }
@@ -153,9 +153,9 @@ namespace GeneralBot.Commands.Moderator
             [Command("bots")]
             public async Task<RuntimeResult> CleanBotsAsync(int amount = 25)
             {
-                var messages = (await GetMessageAsync(amount)).Where(x => x.Author.IsBot).ToList();
+                var messages = (await GetMessageAsync(amount).ConfigureAwait(false)).Where(x => x.Author.IsBot).ToList();
                 if (messages.Count == 0) return CommandRuntimeResult.FromError(MessagesNotFound);
-                await DeleteMessagesAsync(messages);
+                await DeleteMessagesAsync(messages).ConfigureAwait(false);
                 return CommandRuntimeResult.FromSuccess(
                     $"Deleted {Format.Bold(messages.Count.ToString())} message(s) from bots!");
             }
@@ -163,10 +163,10 @@ namespace GeneralBot.Commands.Moderator
             [Command("contains")]
             public async Task<RuntimeResult> CleanContainsAsync(string text, int amount = 25)
             {
-                var messages = (await GetMessageAsync(amount)).Where(x => x.Content.ContainsCaseInsensitive(text))
+                var messages = (await GetMessageAsync(amount).ConfigureAwait(false)).Where(x => x.Content.ContainsCaseInsensitive(text))
                     .ToList();
                 if (messages.Count == 0) return CommandRuntimeResult.FromError(MessagesNotFound);
-                await DeleteMessagesAsync(messages);
+                await DeleteMessagesAsync(messages).ConfigureAwait(false);
                 return CommandRuntimeResult.FromSuccess(
                     $"Deleted {Format.Bold(messages.Count.ToString())} message(s) containing {text}!");
             }
@@ -174,18 +174,18 @@ namespace GeneralBot.Commands.Moderator
             [Command("attachments")]
             public async Task<RuntimeResult> CleanAttachmentsAsync(int amount = 25)
             {
-                var messages = (await GetMessageAsync(amount)).Where(x => x.Attachments.Count > 0).ToList();
+                var messages = (await GetMessageAsync(amount).ConfigureAwait(false)).Where(x => x.Attachments.Count > 0).ToList();
                 if (messages.Count == 0) return CommandRuntimeResult.FromError(MessagesNotFound);
-                await DeleteMessagesAsync(messages);
+                await DeleteMessagesAsync(messages).ConfigureAwait(false);
                 return CommandRuntimeResult.FromSuccess(
                     $"Deleted {Format.Bold(messages.Count.ToString())} message(s) containing attachments!");
             }
 
-            private async Task<IEnumerable<IMessage>> GetMessageAsync(int count)
-                => await Context.Channel.GetMessagesAsync(count).Flatten();
+            private Task<IEnumerable<IMessage>> GetMessageAsync(int count)
+                => Context.Channel.GetMessagesAsync(count).Flatten();
 
-            private async Task DeleteMessagesAsync(IEnumerable<IMessage> messages)
-                => await Context.Channel.DeleteMessagesAsync(messages);
+            private Task DeleteMessagesAsync(IEnumerable<IMessage> messages)
+                => Context.Channel.DeleteMessagesAsync(messages);
         }
     }
 }

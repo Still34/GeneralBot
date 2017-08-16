@@ -32,7 +32,7 @@ namespace GeneralBot.Services
                     break;
             }
             if (!Equals(currentStatus, newStatus))
-                await _client.SetStatusAsync(newStatus);
+                await _client.SetStatusAsync(newStatus).ConfigureAwait(false);
         }
     }
 }

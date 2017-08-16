@@ -14,9 +14,9 @@ namespace GeneralBot.Extensions
         /// <returns></returns>
         public static async Task<IInvite> GetLastInviteAsync(this IGuildChannel channel, bool createNew = false)
         {
-            var invites = await channel.GetInvitesAsync();
+            var invites = await channel.GetInvitesAsync().ConfigureAwait(false);
             if (invites.Count != 0 || !createNew) return invites.OrderByDescending(x => x.CreatedAt).FirstOrDefault();
-            return await channel.CreateInviteAsync(null);
+            return await channel.CreateInviteAsync(null).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -27,10 +27,10 @@ namespace GeneralBot.Extensions
         /// <returns></returns>
         public static async Task<IInvite> GetLastInviteAsync(this IGuild guild, bool createNew = false)
         {
-            var invites = await guild.GetInvitesAsync();
+            var invites = await guild.GetInvitesAsync().ConfigureAwait(false);
             if (invites.Count != 0 || !createNew) return invites.OrderByDescending(x => x.CreatedAt).FirstOrDefault();
-            var defaultChannel = await guild.GetDefaultChannelAsync();
-            return await defaultChannel.CreateInviteAsync(null);
+            var defaultChannel = await guild.GetDefaultChannelAsync().ConfigureAwait(false);
+            return await defaultChannel.CreateInviteAsync(null).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -53,7 +53,7 @@ namespace GeneralBot.Extensions
             string channelTopic = oldChannel.Topic ?? "";
             int channelPosition = oldChannel.Position;
             var channelPerms = oldChannel.PermissionOverwrites;
-            var newChannel = await oldChannel.Guild.CreateTextChannelAsync(channelName);
+            var newChannel = await oldChannel.Guild.CreateTextChannelAsync(channelName).ConfigureAwait(false);
             if (clonePerms)
             {
                 foreach (var perm in channelPerms)
@@ -62,11 +62,11 @@ namespace GeneralBot.Extensions
                     {
                         case PermissionTarget.Role:
                             var role = oldChannel.Guild.GetRole(perm.TargetId);
-                            await newChannel.AddPermissionOverwriteAsync(role, perm.Permissions);
+                            await newChannel.AddPermissionOverwriteAsync(role, perm.Permissions).ConfigureAwait(false);
                             break;
                         case PermissionTarget.User:
-                            var user = await oldChannel.Guild.GetUserAsync(perm.TargetId);
-                            await newChannel.AddPermissionOverwriteAsync(user, perm.Permissions);
+                            var user = await oldChannel.Guild.GetUserAsync(perm.TargetId).ConfigureAwait(false);
+                            await newChannel.AddPermissionOverwriteAsync(user, perm.Permissions).ConfigureAwait(false);
                             break;
                     }
                 }
@@ -76,9 +76,9 @@ namespace GeneralBot.Extensions
                 x.Position = channelPosition;
                 x.Name = channelName;
                 x.Topic = channelTopic;
-            });
+            }).ConfigureAwait(false);
             if (deleteOldChannel)
-                await oldChannel.DeleteAsync();
+                await oldChannel.DeleteAsync().ConfigureAwait(false);
             return newChannel;
         }
     }

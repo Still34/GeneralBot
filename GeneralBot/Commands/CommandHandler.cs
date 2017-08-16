@@ -74,7 +74,7 @@ namespace GeneralBot.Commands
                 {
                     await _loggingService.LogAsync(
                         $"{typeReader} does not have a {nameof(Type)} array specified, ignoring...",
-                        LogSeverity.Warning);
+                        LogSeverity.Warning).ConfigureAwait(false);
                 }
             }
             await _loggingService.LogAsync(
@@ -82,7 +82,7 @@ namespace GeneralBot.Commands
                 string.Join(Environment.NewLine, typeReaderList), LogSeverity.Verbose).ConfigureAwait(false);
 
             // Command module discovery.
-            await _commandService.AddModulesAsync(Assembly.GetEntryAssembly());
+            await _commandService.AddModulesAsync(Assembly.GetEntryAssembly()).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -107,7 +107,7 @@ namespace GeneralBot.Commands
             if (!msg.HasStringPrefix(prefix, ref argPos)) return;
 
             var context = new SocketCommandContext(_client, msg);
-            await _commandService.ExecuteAsync(context, argPos, _services);
+            await _commandService.ExecuteAsync(context, argPos, _services).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -145,7 +145,7 @@ namespace GeneralBot.Commands
                     embed = EmbedHelper.FromError(description: result.ErrorReason);
                     break;
             }
-            await context.Channel.SendMessageAsync("", embed: embed);
+            await context.Channel.SendMessageAsync("", embed: embed).ConfigureAwait(false);
             await _loggingService.LogAsync(
                 $"{context.User} executed \"{commandInfo.Aliases.FirstOrDefault()}\" in {context.Message.GetPostedAt()}." +
                 Environment.NewLine +

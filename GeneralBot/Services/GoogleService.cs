@@ -37,13 +37,13 @@ namespace GeneralBot.Services
                 {
                     var embed = new EmbedBuilder();
                     embed.WithColor(ColorHelper.GetRandomColor());
-                    string htmlString = await response.Content.ReadAsStringAsync();
+                    string htmlString = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                     var doc = new HtmlDocument();
                     doc.LoadHtml(htmlString);
-                    var card = await ParseGoogleCardAsync(doc, embed);
+                    var card = await ParseGoogleCardAsync(doc, embed).ConfigureAwait(false);
                     if (card != null)
                         return card;
-                    var results = await GetGoogleSearchAsync(doc, amount);
+                    var results = await GetGoogleSearchAsync(doc, amount).ConfigureAwait(false);
                     foreach (var result in results)
                         embed.AddField(result.Title, result.Url);
                     return embed.WithFooter(x => x.Text = $"Results for '{query}'").Build();
@@ -102,7 +102,7 @@ namespace GeneralBot.Services
                         builder.AddInlineField(amount[0], amount[1]);
                         builder.AddInlineField(calories[0], calories[1]);
                     }
-                    var googleSearch = await GetGoogleSearchAsync(doc, 3);
+                    var googleSearch = await GetGoogleSearchAsync(doc, 3).ConfigureAwait(false);
                     foreach (var result in googleSearch)
                         builder.AddField(result.Title, result.Url);
                     return builder.Build();
@@ -124,7 +124,7 @@ namespace GeneralBot.Services
                     builder.Title = title;
                     builder.Description = WebUtility.HtmlDecode(featuredSnippet
                         .FirstOrDefault(x => x.GetAttributeValue("class", "") == "_o0d").InnerText);
-                    var results = await GetGoogleSearchAsync(doc, 4);
+                    var results = await GetGoogleSearchAsync(doc, 4).ConfigureAwait(false);
                     foreach (var result in results.Skip(1))
                         builder.AddField(result.Title, result.Url);
                     return builder.Build();

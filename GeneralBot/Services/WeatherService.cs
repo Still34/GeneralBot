@@ -33,7 +33,7 @@ namespace GeneralBot.Services
                 var alertEmbeds = new List<EmbedBuilder>();
                 var weatherEmbeds = new List<EmbedBuilder>();
                 var response = forecast.Response;
-                var location = await GetShortLocationAsync(geocode);
+                var location = await GetShortLocationAsync(geocode).ConfigureAwait(false);
                 var hourlyDataPoint = response.Hourly.Data.FirstOrDefault();
                 if (hourlyDataPoint != null)
                 {

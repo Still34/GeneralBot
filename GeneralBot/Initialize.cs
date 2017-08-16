@@ -35,7 +35,7 @@ namespace GeneralBot
             {
                 DefaultRunMode = RunMode.Async
             });
-            var config = await ConfigureSettingsAsync();
+            var config = await ConfigureSettingsAsync().ConfigureAwait(false);
             collection
                 // Misc Services / Configs
                 .AddSingleton(config)
@@ -71,14 +71,14 @@ namespace GeneralBot
                 .AddSingleton<CacheHelper>()
                 .AddMemoryCache();
             var services = collection.BuildServiceProvider();
-            await ConfigureServicesAsync(services);
+            await ConfigureServicesAsync(services).ConfigureAwait(false);
             return services;
         }
 
         private static async Task ConfigureServicesAsync(IServiceProvider services)
         {
-            await services.GetRequiredService<UserContext>().Database.MigrateAsync();
-            await services.GetRequiredService<CoreContext>().Database.MigrateAsync();
+            await services.GetRequiredService<UserContext>().Database.MigrateAsync().ConfigureAwait(false);
+            await services.GetRequiredService<CoreContext>().Database.MigrateAsync().ConfigureAwait(false);
             services.GetRequiredService<LoggingService>();
             services.GetRequiredService<ConfigureGuildService>();
             services.GetRequiredService<ConfigurePresenceService>();
@@ -86,7 +86,7 @@ namespace GeneralBot
             services.GetRequiredService<ConfigureReadyService>();
             services.GetRequiredService<ActivityService>();
             services.GetRequiredService<GfycatConversionService>();
-            await services.GetRequiredService<CommandHandler>().InitAsync();
+            await services.GetRequiredService<CommandHandler>().InitAsync().ConfigureAwait(false);
         }
 
         // TODO: Implement ASP.NET Core config.

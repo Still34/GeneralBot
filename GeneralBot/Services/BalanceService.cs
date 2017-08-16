@@ -28,7 +28,7 @@ namespace GeneralBot.Services
                 !msg.Author.IsBot)
             {
                 var user = msg.Author;
-                var record = await _userSettings.GetOrCreateProfileAsync(user);
+                var record = await _userSettings.GetOrCreateProfileAsync(user).ConfigureAwait(false);
                 uint balanceIncrement = Convert.ToUInt32(_random.Next(1, 10));
                 if (msg.Timestamp >= record.LastMessage.AddMinutes(1))
                 {
@@ -36,7 +36,7 @@ namespace GeneralBot.Services
                         LogSeverity.Debug).ConfigureAwait(false);
                     record.LastMessage = msg.Timestamp;
                     record.Balance = record.Balance + balanceIncrement;
-                    await _userSettings.SaveRepositoryAsync();
+                    await _userSettings.SaveRepositoryAsync().ConfigureAwait(false);
                 }
             }
         }

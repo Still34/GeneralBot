@@ -32,8 +32,8 @@ namespace GeneralBot.Commands.Admin
         {
             if (url == null)
             {
-                await ReplyAsync("", embed: EmbedHelper.FromInfo("New icon", "Please upload your new server icon."));
-                var response = await InteractiveService.NextMessageAsync(Context, timeout: TimeSpan.FromMinutes(5));
+                await ReplyAsync("", embed: EmbedHelper.FromInfo("New icon", "Please upload your new server icon.")).ConfigureAwait(false);
+                var response = await InteractiveService.NextMessageAsync(Context, timeout: TimeSpan.FromMinutes(5)).ConfigureAwait(false);
                 if (response == null)
                     return CommandRuntimeResult.FromError("You did not upload your picture in time.");
                 if (!Uri.TryCreate(response.Content, UriKind.RelativeOrAbsolute, out url))
@@ -45,10 +45,10 @@ namespace GeneralBot.Commands.Admin
                         return CommandRuntimeResult.FromError("You did not upload any valid pictures.");
                 }
             }
-            using (var image = await WebHelper.GetFileStreamAsync(HttpClient, url))
+            using (var image = await WebHelper.GetFileStreamAsync(HttpClient, url).ConfigureAwait(false))
             {
                 // ReSharper disable once AccessToDisposedClosure
-                await Context.Guild.ModifyAsync(x => x.Icon = new Image(image));
+                await Context.Guild.ModifyAsync(x => x.Icon = new Image(image)).ConfigureAwait(false);
             }
             return CommandRuntimeResult.FromSuccess("The server icon has been changed!");
         }
@@ -57,9 +57,9 @@ namespace GeneralBot.Commands.Admin
         [Summary("Changes the command prefix.")]
         public async Task<RuntimeResult> ConfigPrefixAsync(string prefix)
         {
-            var record = await CoreRepository.GetOrCreateGuildSettingsAsync(Context.Guild);
+            var record = await CoreRepository.GetOrCreateGuildSettingsAsync(Context.Guild).ConfigureAwait(false);
             record.CommandPrefix = prefix;
-            await CoreRepository.SaveRepositoryAsync();
+            await CoreRepository.SaveRepositoryAsync().ConfigureAwait(false);
             return CommandRuntimeResult.FromSuccess($"Successfully changed prefix to {Format.Bold(prefix)}.");
         }
 
@@ -68,9 +68,9 @@ namespace GeneralBot.Commands.Admin
         [Summary("Changes the required permission to use mod commands.")]
         public async Task<RuntimeResult> ModeratorPermsSetAsync([Remainder] GuildPermission guildPermission)
         {
-            var record = await CoreRepository.GetOrCreateGuildSettingsAsync(Context.Guild);
+            var record = await CoreRepository.GetOrCreateGuildSettingsAsync(Context.Guild).ConfigureAwait(false);
             record.ModeratorPermission = guildPermission;
-            await CoreRepository.SaveRepositoryAsync();
+            await CoreRepository.SaveRepositoryAsync().ConfigureAwait(false);
             return CommandRuntimeResult.FromSuccess(
                 $"Successfully changed the required moderator permission to {Format.Bold(guildPermission.Humanize(LetterCasing.Title))}.");
         }
@@ -80,7 +80,7 @@ namespace GeneralBot.Commands.Admin
         [Summary("Change server invite command settings.")]
         public async Task<RuntimeResult> ToggleInviteAsync(bool? shouldEnable = null)
         {
-            var record = await CoreRepository.GetOrCreateGuildSettingsAsync(Context.Guild);
+            var record = await CoreRepository.GetOrCreateGuildSettingsAsync(Context.Guild).ConfigureAwait(false);
 
             string result;
             switch (shouldEnable ?? !record.IsInviteAllowed)
@@ -95,7 +95,7 @@ namespace GeneralBot.Commands.Admin
                     break;
             }
 
-            await CoreRepository.SaveRepositoryAsync();
+            await CoreRepository.SaveRepositoryAsync().ConfigureAwait(false);
             return CommandRuntimeResult.FromSuccess(result);
         }
 
@@ -104,7 +104,7 @@ namespace GeneralBot.Commands.Admin
         [Summary("Change gfycat conversion settings.")]
         public async Task<RuntimeResult> ToggleGfycatAsync(bool? shouldEnable = null)
         {
-            var record = await CoreRepository.GetOrCreateGuildSettingsAsync(Context.Guild);
+            var record = await CoreRepository.GetOrCreateGuildSettingsAsync(Context.Guild).ConfigureAwait(false);
             string result;
             switch (shouldEnable ?? !record.IsGfyCatEnabled)
             {
@@ -117,7 +117,7 @@ namespace GeneralBot.Commands.Admin
                     result = "Auto gfycat conversion has been **disabled**.";
                     break;
             }
-            await CoreRepository.SaveRepositoryAsync();
+            await CoreRepository.SaveRepositoryAsync().ConfigureAwait(false);
             return CommandRuntimeResult.FromSuccess(result);
         }
 
@@ -130,7 +130,7 @@ namespace GeneralBot.Commands.Admin
             [Command("channel")]
             public async Task<RuntimeResult> SetLogChannelAsync(SocketTextChannel channel = null)
             {
-                var record = await CoreRepository.GetOrCreateActivityAsync(Context.Guild);
+                var record = await CoreRepository.GetOrCreateActivityAsync(Context.Guild).ConfigureAwait(false);
                 if (channel == null)
                 {
                     var targetChannel = Context.Guild.GetTextChannel(record.LogChannel);
@@ -141,7 +141,7 @@ namespace GeneralBot.Commands.Admin
                 if (record.LogChannel == channel.Id)
                     return CommandRuntimeResult.FromInfo("The current log channel is already the specified channel!");
                 record.LogChannel = channel.Id;
-                await CoreRepository.SaveRepositoryAsync();
+                await CoreRepository.SaveRepositoryAsync().ConfigureAwait(false);
                 return CommandRuntimeResult.FromSuccess($"The current log channel has been set to {Format.Bold(channel.Name)}!");
             }
 
@@ -149,7 +149,7 @@ namespace GeneralBot.Commands.Admin
             [Alias("voicechat", "vc")]
             public async Task<RuntimeResult> ToggleVcLoggingAsync(bool? shouldEnable = null)
             {
-                var record = await CoreRepository.GetOrCreateActivityAsync(Context.Guild);
+                var record = await CoreRepository.GetOrCreateActivityAsync(Context.Guild).ConfigureAwait(false);
                 string result;
                 switch (shouldEnable ?? !record.ShouldLogVoice)
                 {
@@ -162,7 +162,7 @@ namespace GeneralBot.Commands.Admin
                         result = "Voice activity logging has been **disabled**.";
                         break;
                 }
-                await CoreRepository.SaveRepositoryAsync();
+                await CoreRepository.SaveRepositoryAsync().ConfigureAwait(false);
                 return CommandRuntimeResult.FromSuccess(result);
             }
 
@@ -170,7 +170,7 @@ namespace GeneralBot.Commands.Admin
             [Alias("userjoin", "userjoined", "joined")]
             public async Task<RuntimeResult> ToggleJoinLoggingAsync(bool? shouldEnable = null)
             {
-                var record = await CoreRepository.GetOrCreateActivityAsync(Context.Guild);
+                var record = await CoreRepository.GetOrCreateActivityAsync(Context.Guild).ConfigureAwait(false);
                 string result;
                 switch (shouldEnable ?? !record.ShouldLogJoin)
                 {
@@ -183,7 +183,7 @@ namespace GeneralBot.Commands.Admin
                         result = "User join logging has been **disabled**.";
                         break;
                 }
-                await CoreRepository.SaveRepositoryAsync();
+                await CoreRepository.SaveRepositoryAsync().ConfigureAwait(false);
                 return CommandRuntimeResult.FromSuccess(result);
             }
 
@@ -191,7 +191,7 @@ namespace GeneralBot.Commands.Admin
             [Alias("left", "userleft", "userleave")]
             public async Task<RuntimeResult> ToggleLeaveLoggingAsync(bool? shouldEnable = null)
             {
-                var record = await CoreRepository.GetOrCreateActivityAsync(Context.Guild);
+                var record = await CoreRepository.GetOrCreateActivityAsync(Context.Guild).ConfigureAwait(false);
                 string result;
                 switch (shouldEnable ?? !record.ShouldLogLeave)
                 {
@@ -205,7 +205,7 @@ namespace GeneralBot.Commands.Admin
                         break;
                 }
 
-                await CoreRepository.SaveRepositoryAsync();
+                await CoreRepository.SaveRepositoryAsync().ConfigureAwait(false);
                 return CommandRuntimeResult.FromSuccess(result);
             }
         }
@@ -222,7 +222,7 @@ namespace GeneralBot.Commands.Admin
             [Summary("Checks the current status of the welcome feature.")]
             public async Task WelcomeAsync()
             {
-                var record = await CoreRepository.GetOrCreateGreetingsAsync(Context.Guild);
+                var record = await CoreRepository.GetOrCreateGreetingsAsync(Context.Guild).ConfigureAwait(false);
                 string formattedMessage = record.WelcomeMessage.Replace("{mention}", Context.User.Mention)
                     .Replace("{username}", Context.User.Username)
                     .Replace("{discrim}", Context.User.Discriminator)
@@ -237,7 +237,7 @@ namespace GeneralBot.Commands.Admin
                     }
                     .AddInlineField("Current message:", record.WelcomeMessage)
                     .AddInlineField("Example:", formattedMessage);
-                await ReplyAsync("", embed: em);
+                await ReplyAsync("", embed: em).ConfigureAwait(false);
             }
 
             [Command("enable")]
@@ -245,12 +245,12 @@ namespace GeneralBot.Commands.Admin
             [Summary("Enables the welcome setting on the current guild.")]
             public async Task<RuntimeResult> EnableWelcomeAsync()
             {
-                var greetingSettings = await CoreRepository.GetOrCreateGreetingsAsync(Context.Guild);
-                var guildSettings = await CoreRepository.GetOrCreateGuildSettingsAsync(Context.Guild);
+                var greetingSettings = await CoreRepository.GetOrCreateGreetingsAsync(Context.Guild).ConfigureAwait(false);
+                var guildSettings = await CoreRepository.GetOrCreateGuildSettingsAsync(Context.Guild).ConfigureAwait(false);
                 if (greetingSettings.IsJoinEnabled)
                     return CommandRuntimeResult.FromError("The welcome message is already enabled!");
                 greetingSettings.IsJoinEnabled = true;
-                await CoreRepository.SaveRepositoryAsync();
+                await CoreRepository.SaveRepositoryAsync().ConfigureAwait(false);
                 return CommandRuntimeResult.FromSuccess(
                     $"Successfully enabled the welcome message! If you haven't configure the welcome message by using `{guildSettings.CommandPrefix}server welcome message`");
             }
@@ -260,11 +260,11 @@ namespace GeneralBot.Commands.Admin
             [Summary("Disables the welcome setting on the current guild.")]
             public async Task<RuntimeResult> DisableWelcomeAsync()
             {
-                var record = await CoreRepository.GetOrCreateGreetingsAsync(Context.Guild);
+                var record = await CoreRepository.GetOrCreateGreetingsAsync(Context.Guild).ConfigureAwait(false);
                 if (!record.IsJoinEnabled)
                     return CommandRuntimeResult.FromError("The welcome message is already disabled!");
                 record.IsJoinEnabled = false;
-                await CoreRepository.SaveRepositoryAsync();
+                await CoreRepository.SaveRepositoryAsync().ConfigureAwait(false);
                 return CommandRuntimeResult.FromSuccess("Successfully disabled the welcome message!");
             }
 
@@ -274,10 +274,10 @@ namespace GeneralBot.Commands.Admin
             [Remarks("Placeholders: {mention}, {username}, {discrim}, {guild}, {date}")]
             public async Task<RuntimeResult> ConfigMessageAsync([Remainder] string message)
             {
-                var record = await CoreRepository.GetOrCreateGreetingsAsync(Context.Guild);
+                var record = await CoreRepository.GetOrCreateGreetingsAsync(Context.Guild).ConfigureAwait(false);
                 if (message.Length > 1024) return CommandRuntimeResult.FromError("Your welcome message is too long!");
                 record.WelcomeMessage = message;
-                await CoreRepository.SaveRepositoryAsync();
+                await CoreRepository.SaveRepositoryAsync().ConfigureAwait(false);
                 return CommandRuntimeResult.FromSuccess($"Welcome message set to: {Format.Bold(message)}");
             }
 
@@ -286,9 +286,9 @@ namespace GeneralBot.Commands.Admin
             [Summary("Changes the welcome channel on the current guild.")]
             public async Task<RuntimeResult> ConfigChannelAsync(SocketTextChannel channel)
             {
-                var record = await CoreRepository.GetOrCreateGreetingsAsync(Context.Guild);
+                var record = await CoreRepository.GetOrCreateGreetingsAsync(Context.Guild).ConfigureAwait(false);
                 record.ChannelId = channel.Id;
-                await CoreRepository.SaveRepositoryAsync();
+                await CoreRepository.SaveRepositoryAsync().ConfigureAwait(false);
                 return CommandRuntimeResult.FromSuccess($"Welcome channel set to: {channel.Mention}");
             }
         }

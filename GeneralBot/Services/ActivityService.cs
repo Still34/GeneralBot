@@ -23,7 +23,7 @@ namespace GeneralBot.Services
         {
             if (!(user is SocketGuildUser guildUser)) return;
             var guild = guildUser.Guild;
-            var record = await _coreRepository.GetOrCreateActivityAsync(guild);
+            var record = await _coreRepository.GetOrCreateActivityAsync(guild).ConfigureAwait(false);
             if (!record.ShouldLogVoice) return;
             var logChannel = guild.GetTextChannel(record.LogChannel);
             if (logChannel == null) return;
@@ -63,7 +63,7 @@ namespace GeneralBot.Services
         private async Task UserLeftAnnounceAsync(SocketGuildUser guildUser)
         {
             var guild = guildUser.Guild;
-            var record = await _coreRepository.GetOrCreateActivityAsync(guild);
+            var record = await _coreRepository.GetOrCreateActivityAsync(guild).ConfigureAwait(false);
             if (!record.ShouldLogLeave) return;
             var logChannel = guild.GetTextChannel(record.LogChannel);
             if (logChannel == null) return;
@@ -83,7 +83,7 @@ namespace GeneralBot.Services
         private async Task UserJoinedAnnounceAsync(SocketGuildUser guildUser)
         {
             var guild = guildUser.Guild;
-            var record = await _coreRepository.GetOrCreateActivityAsync(guild);
+            var record = await _coreRepository.GetOrCreateActivityAsync(guild).ConfigureAwait(false);
             if (!record.ShouldLogJoin) return;
             var logChannel = guild.GetTextChannel(record.LogChannel);
             if (logChannel == null) return;
