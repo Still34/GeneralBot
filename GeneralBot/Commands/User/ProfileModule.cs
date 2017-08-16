@@ -24,7 +24,7 @@ namespace GeneralBot.Commands.User
         public async Task<RuntimeResult> BalanceAsync(SocketUser user = null)
         {
             var targetUser = user ?? Context.User;
-            var record = await UserRepository.GetOrCreateProfileAsync(targetUser);
+            var record = await UserRepository.GetOrCreateProfileAsync(targetUser).ConfigureAwait(false);
             return CommandRuntimeResult.FromInfo(
                 $"{targetUser.Mention}'s current balance is {record.Balance}{Config.CurrencySymbol}");
         }
@@ -38,16 +38,16 @@ namespace GeneralBot.Commands.User
             public async Task<RuntimeResult> CheckSummaryAsync(SocketUser user = null)
             {
                 var targetUser = user ?? Context.User;
-                var record = await UserRepository.GetOrCreateProfileAsync(targetUser);
+                var record = await UserRepository.GetOrCreateProfileAsync(targetUser).ConfigureAwait(false);
                 return CommandRuntimeResult.FromInfo($"Current Summary: {Format.Bold(record.Summary)}");
             }
 
             [Command("set")]
             public async Task<RuntimeResult> SetSummaryAsync([Remainder] string summary)
             {
-                var record = await UserRepository.GetOrCreateProfileAsync(Context.User);
+                var record = await UserRepository.GetOrCreateProfileAsync(Context.User).ConfigureAwait(false);
                 record.Summary = summary;
-                await UserRepository.SaveRepositoryAsync();
+                await UserRepository.SaveRepositoryAsync().ConfigureAwait(false);
                 return CommandRuntimeResult.FromSuccess($"Successfully set summary to {Format.Bold(summary)}");
             }
         }
@@ -70,7 +70,7 @@ namespace GeneralBot.Commands.User
                     if (record == null || record.SteamId == 0)
                         return CommandRuntimeResult.FromError("User hasn't setup their steam profile yet!");
 
-                    var profile = await SteamService.GetProfileAsync(record.SteamId);
+                    var profile = await SteamService.GetProfileAsync(record.SteamId).ConfigureAwait(false);
                     var builder = new EmbedBuilder
                         {
                             Author = new EmbedAuthorBuilder
@@ -93,17 +93,17 @@ namespace GeneralBot.Commands.User
                         .AddInlineField("Real Name:",
                             string.IsNullOrWhiteSpace(profile.RealName) ? "Not Specified." : profile.RealName)
                         .AddInlineField("VAC Banned?:", profile.IsVacBanned ? "Yes." : "No.");
-                    await ReplyAsync("", embed: builder);
+                    await ReplyAsync("", embed: builder).ConfigureAwait(false);
                     return CommandRuntimeResult.FromSuccess();
                 }
 
                 [Command("set")]
                 public async Task<RuntimeResult> SetSteamAsync([Remainder] string username)
                 {
-                    ulong id = await SteamService.GetIdFromVanityAsync(username);
-                    var record = await UserRepository.GetOrCreateGameAsync(Context.User);
+                    ulong id = await SteamService.GetIdFromVanityAsync(username).ConfigureAwait(false);
+                    var record = await UserRepository.GetOrCreateGameAsync(Context.User).ConfigureAwait(false);
                     record.SteamId = id;
-                    await UserRepository.SaveRepositoryAsync();
+                    await UserRepository.SaveRepositoryAsync().ConfigureAwait(false);
                     return CommandRuntimeResult.FromSuccess(
                         $"Successfully set steam to {Format.Bold((await SteamService.GetProfileAsync(id))?.CustomURL ?? id.ToString())}");
                 }
@@ -130,9 +130,9 @@ namespace GeneralBot.Commands.User
                 [Command("set")]
                 public async Task<RuntimeResult> SetBattleTagAsync([Remainder] string username)
                 {
-                    var record = await UserRepository.GetOrCreateGameAsync(Context.User);
+                    var record = await UserRepository.GetOrCreateGameAsync(Context.User).ConfigureAwait(false);
                     record.BattleTag = username;
-                    await UserRepository.SaveRepositoryAsync();
+                    await UserRepository.SaveRepositoryAsync().ConfigureAwait(false);
                     return CommandRuntimeResult.FromSuccess(
                         $"Successfully set BattleTag to {Format.Bold(username)}");
                 }
@@ -160,9 +160,9 @@ namespace GeneralBot.Commands.User
                 [Command("set")]
                 public async Task<RuntimeResult> SetRiotAsync([Remainder] string username)
                 {
-                    var record = await UserRepository.GetOrCreateGameAsync(Context.User);
+                    var record = await UserRepository.GetOrCreateGameAsync(Context.User).ConfigureAwait(false);
                     record.RiotId = username;
-                    await UserRepository.SaveRepositoryAsync();
+                    await UserRepository.SaveRepositoryAsync().ConfigureAwait(false);
                     return CommandRuntimeResult.FromSuccess(
                         $"Successfully set Riot Id to {Format.Bold(username)}");
                 }
@@ -190,9 +190,9 @@ namespace GeneralBot.Commands.User
                 [Command("set")]
                 public async Task<RuntimeResult> SetFriendCodeAsync([Remainder] string username)
                 {
-                    var record = await UserRepository.GetOrCreateGameAsync(Context.User);
+                    var record = await UserRepository.GetOrCreateGameAsync(Context.User).ConfigureAwait(false);
                     record.NintendoFriendCode = username;
-                    await UserRepository.SaveRepositoryAsync();
+                    await UserRepository.SaveRepositoryAsync().ConfigureAwait(false);
                     return CommandRuntimeResult.FromSuccess(
                         $"Successfully set Nintendo Friend Code to {Format.Bold(username)}");
                 }
