@@ -105,7 +105,7 @@ namespace GeneralBot.Commands.User
                     record.SteamId = id;
                     await UserRepository.SaveRepositoryAsync().ConfigureAwait(false);
                     return CommandRuntimeResult.FromSuccess(
-                        $"Successfully set steam to {Format.Bold((await SteamService.GetProfileAsync(id))?.CustomURL ?? id.ToString())}");
+                        $"Successfully set steam to {Format.Bold((await SteamService.GetProfileAsync(id).ConfigureAwait(false))?.CustomURL ?? id.ToString())}");
                 }
             }
 
