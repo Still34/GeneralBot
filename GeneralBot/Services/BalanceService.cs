@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
@@ -9,8 +10,8 @@ namespace GeneralBot.Services
     public class BalanceService
     {
         private readonly LoggingService _loggingService;
-        private readonly Random _random;
         private readonly IUserRepository _userSettings;
+        private readonly Random _random;        
 
         public BalanceService(DiscordSocketClient client, IUserRepository usersettings, LoggingService loggingService,
             Random random)
@@ -39,6 +40,34 @@ namespace GeneralBot.Services
                     await _userSettings.SaveRepositoryAsync().ConfigureAwait(false);
                 }
             }
+        }
+
+        public int GetBalanceForLevel(int level)
+        {
+            switch (level)
+            {
+                case 0:
+                    return 0;
+                case 1:
+                    return 20;
+            }
+            var lastLevel = GetBalanceForLevel(level - 1);
+            return lastLevel + level * 20;
+        }
+
+        public int GetLevel(uint balance)
+        {
+            int level = 0;
+            while (balance >= GetBalanceForLevel(level))
+                level++;
+            return level - 1;
+        }
+
+        public int GetRank(uint balance)
+        {
+            var balances = _userSettings.GetProfiles().Select(x=> x.Balance);
+            var rank = balances.OrderByDescending(x=> x).ToList().IndexOf(balance);
+            return rank + 1;
         }
     }
 }
