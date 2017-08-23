@@ -36,8 +36,8 @@ namespace GeneralBot.Services
         private async Task WelcomeAsync(SocketGuildUser user)
         {
             var guild = user.Guild;
-            await _loggingService.LogAsync($"{user.GetFullnameOrDefault()} ({user.Id}) joined {guild} ({guild.Id}).",
-                LogSeverity.Verbose).ConfigureAwait(false);
+            _loggingService.Log($"{user.GetFullnameOrDefault()} ({user.Id}) joined {guild} ({guild.Id}).",
+                LogSeverity.Verbose);
 
             var record = await _coreSettings.GetOrCreateGreetingsAsync(guild).ConfigureAwait(false);
             if (!record.IsJoinEnabled) return;

@@ -70,14 +70,11 @@ namespace GeneralBot.Services
             return Task.CompletedTask;
         }
 
-        public Task LogAsync(object message, LogSeverity severity, Exception exception = null)
-        {
-            _clientLogger.Log(GetLogLevel(severity), 0,
-                message,
-                exception,
-                (msg, ex) => message.ToString());
-            return Task.CompletedTask;
-        }
+        public void Log(object message, LogSeverity severity, Exception exception = null) => _clientLogger.Log(
+            GetLogLevel(severity), 0,
+            message,
+            exception,
+            (msg, ex) => message.ToString());
 
         private static LogLevel GetLogLevel(LogSeverity severity)
             => (LogLevel) Math.Abs((int) severity - 5);
