@@ -56,7 +56,7 @@ namespace GeneralBot.Commands.User
                 guildCount++;
             }
             await ReplyAsync("",
-                embed: EmbedHelper.FromInfo(EmbedTitle, guildBuilder.ToString().Truncate(2000))).ConfigureAwait(false);
+                embed: EmbedHelper.FromInfo(EmbedTitle, guildBuilder.ToString().Truncate(2000)).Build()).ConfigureAwait(false);
             var selectionMessage = await InteractiveService.NextMessageAsync(Context, timeout: _responseTimeout).ConfigureAwait(false);
             if (selectionMessage == null)
                 return CommandRuntimeResult.FromError($"You did not reply in {_responseTimeout.Humanize()}.");
@@ -68,7 +68,7 @@ namespace GeneralBot.Commands.User
             // TODO: Allow users to upload more than one image.
             await ReplyAsync("",
                 embed: EmbedHelper.FromInfo(EmbedTitle,
-                    "Please describe the incident in details, preferably with evidence.")).ConfigureAwait(false);
+                    "Please describe the incident in details, preferably with evidence.").Build()).ConfigureAwait(false);
             var reportMessage = await InteractiveService.NextMessageAsync(Context, timeout: _responseTimeout).ConfigureAwait(false);
             if (reportMessage == null)
                 return CommandRuntimeResult.FromError($"You did not reply in {_responseTimeout.Humanize()}.");
@@ -91,7 +91,7 @@ namespace GeneralBot.Commands.User
             if (reportMessage.Attachments.Any())
                 reportEmbed.AddField("Attachments", string.Join(", ", reportMessage.Attachments.Select(x => x.Url)));
             reportEmbed.AddField("Report time", DateTimeOffset.UtcNow);
-            await ReplyAsync("Please review your report. Enter Y to confirm.", embed: reportEmbed).ConfigureAwait(false);
+            await ReplyAsync("Please review your report. Enter Y to confirm.", embed: reportEmbed.Build()).ConfigureAwait(false);
             var confirmMessage = await InteractiveService.NextMessageAsync(Context, timeout: _responseTimeout).ConfigureAwait(false);
             if (confirmMessage == null)
                 return CommandRuntimeResult.FromError($"You did not reply in {_responseTimeout.Humanize()}.");
@@ -103,7 +103,7 @@ namespace GeneralBot.Commands.User
             var reportRoles = await GetModeratorRolesAsync(guilds[selection]).ConfigureAwait(false);
             await reportChannel.SendMessageAsync(
                 string.Join(", ", reportRoles.Select(x => x.Mention)) ?? "New report has been filed.",
-                embed: reportEmbed).ConfigureAwait(false);
+                embed: reportEmbed.Build()).ConfigureAwait(false);
 
             return CommandRuntimeResult.FromSuccess("Your report has been sent.");
         }

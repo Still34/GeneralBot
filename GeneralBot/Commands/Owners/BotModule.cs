@@ -51,7 +51,7 @@ namespace GeneralBot.Commands.Owners
                 Color = color,
                 Description = $"Luminance value = {color.GetLuminanceFromColor()}"
             };
-            await ReplyAsync("", embed: embed).ConfigureAwait(false);
+            await ReplyAsync("", embed: embed.Build()).ConfigureAwait(false);
             return CommandRuntimeResult.FromSuccess();
         }
 
@@ -67,7 +67,7 @@ namespace GeneralBot.Commands.Owners
         [Summary("Changes the bot's avatar.")]
         public async Task<RuntimeResult> AvatarConfigureAsync()
         {
-            await ReplyAsync("", embed: EmbedHelper.FromInfo(description: "Please upload the new avatar.")).ConfigureAwait(false);
+            await ReplyAsync("", embed: EmbedHelper.FromInfo(description: "Please upload the new avatar.").Build()).ConfigureAwait(false);
             var message = await InteractiveService.NextMessageAsync(Context,
                 new EnsureFromUserCriterion(Context.User.Id), TimeSpan.FromMinutes(5)).ConfigureAwait(false);
             Uri imageUri = null;

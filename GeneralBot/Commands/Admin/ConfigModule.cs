@@ -32,7 +32,7 @@ namespace GeneralBot.Commands.Admin
         {
             if (url == null)
             {
-                await ReplyAsync("", embed: EmbedHelper.FromInfo("New icon", "Please upload your new server icon.")).ConfigureAwait(false);
+                await ReplyAsync("", embed: EmbedHelper.FromInfo("New icon", "Please upload your new server icon.").Build()).ConfigureAwait(false);
                 var response = await InteractiveService.NextMessageAsync(Context, timeout: TimeSpan.FromMinutes(5)).ConfigureAwait(false);
                 if (response == null)
                     return CommandRuntimeResult.FromError("You did not upload your picture in time.");
@@ -237,7 +237,7 @@ namespace GeneralBot.Commands.Admin
                     }
                     .AddInlineField("Current message:", record.WelcomeMessage)
                     .AddInlineField("Example:", formattedMessage);
-                await ReplyAsync("", embed: em).ConfigureAwait(false);
+                await ReplyAsync("", embed: em.Build()).ConfigureAwait(false);
             }
 
             [Command("enable")]

@@ -72,9 +72,9 @@ namespace GeneralBot.Commands.User
                 _darkSkyParams
             ).ConfigureAwait(false);
             var embeds = await Weather.GetWeatherEmbedsAsync(forecast, geocode).ConfigureAwait(false);
-            await ReplyAsync("", embed: embeds.WeatherResults.FirstOrDefault()).ConfigureAwait(false);
+            await ReplyAsync("", embed: embeds.WeatherResults.FirstOrDefault().Build()).ConfigureAwait(false);
             foreach (var alert in embeds.Alerts)
-                await ReplyAsync("", embed: alert).ConfigureAwait(false);
+                await ReplyAsync("", embed: alert.Build()).ConfigureAwait(false);
             return CommandRuntimeResult.FromSuccess();
         }
 
@@ -92,9 +92,9 @@ namespace GeneralBot.Commands.User
                 geocode.Coordinates.Longitude,
                 _darkSkyParams).ConfigureAwait(false);
             var embeds = await Weather.GetWeatherEmbedsAsync(forecast, geocode).ConfigureAwait(false);
-            await ReplyAsync("", embed: embeds.WeatherResults.FirstOrDefault()).ConfigureAwait(false);
+            await ReplyAsync("", embed: embeds.WeatherResults.FirstOrDefault().Build()).ConfigureAwait(false);
             foreach (var alert in embeds.Alerts)
-                await ReplyAsync("", embed: alert).ConfigureAwait(false);
+                await ReplyAsync("", embed: alert.Build()).ConfigureAwait(false);
             return CommandRuntimeResult.FromSuccess();
         }
     }

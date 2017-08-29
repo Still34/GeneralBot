@@ -77,7 +77,7 @@ namespace GeneralBot.Commands.User
                 sb.AppendLine($@"   '{entry.Content}' at #{channelname}");
                 sb.AppendLine();
             }
-            await ReplyAsync("", embed: embed.WithDescription(sb.ToString())).ConfigureAwait(false);
+            await ReplyAsync("", embed: embed.WithDescription(sb.ToString()).Build()).ConfigureAwait(false);
             return CommandRuntimeResult.FromSuccess();
         }
 
@@ -132,7 +132,7 @@ namespace GeneralBot.Commands.User
                         Name = "New Reminder Set!"
                     })
                     .AddInlineField("Reminder", remindContent)
-                    .AddInlineField("At", dateTime.ToOffset(userTimeOffset))).ConfigureAwait(false);
+                    .AddInlineField("At", dateTime.ToOffset(userTimeOffset)).Build()).ConfigureAwait(false);
             return CommandRuntimeResult.FromSuccess();
         }
 

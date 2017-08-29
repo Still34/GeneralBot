@@ -144,7 +144,7 @@ namespace GeneralBot.Commands
                     embed = EmbedHelper.FromError(description: result.ErrorReason);
                     break;
             }
-            await context.Channel.SendMessageAsync("", embed: embed).ConfigureAwait(false);
+            await context.Channel.SendMessageAsync("", embed: embed.Build()).ConfigureAwait(false);
             _loggingService.Log(
                 $"{context.User} executed \"{commandInfo.Aliases.FirstOrDefault()}\" in {context.Message.GetPostedAt()}." +
                 Environment.NewLine +

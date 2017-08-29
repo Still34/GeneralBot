@@ -51,7 +51,7 @@ namespace GeneralBot.Services
                         .FromError("Uh oh...",
                             "We ran into a problem when executing this command!\n\nDon't worry, this error has been reported.")
                         .AddInlineField("Error ID", errorId)
-                        .WithThumbnailUrl("https://cdn.discordapp.com/emojis/288727789241237504.png"));
+                        .WithThumbnailUrl("https://cdn.discordapp.com/emojis/288727789241237504.png").Build());
             }
 
             _commandsLogger.Log(GetLogLevel(message.Severity), 0,

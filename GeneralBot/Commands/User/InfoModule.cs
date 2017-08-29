@@ -90,7 +90,7 @@ namespace GeneralBot.Commands.User
 
             // Lib version
             embedBuilder.AddInlineField("Discord.NET Version", DiscordConfig.Version);
-            await ReplyAsync("", embed: embedBuilder).ConfigureAwait(false);
+            await ReplyAsync("", embed: embedBuilder.Build()).ConfigureAwait(false);
             return CommandRuntimeResult.FromSuccess();
         }
 
@@ -176,7 +176,7 @@ namespace GeneralBot.Commands.User
                         x.Value = commandInfo.Summary ?? "No summary.";
                     });
                 }
-                await ReplyAsync("", embed: embed).ConfigureAwait(false);
+                await ReplyAsync("", embed: embed.Build()).ConfigureAwait(false);
                 return CommandRuntimeResult.FromSuccess();
             }
 

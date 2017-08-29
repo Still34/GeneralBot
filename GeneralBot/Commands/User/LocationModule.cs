@@ -42,7 +42,7 @@ namespace GeneralBot.Commands.User
                 if (embed.Fields.Count > 10) break;
                 embed.AddField(geocodeResult.FormattedAddress, geocodeResult.Coordinates);
             }
-            await ReplyAsync("", embed: embed).ConfigureAwait(false);
+            await ReplyAsync("", embed: embed.Build()).ConfigureAwait(false);
             return CommandRuntimeResult.FromSuccess();
         }
 

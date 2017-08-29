@@ -78,8 +78,7 @@ namespace DirectoryMaid.Services
             var channel = _client.GetChannel(reminder.ChannelId);
             var user = _client.GetUser(reminder.UserId);
             if (channel is IMessageChannel msgChannel && user != null)
-                await msgChannel.SendMessageAsync(user.Mention, embed: GetReminderEmbed(reminder.Content))
-                    .ConfigureAwait(false);
+                await msgChannel.SendMessageAsync(user.Mention, embed: GetReminderEmbed(reminder.Content).Build()).ConfigureAwait(false);
         }
     }
 }

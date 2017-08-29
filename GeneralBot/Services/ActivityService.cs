@@ -39,7 +39,7 @@ namespace GeneralBot.Services
                 embed.Color = Color.Blue;
                 embed.Title = "Voice Joined";
                 embed.Description = $"{user} ({user.Id}) joined {Format.Bold(afterVoiceState.VoiceChannel?.Name)}!";
-                await logChannel.SendMessageAsync("", embed: embed).ConfigureAwait(false);
+                await logChannel.SendMessageAsync("", embed: embed.Build()).ConfigureAwait(false);
                 return;
             }
             if (beforeVoiceState.VoiceChannel != null && afterVoiceState.VoiceChannel == null)
@@ -47,7 +47,7 @@ namespace GeneralBot.Services
                 embed.Color = Color.Orange;
                 embed.Title = "Voice Left";
                 embed.Description = $"{user} ({user.Id}) left {Format.Bold(beforeVoiceState.VoiceChannel?.Name)}!";
-                await logChannel.SendMessageAsync("", embed: embed).ConfigureAwait(false);
+                await logChannel.SendMessageAsync("", embed: embed.Build()).ConfigureAwait(false);
                 return;
             }
             if (afterVoiceState.VoiceChannel != null && beforeVoiceState.VoiceChannel != null)
@@ -56,7 +56,7 @@ namespace GeneralBot.Services
                 embed.Title = "Voice Changed Channel";
                 embed.Description =
                     $"{user} ({user.Id}) moved from {Format.Bold(beforeVoiceState.VoiceChannel?.Name)} to {Format.Bold(afterVoiceState.VoiceChannel?.Name)}!";
-                await logChannel.SendMessageAsync("", embed: embed).ConfigureAwait(false);
+                await logChannel.SendMessageAsync("", embed: embed.Build()).ConfigureAwait(false);
             }
         }
 
@@ -77,7 +77,7 @@ namespace GeneralBot.Services
                 Color = Color.Red,
                 Description = $"{guildUser} ({guildUser.Id}) left the server."
             };
-            await logChannel.SendMessageAsync("", embed: embed).ConfigureAwait(false);
+            await logChannel.SendMessageAsync("", embed: embed.Build()).ConfigureAwait(false);
         }
 
         private async Task UserJoinedAnnounceAsync(SocketGuildUser guildUser)
@@ -97,7 +97,7 @@ namespace GeneralBot.Services
                 Color = Color.Green,
                 Description = $"{guildUser} ({guildUser.Id}) joined the server."
             };
-            await logChannel.SendMessageAsync("", embed: embed).ConfigureAwait(false);
+            await logChannel.SendMessageAsync("", embed: embed.Build()).ConfigureAwait(false);
         }
     }
 }

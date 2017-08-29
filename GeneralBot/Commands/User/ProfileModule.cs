@@ -52,29 +52,29 @@ namespace GeneralBot.Commands.User
             using (var profileBase = Image.Load("Resources/Profile/base.png"))
             using (var avatarFrame = Image.Load("Resources/Profile/avatarFrame.png"))
             using (var badge = Image.Load("Resources/Profile/badge.png"))
-            using (var avatarStream = (await WebHelper.GetFileStreamAsync(HttpClient, new Uri(targetUser.GetAvatarUrl()))))
+            using (var avatarStream = await WebHelper.GetFileStreamAsync(HttpClient, new Uri(targetUser.GetAvatarUrl())).ConfigureAwait(false))
             using (var finalImage = new MemoryStream())
             using (var avatar = Image.Load(avatarStream))
             {
                 //Fonts & text rendering
-                var RobotoItalic = new FontCollection().Install("Resources/Profile/Fonts/Roboto-Italic.ttf");
-                var Roboto = new FontCollection().Install("Resources/Profile/Fonts/Roboto-Regular.ttf");
+                var robotoItalic = new FontCollection().Install("Resources/Profile/Fonts/Roboto-Italic.ttf");
+                var roboto = new FontCollection().Install("Resources/Profile/Fonts/Roboto-Regular.ttf");
                 var textOptions = new TextGraphicsOptions { HorizontalAlignment = HorizontalAlignment.Center };
 
                 //Actual Image
                 var final = profileBase.DrawImage(avatar.Resize(540, 540), new Size(), new Point(935, 134),
                         GraphicsOptions.Default)
                     .DrawImage(avatarFrame, new Size(), new Point(0, 0), GraphicsOptions.Default)
-                    .DrawText(targetUser.Username, RobotoItalic.CreateFont(130), new Rgba32(106, 161, 196),
+                    .DrawText(targetUser.Username, robotoItalic.CreateFont(130), new Rgba32(106, 161, 196),
                         new Point(profileBase.Width / 2, 690), textOptions)
-                    .DrawText($"Member Since {targetUser.CreatedAt:M/d/yy}", RobotoItalic.CreateFont(73),
+                    .DrawText($"Member Since {targetUser.CreatedAt:M/d/yy}", robotoItalic.CreateFont(73),
                         new Rgba32(138, 145, 153),
                         new Point(profileBase.Width / 2, 840), textOptions)
-                    .DrawText($"Balance: {record.Balance}", Roboto.CreateFont(82), new Rgba32(138, 145, 153),
+                    .DrawText($"Balance: {record.Balance}", roboto.CreateFont(82), new Rgba32(138, 145, 153),
                         new Point(profileBase.Width / 2, 930), textOptions)
-                    .DrawText("About Me:", RobotoItalic.CreateFont(90), new Rgba32(106, 161, 196), new Point(340, 1130),
+                    .DrawText("About Me:", robotoItalic.CreateFont(90), new Rgba32(106, 161, 196), new Point(340, 1130),
                         TextGraphicsOptions.Default)
-                    .DrawText(Regex.Replace(record.Summary, ".{55}", "$0\n"), Roboto.CreateFont(70), new Rgba32(138, 145, 153), new Point(340, 1250),
+                    .DrawText(Regex.Replace(record.Summary, ".{55}", "$0\n"), roboto.CreateFont(70), new Rgba32(138, 145, 153), new Point(340, 1250),
                         TextGraphicsOptions.Default);
 
                 //Verified Badge
@@ -86,7 +86,7 @@ namespace GeneralBot.Commands.User
 
                 //Sending the image
                 finalImage.Seek(0, SeekOrigin.Begin);
-                await Context.Channel.SendFileAsync(finalImage, "profile.png", $"Profile card for `{targetUser}`");
+                await Context.Channel.SendFileAsync(finalImage, "profile.png", $"Profile card for `{targetUser}`").ConfigureAwait(false);
             }
             return CommandRuntimeResult.FromSuccess();
         }
@@ -107,7 +107,7 @@ namespace GeneralBot.Commands.User
                     }
                 }.AddInlineField("Balance", $"`{record.Balance}`{Config.CurrencySymbol}\nRank: `{NumberHelper.AddOrdinal(BalanceService.GetRank(record.Balance))}`")
                 .AddInlineField("Wealth Level", $"Current: `{wealthLevel}`\nNext: `{wealthLevel + 1}` (`{record.Balance}`/`{BalanceService.GetBalanceForLevel(wealthLevel + 1)}`)");
-            await ReplyAsync("", embed: builder);
+            await ReplyAsync("", embed: builder.Build()).ConfigureAwait(false);
             return CommandRuntimeResult.FromSuccess();
         }
 
@@ -177,7 +177,7 @@ namespace GeneralBot.Commands.User
                         .AddInlineField("Real Name:",
                             string.IsNullOrWhiteSpace(profile.RealName) ? "Not Specified." : profile.RealName)
                         .AddInlineField("VAC Banned?:", profile.IsVacBanned ? "Yes." : "No.");
-                    await ReplyAsync("", embed: builder).ConfigureAwait(false);
+                    await ReplyAsync("", embed: builder.Build()).ConfigureAwait(false);
                     return CommandRuntimeResult.FromSuccess();
                 }
 

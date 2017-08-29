@@ -47,7 +47,7 @@ namespace GeneralBot.Commands.User
                 }
                 .AddField("You asked...", input)
                 .AddField("The 8 ball says...", response);
-            await ReplyAsync("", embed: embed).ConfigureAwait(false);
+            await ReplyAsync("", embed: embed.Build()).ConfigureAwait(false);
             return CommandRuntimeResult.FromSuccess();
         }
 
@@ -69,7 +69,7 @@ namespace GeneralBot.Commands.User
                 Color = ColorHelper.GetRandomColor(),
                 Description = regexParsed[Random.Next(0, regexParsed.Length)]
             };
-            await ReplyAsync("", embed: embed).ConfigureAwait(false);
+            await ReplyAsync("", embed: embed.Build()).ConfigureAwait(false);
             return CommandRuntimeResult.FromSuccess();
         }
 
@@ -102,7 +102,7 @@ namespace GeneralBot.Commands.User
                     .AddField("Example:", result.Example)
                     .AddInlineField("Likes:", $":thumbsup: {result.Likes}")
                     .AddInlineField("Dislikes:", $":thumbsdown: {result.Dislikes}");
-                await ReplyAsync("", embed: builder).ConfigureAwait(false);
+                await ReplyAsync("", embed: builder.Build()).ConfigureAwait(false);
                 return CommandRuntimeResult.FromSuccess();
             }
         }

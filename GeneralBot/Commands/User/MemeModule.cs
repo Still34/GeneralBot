@@ -109,7 +109,7 @@ namespace GeneralBot.Commands.User
                     Color = ColorHelper.GetRandomColor(),
                     ThumbnailUrl = post.Data.Url
                 };
-                await ReplyAsync("", embed: builder).ConfigureAwait(false);
+                await ReplyAsync("", embed: builder.Build()).ConfigureAwait(false);
                 return CommandRuntimeResult.FromSuccess();
             }
         }
