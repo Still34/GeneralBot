@@ -28,8 +28,8 @@ namespace GeneralBot.Models.Database.CoreSettings
             var record = _coreContext.GreetingsSettings.SingleOrDefault(x => x.GuildId == guild.Id);
             if (record == null)
             {
-                await _logging.LogAsync($"Registering greetings settings for {guild.Name} ({guild.Id})...",
-                    LogSeverity.Info).ConfigureAwait(false);
+                _logging.Log($"Registering greetings settings for {guild.Name} ({guild.Id})...",
+                    LogSeverity.Info);
                 record = new GreetingSettings {GuildId = guild.Id};
                 _coreContext.GreetingsSettings.Add(record);
                 await SaveRepositoryAsync().ConfigureAwait(false);
@@ -59,8 +59,8 @@ namespace GeneralBot.Models.Database.CoreSettings
             var record = _coreContext.ActivityLogging.SingleOrDefault(x => x.GuildId == guild.Id);
             if (record == null)
             {
-                await _logging.LogAsync($"Registering logging settings for {guild.Name} ({guild.Id})...",
-                    LogSeverity.Info).ConfigureAwait(false);
+                _logging.Log($"Registering logging settings for {guild.Name} ({guild.Id})...",
+                    LogSeverity.Info);
                 record = new ActivityLogging {GuildId = guild.Id};
                 _coreContext.ActivityLogging.Add(record);
                 await SaveRepositoryAsync().ConfigureAwait(false);
@@ -108,8 +108,8 @@ namespace GeneralBot.Models.Database.CoreSettings
             var record = _coreContext.GuildsSettings.SingleOrDefault(x => x.GuildId == guild.Id);
             if (record == null)
             {
-                await _logging.LogAsync($"Registering guild settings for {guild.Name} ({guild.Id})...",
-                    LogSeverity.Info).ConfigureAwait(false);
+                _logging.Log($"Registering guild settings for {guild.Name} ({guild.Id})...",
+                    LogSeverity.Info);
                 record = new GuildSettings {GuildId = guild.Id};
                 _coreContext.GuildsSettings.Add(record);
                 await SaveRepositoryAsync().ConfigureAwait(false);

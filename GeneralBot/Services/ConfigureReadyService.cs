@@ -35,7 +35,8 @@ namespace GeneralBot.Services
                 sb.AppendLine($"|--------User Count: {guild.MemberCount}");
                 sb.AppendLine($"|--------Joined at: {guild.CurrentUser.JoinedAt}");
             }
-            return _loggingService.LogAsync(sb, LogSeverity.Info);
+            _loggingService.Log(sb, LogSeverity.Info);
+            return Task.CompletedTask;
         }
     }
 }

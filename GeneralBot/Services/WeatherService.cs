@@ -92,8 +92,8 @@ namespace GeneralBot.Services
                 }
                 return (weatherEmbeds, alertEmbeds);
             }
-            await _loggingService.LogAsync($"Weather returned unexpected response: {forecast.ResponseReasonPhrase}",
-                LogSeverity.Error).ConfigureAwait(false);
+            _loggingService.Log($"Weather returned unexpected response: {forecast.ResponseReasonPhrase}",
+                LogSeverity.Error);
             return (null, null);
         }
 

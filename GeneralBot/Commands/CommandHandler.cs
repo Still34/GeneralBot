@@ -72,14 +72,13 @@ namespace GeneralBot.Commands
                 }
                 else
                 {
-                    await _loggingService.LogAsync(
-                        $"{typeReader} does not have a {nameof(Type)} array specified, ignoring...",
-                        LogSeverity.Warning).ConfigureAwait(false);
+                    _loggingService.Log($"{typeReader} does not have a {nameof(Type)} array specified, ignoring...",
+                        LogSeverity.Warning);
                 }
             }
-            await _loggingService.LogAsync(
+            _loggingService.Log(
                 $"{typeReaderList.Count} {nameof(TypeReader)}(s) loaded." + Environment.NewLine +
-                string.Join(Environment.NewLine, typeReaderList), LogSeverity.Verbose).ConfigureAwait(false);
+                string.Join(Environment.NewLine, typeReaderList), LogSeverity.Verbose);
 
             // Command module discovery.
             await _commandService.AddModulesAsync(Assembly.GetEntryAssembly()).ConfigureAwait(false);
@@ -146,13 +145,13 @@ namespace GeneralBot.Commands
                     break;
             }
             await context.Channel.SendMessageAsync("", embed: embed).ConfigureAwait(false);
-            await _loggingService.LogAsync(
+            _loggingService.Log(
                 $"{context.User} executed \"{commandInfo.Aliases.FirstOrDefault()}\" in {context.Message.GetPostedAt()}." +
                 Environment.NewLine +
                 $"Result: {result.ErrorReason}" +
                 Environment.NewLine +
                 $"Result Type: {result.GetType().Name}",
-                LogSeverity.Verbose).ConfigureAwait(false);
+                LogSeverity.Verbose);
         }
     }
 }

@@ -1,14 +1,23 @@
-﻿using System.Linq;
+﻿using System;
+using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 using GeneralBot.Commands.Results;
+using GeneralBot.Extensions;
 using GeneralBot.Extensions.Helpers;
 using GeneralBot.Models.Config;
 using GeneralBot.Models.Database.UserSettings;
 using GeneralBot.Services;
+using ImageSharp;
+using ImageSharp.Drawing;
+using SixLabors.Fonts;
+using SixLabors.Primitives;
+using Image = ImageSharp.Image;
 
 namespace GeneralBot.Commands.User
 {
@@ -17,7 +26,70 @@ namespace GeneralBot.Commands.User
     {
         public ConfigModel Config { get; set; }
         public HttpClient HttpClient { get; set; }
+        public BalanceService BalanceService { get; set; }
         public IUserRepository UserRepository { get; set; }
+        private IDisposable TypingDisposable { get; set; }
+
+        protected override void BeforeExecute(CommandInfo command)
+        {
+            base.BeforeExecute(command);
+            TypingDisposable = Context.Channel.EnterTypingState();
+        }
+
+        protected override void AfterExecute(CommandInfo command)
+        {
+            base.AfterExecute(command);
+            TypingDisposable.Dispose();
+        }
+
+        [Command]
+        public async Task<RuntimeResult> ProfileAsync(SocketUser user = null)
+        {
+            //User Data
+            var targetUser = user ?? Context.User;
+            var record = await UserRepository.GetOrCreateProfileAsync(targetUser).ConfigureAwait(false);
+
+            using (var profileBase = Image.Load("Resources/Profile/base.png"))
+            using (var avatarFrame = Image.Load("Resources/Profile/avatarFrame.png"))
+            using (var badge = Image.Load("Resources/Profile/badge.png"))
+            using (var avatarStream = (await WebHelper.GetFileStreamAsync(HttpClient, new Uri(targetUser.GetAvatarUrl()))))
+            using (var finalImage = new MemoryStream())
+            using (var avatar = Image.Load(avatarStream))
+            {
+                //Fonts & text rendering
+                var RobotoItalic = new FontCollection().Install("Resources/Profile/Fonts/Roboto-Italic.ttf");
+                var Roboto = new FontCollection().Install("Resources/Profile/Fonts/Roboto-Regular.ttf");
+                var textOptions = new TextGraphicsOptions { HorizontalAlignment = HorizontalAlignment.Center };
+
+                //Actual Image
+                var final = profileBase.DrawImage(avatar.Resize(540, 540), new Size(), new Point(935, 134),
+                        GraphicsOptions.Default)
+                    .DrawImage(avatarFrame, new Size(), new Point(0, 0), GraphicsOptions.Default)
+                    .DrawText(targetUser.Username, RobotoItalic.CreateFont(130), new Rgba32(106, 161, 196),
+                        new Point(profileBase.Width / 2, 690), textOptions)
+                    .DrawText($"Member Since {targetUser.CreatedAt:M/d/yy}", RobotoItalic.CreateFont(73),
+                        new Rgba32(138, 145, 153),
+                        new Point(profileBase.Width / 2, 840), textOptions)
+                    .DrawText($"Balance: {record.Balance}", Roboto.CreateFont(82), new Rgba32(138, 145, 153),
+                        new Point(profileBase.Width / 2, 930), textOptions)
+                    .DrawText("About Me:", RobotoItalic.CreateFont(90), new Rgba32(106, 161, 196), new Point(340, 1130),
+                        TextGraphicsOptions.Default)
+                    .DrawText(Regex.Replace(record.Summary, ".{55}", "$0\n"), Roboto.CreateFont(70), new Rgba32(138, 145, 153), new Point(340, 1250),
+                        TextGraphicsOptions.Default);
+
+                //Verified Badge
+                //TODO: Add some kind of verification system/reputation system?
+                if (Config.Owners.Contains(targetUser.Id))
+                    final.DrawImage(badge, new Size(), new Point(0, 0), GraphicsOptions.Default).Resize(500, 500).SaveAsPng(finalImage);
+                else
+                    final.Resize(500, 500).SaveAsPng(finalImage);
+
+                //Sending the image
+                finalImage.Seek(0, SeekOrigin.Begin);
+                await Context.Channel.SendFileAsync(finalImage, "profile.png", $"Profile card for `{targetUser}`");
+            }
+            return CommandRuntimeResult.FromSuccess();
+        }
 
         [Command("balance")]
         [Summary("Shows the specified user's balance.")]
@@ -25,8 +97,18 @@ namespace GeneralBot.Commands.User
         {
             var targetUser = user ?? Context.User;
             var record = await UserRepository.GetOrCreateProfileAsync(targetUser).ConfigureAwait(false);
-            return CommandRuntimeResult.FromInfo(
-                $"{targetUser.Mention}'s current balance is {record.Balance}{Config.CurrencySymbol}");
+            var wealthLevel = BalanceService.GetLevel(record.Balance);
+            var builder = new EmbedBuilder
+                {
+                    Author = new EmbedAuthorBuilder
+                    {
+                        Name = targetUser.GetFullnameOrDefault(),
+                        IconUrl = targetUser.GetAvatarUrlOrDefault()
+                    }
+                }.AddInlineField("Balance", $"`{record.Balance}`{Config.CurrencySymbol}\nRank: `{NumberHelper.AddOrdinal(BalanceService.GetRank(record.Balance))}`")
+                .AddInlineField("Wealth Level", $"Current: `{wealthLevel}`\nNext: `{wealthLevel + 1}` (`{record.Balance}`/`{BalanceService.GetBalanceForLevel(wealthLevel + 1)}`)");
+            await ReplyAsync("", embed: builder);
+            return CommandRuntimeResult.FromSuccess();
         }
 
         [Group("summary")]
@@ -45,6 +127,8 @@ namespace GeneralBot.Commands.User
             [Command("set")]
             public async Task<RuntimeResult> SetSummaryAsync([Remainder] string summary)
             {
+                if (summary.Length > 500)
+                    return CommandRuntimeResult.FromError("Your summary needs to be shorter than 500 characters!");
                 var record = await UserRepository.GetOrCreateProfileAsync(Context.User).ConfigureAwait(false);
                 record.Summary = summary;
                 await UserRepository.SaveRepositoryAsync().ConfigureAwait(false);
