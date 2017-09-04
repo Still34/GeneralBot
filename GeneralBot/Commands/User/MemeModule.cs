@@ -12,6 +12,7 @@ using GeneralBot.Commands.Results;
 using GeneralBot.Extensions.Helpers;
 using GeneralBot.Models.Config;
 using GeneralBot.Models.Reddit;
+using ImageMagick;
 using ImageSharp;
 using ImageSharp.Formats;
 using ImageSharp.PixelFormats;
@@ -158,6 +159,30 @@ namespace GeneralBot.Commands.User
                         .SaveAsPng(imageStream);
                     imageStream.Seek(0, SeekOrigin.Begin);
                     await Context.Channel.SendFileAsync(imageStream, "angery.png").ConfigureAwait(false);
+                }
+            }
+            return CommandRuntimeResult.FromSuccess();
+        }
+
+        [Command("liquify")]
+        public async Task<RuntimeResult> LiquifyAsync()
+        {
+            var message =
+                (await Context.Channel.GetMessagesAsync().Flatten().ConfigureAwait(false))?
+                .FirstOrDefault(x => x.Attachments.Any(a => a.Width.HasValue));
+            if (message == null)
+                return CommandRuntimeResult.FromError("No images found!");
+            foreach (var attachment in message.Attachments)
+            {
+                using (var attachmentStream = await WebHelper.GetFileStreamAsync(HttpClient, new Uri(attachment.Url)).ConfigureAwait(false))
+                using (var image = new MagickImage(attachmentStream))
+                using (var imageStream = new MemoryStream())
+                {
+                    image.LiquidRescale(Convert.ToInt32(image.Width * 0.5), Convert.ToInt32(image.Height * 0.5));
+                    image.LiquidRescale(Convert.ToInt32(image.Width * 1.5), Convert.ToInt32(image.Height * 1.5));
+                    image.Write(imageStream, MagickFormat.Png);
+                    imageStream.Seek(0, SeekOrigin.Begin);
+                    await Context.Channel.SendFileAsync(imageStream, "liquify.png").ConfigureAwait(false);
                 }
             }
             return CommandRuntimeResult.FromSuccess();

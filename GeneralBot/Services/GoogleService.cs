@@ -26,7 +26,7 @@ namespace GeneralBot.Services
             {
                 Host = "www.google.com",
                 Path = "search",
-                Query = $"q={encodedQuery}&lr=lang_en&hl=en"
+                Query = $"q={encodedQuery}&lr=lang_en&hl=en&safe=on"
             };
 
             using (var response = await _httpClient.GetAsync(builder.Uri).ConfigureAwait(false))
@@ -35,8 +35,10 @@ namespace GeneralBot.Services
                     "Mozilla/5.0 (Windows NT 6.3; Win64; x64)");
                 if (response.IsSuccessStatusCode)
                 {
-                    var embed = new EmbedBuilder();
-                    embed.WithColor(ColorHelper.GetRandomColor());
+                    var embed = new EmbedBuilder()
+                    {
+                        Color = ColorHelper.GetRandomColor()
+                    };  
                     string htmlString = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                     var doc = new HtmlDocument();
                     doc.LoadHtml(htmlString);
@@ -83,7 +85,7 @@ namespace GeneralBot.Services
             if (featuredSnippet != null)
             {
                 string icon = featuredSnippet[0]?.SelectSingleNode("div/a/img")?.GetAttributeValue("src", "");
-                if (icon != null)
+                if (icon != null && Uri.IsWellFormedUriString(icon, UriKind.Absolute))
                     builder.ThumbnailUrl = icon;
                 if (featuredSnippet.Count > 4)
                 {

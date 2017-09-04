@@ -8,7 +8,7 @@ using GeneralBot.Extensions;
 using GeneralBot.Models.Config;
 using GeneralBot.Models.Database.UserSettings;
 
-namespace DirectoryMaid.Services
+namespace GeneralBot.Services
 {
     public class ReminderService
     {

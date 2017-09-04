@@ -21,7 +21,7 @@ namespace GeneralBot.Typereaders
             "on"
         };
 
-        public static Type[] Types { get; } = {typeof(bool?), typeof(bool)};
+        public static Type[] Types { get; } = {typeof(bool)};
 
         public override Task<TypeReaderResult> Read(ICommandContext context, string input, IServiceProvider services)
         {

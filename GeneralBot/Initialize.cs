@@ -3,7 +3,6 @@ using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 using DarkSky.Services;
-using DirectoryMaid.Services;
 using Discord.Addons.Interactive;
 using Discord.Commands;
 using Discord.WebSocket;
