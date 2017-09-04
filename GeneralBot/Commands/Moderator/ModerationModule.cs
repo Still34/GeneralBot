@@ -26,7 +26,7 @@ namespace GeneralBot.Commands.Moderator
             [RequireHierarchy] SocketGuildUser user,
             [Remainder] string reason = null)
         {
-            await user.KickAsync(reason).ConfigureAwait(false);
+            await user.KickAsync(reason, new RequestOptions() {AuditLogReason = $"{Context.User} ({Context.User.Id}): {reason}"}).ConfigureAwait(false);
             return CommandRuntimeResult.FromSuccess($"User {user} has been kicked from the server.");
         }
 
@@ -40,7 +40,8 @@ namespace GeneralBot.Commands.Moderator
             int days = 0,
             [Remainder] string reason = null)
         {
-            await Context.Guild.AddBanAsync(user, days, reason).ConfigureAwait(false);
+            await Context.Guild.AddBanAsync(user, days, reason, new RequestOptions() { AuditLogReason = $"{Context.User} ({Context.User.Id}): {reason} (BAN)" })
+                .ConfigureAwait(false);
             return CommandRuntimeResult.FromSuccess($"User {user} has been banned from the server.");
         }
 
@@ -54,7 +55,8 @@ namespace GeneralBot.Commands.Moderator
             int days = 0,
             [Remainder] string reason = null)
         {
-            await Context.Guild.AddBanAsync(userId, days, reason).ConfigureAwait(false);
+            await Context.Guild.AddBanAsync(userId, days, reason, new RequestOptions() { AuditLogReason = $"{Context.User} ({Context.User.Id}): {reason} (BAN)" })
+                .ConfigureAwait(false);
             return CommandRuntimeResult.FromSuccess($"User {userId} has been banned from the server.");
         }
 
@@ -68,8 +70,10 @@ namespace GeneralBot.Commands.Moderator
             int days = 0,
             [Remainder] string reason = null)
         {
-            await Context.Guild.AddBanAsync(user, days, reason).ConfigureAwait(false);
-            await Context.Guild.RemoveBanAsync(user).ConfigureAwait(false);
+            await Context.Guild.AddBanAsync(user, days, reason, new RequestOptions() { AuditLogReason = $"{Context.User} ({Context.User.Id}): {reason} (SOFTBAN)" })
+                .ConfigureAwait(false);
+            await Context.Guild.RemoveBanAsync(user, new RequestOptions() { AuditLogReason = $"{Context.User} ({Context.User.Id}): {reason} (SOFTBAN)" })
+                .ConfigureAwait(false);
             return CommandRuntimeResult.FromSuccess($"User {user} has been banned from the server.");
         }
 
@@ -83,8 +87,11 @@ namespace GeneralBot.Commands.Moderator
             int days = 0,
             [Remainder] string reason = null)
         {
-            await Context.Guild.AddBanAsync(userId, days, reason).ConfigureAwait(false);
-            await Context.Guild.RemoveBanAsync(userId).ConfigureAwait(false);
+            await Context.Guild.AddBanAsync(userId, days, reason,
+                    new RequestOptions() {AuditLogReason = $"{Context.User} ({Context.User.Id}): {reason} (SOFTBAN)"})
+                .ConfigureAwait(false);
+            await Context.Guild.RemoveBanAsync(userId, new RequestOptions() { AuditLogReason = $"{Context.User} ({Context.User.Id}): {reason} (SOFTBAN)" })
+                .ConfigureAwait(false);
             return CommandRuntimeResult.FromSuccess($"User {userId} has been banned from the server.");
         }
 
@@ -95,7 +102,9 @@ namespace GeneralBot.Commands.Moderator
         public async Task<RuntimeResult> NicknameChangeAsync([RequireHierarchy] SocketGuildUser user,
             [Remainder] string nickname)
         {
-            await user.ModifyAsync(x => x.Nickname = nickname).ConfigureAwait(false);
+            await user.ModifyAsync(x => x.Nickname = nickname,
+                    new RequestOptions() {AuditLogReason = $"{Context.User} ({Context.User.Id}): Nickname Update"})
+                .ConfigureAwait(false);
             return CommandRuntimeResult.FromSuccess($"Successfully changed {user}'s name to {nickname}.");
         }
 
@@ -103,10 +112,13 @@ namespace GeneralBot.Commands.Moderator
         [Summary("Blocks a user from the current channel.")]
         [RequireBotPermission(GuildPermission.ManageChannels)]
         [RequireUserPermission(GuildPermission.ManageChannels)]
-        public async Task<RuntimeResult> BlockUserAsync([RequireHierarchy] SocketGuildUser user)
+        public async Task<RuntimeResult> BlockUserAsync([RequireHierarchy] SocketGuildUser user,
+            [Remainder] string reason = null)
         {
             if (Context.Channel is SocketTextChannel channel)
-                await channel.AddPermissionOverwriteAsync(user, new OverwritePermissions(readMessages: PermValue.Deny)).ConfigureAwait(false);
+                await channel.AddPermissionOverwriteAsync(user, new OverwritePermissions(readMessages: PermValue.Deny),
+                        new RequestOptions() {AuditLogReason = $"{Context.User} ({Context.User.Id}): {reason} (BLOCK)"})
+                    .ConfigureAwait(false);
             return CommandRuntimeResult.FromSuccess($"Successfully blocked {user.Mention}.");
         }
 
@@ -114,10 +126,14 @@ namespace GeneralBot.Commands.Moderator
         [Summary("Unblocks a user from the current channel.")]
         [RequireBotPermission(GuildPermission.ManageChannels)]
         [RequireUserPermission(GuildPermission.ManageChannels)]
-        public async Task<RuntimeResult> UnblockUserAsync([RequireHierarchy] SocketGuildUser user)
+        public async Task<RuntimeResult> UnblockUserAsync([RequireHierarchy] SocketGuildUser user,
+            [Remainder] string reason = null)
         {
             if (Context.Channel is SocketTextChannel channel)
-                await channel.RemovePermissionOverwriteAsync(user).ConfigureAwait(false);
+                await channel
+                    .RemovePermissionOverwriteAsync(user,
+                        new RequestOptions() {AuditLogReason = $"{Context.User} ({Context.User.Id}): {reason} (UNBLOCK)"})
+                    .ConfigureAwait(false);
             return CommandRuntimeResult.FromSuccess($"Successfully unblocked {user.Mention}");
         }
 
