@@ -93,7 +93,7 @@ namespace GeneralBot.Commands.User
         }
 
         [Group("balance")]
-        public class Balance : ModuleBase<SocketCommandContext>
+        public class BalanceModule : ModuleBase<SocketCommandContext>
         {
             public ConfigModel Config { get; set; }
             public IUserRepository UserRepository { get; set; }
