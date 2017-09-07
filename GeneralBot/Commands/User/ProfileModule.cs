@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using Discord;
@@ -91,24 +92,59 @@ namespace GeneralBot.Commands.User
             return CommandRuntimeResult.FromSuccess();
         }
 
-        [Command("balance")]
-        [Summary("Shows the specified user's balance.")]
-        public async Task<RuntimeResult> BalanceAsync(SocketUser user = null)
+        [Group("balance")]
+        public class Balance : ModuleBase<SocketCommandContext>
         {
-            var targetUser = user ?? Context.User;
-            var record = await UserRepository.GetOrCreateProfileAsync(targetUser).ConfigureAwait(false);
-            var wealthLevel = BalanceService.GetLevel(record.Balance);
-            var builder = new EmbedBuilder
-                {
-                    Author = new EmbedAuthorBuilder
+            public ConfigModel Config { get; set; }
+            public IUserRepository UserRepository { get; set; }
+            public BalanceService BalanceService { get; set; }
+
+            [Command]
+            [Summary("Shows the specified user's balance.")]
+            public async Task<RuntimeResult> BalanceAsync(SocketUser user = null)
+            {
+                var targetUser = user ?? Context.User;
+                var record = await UserRepository.GetOrCreateProfileAsync(targetUser).ConfigureAwait(false);
+                var wealthLevel = BalanceService.GetLevel(record.Balance);
+                var builder = new EmbedBuilder
                     {
-                        Name = targetUser.GetFullnameOrDefault(),
-                        IconUrl = targetUser.GetAvatarUrlOrDefault()
-                    }
-                }.AddInlineField("Balance", $"`{record.Balance}`{Config.CurrencySymbol}\nRank: `{NumberHelper.AddOrdinal(BalanceService.GetRank(record.Balance))}`")
-                .AddInlineField("Wealth Level", $"Current: `{wealthLevel}`\nNext: `{wealthLevel + 1}` (`{record.Balance}`/`{BalanceService.GetBalanceForLevel(wealthLevel + 1)}`)");
-            await ReplyAsync("", embed: builder.Build()).ConfigureAwait(false);
-            return CommandRuntimeResult.FromSuccess();
+                        Author = new EmbedAuthorBuilder
+                        {
+                            Name = targetUser.GetFullnameOrDefault(),
+                            IconUrl = targetUser.GetAvatarUrlOrDefault()
+                        },
+                        Color = ColorHelper.GetRandomColor()
+                    }.AddInlineField("Balance",
+                        $"`{record.Balance}`{Config.CurrencySymbol}\nRank: `{NumberHelper.AddOrdinal(BalanceService.GetRank(record.Balance))}`")
+                    .AddInlineField("Wealth Level",
+                        $"Current: `{wealthLevel}`\nNext: `{wealthLevel + 1}` (`{record.Balance}`/`{BalanceService.GetBalanceForLevel(wealthLevel + 1)}`)");
+                await ReplyAsync("", embed: builder.Build()).ConfigureAwait(false);
+                return CommandRuntimeResult.FromSuccess();
+            }
+
+            [Command("leaderboard")]
+            [Alias("top")]
+            [Summary("Shows the balance leaderboard.")]
+            public async Task<RuntimeResult> LeaderboardAsync()
+            {
+                var richest = UserRepository.GetProfiles().OrderByDescending(x => x.Balance).Take(5);
+                var sb = new StringBuilder();
+                foreach (var user in richest)
+                {
+                    sb.AppendLine(
+                        $"{Format.Bold(NumberHelper.AddOrdinal(BalanceService.GetRank(user.Balance)))}: " +
+                        $"{Format.Code(Context.Client.GetUser(user.UserId).ToString())} - " +
+                        $"{user.Balance} {Config.CurrencySymbol}");
+                }
+                await ReplyAsync("", embed: new EmbedBuilder
+                {
+                    Title = "Balance Leaderboard:",
+                    Color = ColorHelper.GetRandomColor(),
+                    Description = sb.ToString()
+                }.Build());
+                return CommandRuntimeResult.FromSuccess();
+            }
+            
         }
 
         [Group("summary")]

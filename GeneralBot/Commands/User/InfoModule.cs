@@ -13,6 +13,7 @@ using Discord.Commands;
 using Discord.WebSocket;
 using GeneralBot.Commands.Results;
 using GeneralBot.Extensions;
+using GeneralBot.Extensions.Helpers;
 using GeneralBot.Models.Config;
 using GeneralBot.Models.Database.CoreSettings;
 using Humanizer;
@@ -160,7 +161,8 @@ namespace GeneralBot.Commands.User
                     {
                         Name = $"Here are some commands related to \"{input}\"...",
                         IconUrl = Context.Client.CurrentUser.GetAvatarUrlOrDefault()
-                    }
+                    },
+                    Color = ColorHelper.GetRandomColor()
                 };
                 foreach (var commandInfo in commandInfos)
                 {
@@ -170,9 +172,9 @@ namespace GeneralBot.Commands.User
                             "Refine your search term to see more!");
                         break;
                     }
-                    embed.AddField(x =>
+                    embed.AddField(async x =>
                     {
-                        x.Name = $"{GetCommandPrefixAsync(Context.Guild)}{BuildCommandInfo(commandInfo)}";
+                        x.Name = $"{await GetCommandPrefixAsync(Context.Guild)}{BuildCommandInfo(commandInfo)}";
                         x.Value = commandInfo.Summary ?? "No summary.";
                     });
                 }
