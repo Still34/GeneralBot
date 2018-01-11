@@ -100,8 +100,8 @@ namespace GeneralBot.Commands.User
                         Footer = new EmbedFooterBuilder {Text = $"Defined by {result.Author}."}
                     }
                     .AddField("Example:", result.Example)
-                    .AddInlineField("Likes:", $":thumbsup: {result.Likes}")
-                    .AddInlineField("Dislikes:", $":thumbsdown: {result.Dislikes}");
+                    .AddField("Likes:", $":thumbsup: {result.Likes}", true)
+                    .AddField("Dislikes:", $":thumbsdown: {result.Dislikes}", true);
                 await ReplyAsync("", embed: builder.Build()).ConfigureAwait(false);
                 return CommandRuntimeResult.FromSuccess();
             }
