@@ -10,7 +10,7 @@ namespace GeneralBot.Preconditions.Parameters
     /// </summary>
     public class RequireHierarchy : ParameterPreconditionAttribute
     {
-        public override async Task<PreconditionResult> CheckPermissions(ICommandContext context,
+        public override async Task<PreconditionResult> CheckPermissionsAsync(ICommandContext context,
             ParameterInfo parameter, object value, IServiceProvider services)
         {
             var user = context.User as SocketGuildUser;

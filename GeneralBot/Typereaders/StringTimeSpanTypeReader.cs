@@ -42,7 +42,7 @@ namespace GeneralBot.Typereaders
             return Task.FromResult(timeSpan);
         }
 
-        public override async Task<TypeReaderResult> Read(ICommandContext context, string input,
+        public override async Task<TypeReaderResult> ReadAsync(ICommandContext context, string input,
             IServiceProvider services)
         {
             var dateTimeParsed = await DehumanizeTimespanAsync(input).ConfigureAwait(false);

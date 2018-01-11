@@ -50,7 +50,7 @@ namespace GeneralBot.Services
                     EmbedHelper
                         .FromError("Uh oh...",
                             "We ran into a problem when executing this command!\n\nDon't worry, this error has been reported.")
-                        .AddInlineField("Error ID", errorId)
+                        .AddField("Error ID", errorId, true)
                         .WithThumbnailUrl("https://cdn.discordapp.com/emojis/288727789241237504.png").Build());
             }
 

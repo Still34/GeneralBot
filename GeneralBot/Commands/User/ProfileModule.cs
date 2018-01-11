@@ -114,10 +114,10 @@ namespace GeneralBot.Commands.User
                             IconUrl = targetUser.GetAvatarUrlOrDefault()
                         },
                         Color = ColorHelper.GetRandomColor()
-                    }.AddInlineField("Balance",
-                        $"`{record.Balance}`{Config.CurrencySymbol}\nRank: `{NumberHelper.AddOrdinal(BalanceService.GetRank(record.Balance))}`")
-                    .AddInlineField("Wealth Level",
-                        $"Current: `{wealthLevel}`\nNext: `{wealthLevel + 1}` (`{record.Balance}`/`{BalanceService.GetBalanceForLevel(wealthLevel + 1)}`)");
+                    }.AddField("Balance",
+                        $"`{record.Balance}`{Config.CurrencySymbol}\nRank: `{NumberHelper.AddOrdinal(BalanceService.GetRank(record.Balance))}`", true)
+                    .AddField("Wealth Level",
+                        $"Current: `{wealthLevel}`\nNext: `{wealthLevel + 1}` (`{record.Balance}`/`{BalanceService.GetBalanceForLevel(wealthLevel + 1)}`)", true);
                 await ReplyAsync("", embed: builder.Build()).ConfigureAwait(false);
                 return CommandRuntimeResult.FromSuccess();
             }
@@ -206,13 +206,13 @@ namespace GeneralBot.Commands.User
                             },
                             Color = ColorHelper.GetRandomColor()
                         }
-                        .AddInlineField("State:", profile.StateMessage)
-                        .AddInlineField("Member Since:", profile.MemberSince)
-                        .AddInlineField("Location:",
-                            string.IsNullOrWhiteSpace(profile.Location) ? "Not Specified." : profile.Location)
-                        .AddInlineField("Real Name:",
-                            string.IsNullOrWhiteSpace(profile.RealName) ? "Not Specified." : profile.RealName)
-                        .AddInlineField("VAC Banned?:", profile.IsVacBanned ? "Yes." : "No.");
+                        .AddField("State:", profile.StateMessage, true)
+                        .AddField("Member Since:", profile.MemberSince, true)
+                        .AddField("Location:",
+                            string.IsNullOrWhiteSpace(profile.Location) ? "Not Specified." : profile.Location, true)
+                        .AddField("Real Name:",
+                            string.IsNullOrWhiteSpace(profile.RealName) ? "Not Specified." : profile.RealName, true)
+                        .AddField("VAC Banned?:", profile.IsVacBanned ? "Yes." : "No.", true);
                     await ReplyAsync("", embed: builder.Build()).ConfigureAwait(false);
                     return CommandRuntimeResult.FromSuccess();
                 }

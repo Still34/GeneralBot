@@ -198,10 +198,10 @@ namespace GeneralBot.Commands.Moderator
             }
 
             private Task<IEnumerable<IMessage>> GetMessageAsync(int count)
-                => Context.Channel.GetMessagesAsync(count).Flatten();
+                => Context.Channel.GetMessagesAsync(count).FlattenAsync();
 
             private Task DeleteMessagesAsync(IEnumerable<IMessage> messages)
-                => Context.Channel.DeleteMessagesAsync(messages);
+                => (Context.Channel as SocketTextChannel).DeleteMessagesAsync(messages);
         }
     }
 }

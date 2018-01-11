@@ -131,8 +131,8 @@ namespace GeneralBot.Commands.User
                         IconUrl = Context.Client.CurrentUser.GetAvatarUrlOrDefault(),
                         Name = "New Reminder Set!"
                     })
-                    .AddInlineField("Reminder", remindContent)
-                    .AddInlineField("At", dateTime.ToOffset(userTimeOffset)).Build()).ConfigureAwait(false);
+                    .AddField("Reminder", remindContent, true)
+                    .AddField("At", dateTime.ToOffset(userTimeOffset)).Build()).ConfigureAwait(false);
             return CommandRuntimeResult.FromSuccess();
         }
 

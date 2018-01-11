@@ -23,7 +23,7 @@ namespace GeneralBot.Typereaders
 
         public static Type[] Types { get; } = {typeof(bool)};
 
-        public override Task<TypeReaderResult> Read(ICommandContext context, string input, IServiceProvider services)
+        public override Task<TypeReaderResult> ReadAsync(ICommandContext context, string input, IServiceProvider services)
         {
             if (bool.TryParse(input, out bool result))
                 return Task.FromResult(TypeReaderResult.FromSuccess(result));

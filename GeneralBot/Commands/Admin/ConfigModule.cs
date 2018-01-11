@@ -235,8 +235,8 @@ namespace GeneralBot.Commands.Admin
                         Color = new Color(52, 152, 219),
                         ThumbnailUrl = Config.Icons.Announce
                     }
-                    .AddInlineField("Current message:", record.WelcomeMessage)
-                    .AddInlineField("Example:", formattedMessage);
+                    .AddField("Current message:", record.WelcomeMessage, true)
+                    .AddField("Example:", formattedMessage, true);
                 await ReplyAsync("", embed: em.Build()).ConfigureAwait(false);
             }
 

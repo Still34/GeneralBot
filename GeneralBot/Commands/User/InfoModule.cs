@@ -76,21 +76,21 @@ namespace GeneralBot.Commands.User
                 memInfoDescriptionBuilder.Append(
                     $" / {Math.Round(workingSetBytes.LargestWholeNumberValue, 2)} {workingSetBytes.LargestWholeNumberSymbol}");
             }
-            embedBuilder.AddInlineField(memInfoTitleBuilder.ToString(), memInfoDescriptionBuilder);
+            embedBuilder.AddField(memInfoTitleBuilder.ToString(), memInfoDescriptionBuilder, true);
 
             // Application latency
-            embedBuilder.AddInlineField("Latency", Context.Client.Latency + "ms");
+            embedBuilder.AddField("Latency", Context.Client.Latency + "ms", true);
 
             // Discord application creation date
             var appInfo = await Context.Client.GetApplicationInfoAsync().ConfigureAwait(false);
-            embedBuilder.AddInlineField("Created On", appInfo.CreatedAt.UtcDateTime);
+            embedBuilder.AddField("Created On", appInfo.CreatedAt.UtcDateTime, true);
 
             // Last updated on based on file modification date
-            embedBuilder.AddInlineField("Last Update",
-                File.GetLastWriteTimeUtc(Assembly.GetEntryAssembly().Location));
+            embedBuilder.AddField("Last Update",
+                File.GetLastWriteTimeUtc(Assembly.GetEntryAssembly().Location), true);
 
             // Lib version
-            embedBuilder.AddInlineField("Discord.NET Version", DiscordConfig.Version);
+            embedBuilder.AddField("Discord.NET Version", DiscordConfig.Version, true);
             await ReplyAsync("", embed: embedBuilder.Build()).ConfigureAwait(false);
             return CommandRuntimeResult.FromSuccess();
         }
@@ -168,8 +168,8 @@ namespace GeneralBot.Commands.User
                 {
                     if (embed.Fields.Count > 5)
                     {
-                        embed.AddInlineField($"And {commandInfos.Count - embed.Fields.Count} more...",
-                            "Refine your search term to see more!");
+                        embed.AddField($"And {commandInfos.Count - embed.Fields.Count} more...",
+                            "Refine your search term to see more!", true);
                         break;
                     }
                     embed.AddField(async x =>

@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
+using Discord.WebSocket;
 using GeneralBot.Commands.Results;
 using GeneralBot.Extensions.Helpers;
 using GeneralBot.Models.Config;
@@ -96,7 +97,7 @@ namespace GeneralBot.Commands.User
 
                 var result =
                     JsonConvert.DeserializeObject<RedditResponseModel>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
-                var children = Context.Channel.IsNsfw
+                var children = (Context.Channel as SocketTextChannel).IsNsfw
                     ? result.Data.Children
                     : result.Data.Children.Where(x => !x.Data.IsNsfw).ToList();
                 int index = Random.Next(children.Count);
@@ -120,7 +121,7 @@ namespace GeneralBot.Commands.User
         public async Task<RuntimeResult> NeedsMoreJpegAsync()
         {
             var message =
-                (await Context.Channel.GetMessagesAsync().Flatten().ConfigureAwait(false))?
+                (await Context.Channel.GetMessagesAsync().FlattenAsync().ConfigureAwait(false))?
                 .FirstOrDefault(x => x.Attachments.Any(a => a.Width.HasValue));
             if (message == null)
                 return CommandRuntimeResult.FromError("No images found!");
@@ -143,7 +144,7 @@ namespace GeneralBot.Commands.User
         public async Task<RuntimeResult> AngeryAsync()
         {
             var message =
-                (await Context.Channel.GetMessagesAsync().Flatten().ConfigureAwait(false))?
+                (await Context.Channel.GetMessagesAsync().FlattenAsync().ConfigureAwait(false))?
                 .FirstOrDefault(x => x.Attachments.Any(a => a.Width.HasValue));
             if (message == null)
                 return CommandRuntimeResult.FromError("No images found!");
@@ -168,7 +169,7 @@ namespace GeneralBot.Commands.User
         public async Task<RuntimeResult> LiquifyAsync()
         {
             var message =
-                (await Context.Channel.GetMessagesAsync().Flatten().ConfigureAwait(false))?
+                (await Context.Channel.GetMessagesAsync().FlattenAsync().ConfigureAwait(false))?
                 .FirstOrDefault(x => x.Attachments.Any(a => a.Width.HasValue));
             if (message == null)
                 return CommandRuntimeResult.FromError("No images found!");

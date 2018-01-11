@@ -11,7 +11,7 @@ namespace GeneralBot.Typereaders
     {
         public static Type[] Types { get; } = {typeof(Uri)};
 
-        public override Task<TypeReaderResult> Read(ICommandContext context, string input, IServiceProvider services) =>
+        public override Task<TypeReaderResult> ReadAsync(ICommandContext context, string input, IServiceProvider services) =>
             Task.FromResult(Uri.TryCreate(input, UriKind.RelativeOrAbsolute, out Uri output)
                 ? TypeReaderResult.FromSuccess(output)
                 : TypeReaderResult.FromError(CommandError.ParseFailed, "The input is not a valid URL."));
