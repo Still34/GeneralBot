@@ -13,7 +13,7 @@ namespace GeneralBot.Preconditions
     /// </summary>
     public class RequireModerator : PreconditionAttribute
     {
-        public override async Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command,
+        public override async Task<PreconditionResult> CheckPermissionsAsync(ICommandContext context, CommandInfo command,
             IServiceProvider services)
         {
             var guildUser = context.User as IGuildUser;
