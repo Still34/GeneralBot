@@ -51,14 +51,14 @@ namespace GeneralBot.Services
                         },
                         ThumbnailUrl = weatherIcons.Url
                     }.WithCurrentTimestamp();
-                    embed.AddInlineField($"{weatherIcons.Emoji.Name} Summary", response.Hourly.Summary);
-                    embed.AddInlineField("🌡 Temperature",
-                        $"{hourlyDataPoint.Temperature} °C / {hourlyDataPoint.Temperature * 1.8 + 32} °F");
-                    embed.AddInlineField("☂ Precipitation", string.Format("{0:P1}", hourlyDataPoint.PrecipProbability));
+                    embed.AddField($"{weatherIcons.Emoji.Name} Summary", response.Hourly.Summary, true);
+                    embed.AddField("🌡 Temperature",
+                        $"{hourlyDataPoint.Temperature} °C / {hourlyDataPoint.Temperature * 1.8 + 32} °F", true);
+                    embed.AddField("☂ Precipitation", string.Format("{0:P1}", hourlyDataPoint.PrecipProbability), true);
                     if (hourlyDataPoint.PrecipIntensity.HasValue && hourlyDataPoint.PrecipIntensity.Value > 0)
-                        embed.AddInlineField("💧 Precipitation Intensity", $"{hourlyDataPoint.PrecipIntensity} (mm/h)");
-                    embed.AddInlineField("💧 Humidity", string.Format("{0:P1}", hourlyDataPoint.Humidity));
-                    embed.AddInlineField("🌬 Wind Speed", $"{hourlyDataPoint.WindSpeed} (m/s)");
+                        embed.AddField("💧 Precipitation Intensity", $"{hourlyDataPoint.PrecipIntensity} (mm/h)", true);
+                    embed.AddField("💧 Humidity", string.Format("{0:P1}", hourlyDataPoint.Humidity), true);
+                    embed.AddField("🌬 Wind Speed", $"{hourlyDataPoint.WindSpeed} (m/s)", true);
                     weatherEmbeds.Add(embed);
                 }
                 if (response.Alerts != null)

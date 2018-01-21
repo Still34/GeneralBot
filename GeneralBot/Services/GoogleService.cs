@@ -101,8 +101,8 @@ namespace GeneralBot.Services
                         var numRegex = new Regex(@"(\d.*)");
                         var amount = numRegex.Split(table?.InnerText.Humanize());
                         var calories = numRegex.Split(table?.NextSibling.InnerText);
-                        builder.AddInlineField(amount[0], amount[1]);
-                        builder.AddInlineField(calories[0], calories[1]);
+                        builder.AddField(amount[0], amount[1], true);
+                        builder.AddField(calories[0], calories[1], true);
                     }
                     var googleSearch = await GetGoogleSearchAsync(doc, 3).ConfigureAwait(false);
                     foreach (var result in googleSearch)
