@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace GeneralBot.Models.Reddit
+namespace GeneralBot.Models
 {
     public class MediaEmbed
     {

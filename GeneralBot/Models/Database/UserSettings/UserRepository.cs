@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Discord;
-using GeneralBot.Models.Context;
 
 namespace GeneralBot.Models.Database.UserSettings
 {

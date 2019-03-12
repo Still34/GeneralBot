@@ -1,5 +1,4 @@
-﻿using GeneralBot.Models.Context;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace GeneralBot.Models.Database.UserSettings
 {

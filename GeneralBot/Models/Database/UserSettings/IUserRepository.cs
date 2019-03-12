@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Discord;
-using GeneralBot.Models.Context;
 
 namespace GeneralBot.Models.Database.UserSettings
 {

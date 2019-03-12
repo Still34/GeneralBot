@@ -2,7 +2,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace GeneralBot.Models.Context
+namespace GeneralBot.Models.Database.UserSettings
 {
     public class Coordinate
     {
