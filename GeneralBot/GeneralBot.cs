@@ -16,6 +16,7 @@ namespace GeneralBot
         // ReSharper disable once AsyncConverter.ConfigureAwaitHighlighting
         // ReSharper disable once UnusedMember.Local
         // ReSharper disable once AsyncConverter.AsyncMethodNamingHighlighting
+        //meowpuffygottem
         private static async Task Main() => await new GeneralBot().StartAsync();
 
         public async Task StartAsync()
