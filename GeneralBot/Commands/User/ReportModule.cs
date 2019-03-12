@@ -127,12 +127,12 @@ namespace GeneralBot.Commands.User
             // Attempts to create a new text channel.
             var newChannel = await guild.CreateTextChannelAsync(ReportChannelName).ConfigureAwait(false);
             await newChannel.AddPermissionOverwriteAsync(guild.EveryoneRole,
-                new OverwritePermissions(readMessages: PermValue.Deny)).ConfigureAwait(false);
+                new OverwritePermissions(viewChannel: PermValue.Deny)).ConfigureAwait(false);
             var modRoles = await GetModeratorRolesAsync(guild).ConfigureAwait(false);
             foreach (var modRole in modRoles)
             {
                 await newChannel.AddPermissionOverwriteAsync(modRole,
-                    new OverwritePermissions(readMessages: PermValue.Allow)).ConfigureAwait(false);
+                    new OverwritePermissions(viewChannel: PermValue.Allow)).ConfigureAwait(false);
             }
             return newChannel;
         }

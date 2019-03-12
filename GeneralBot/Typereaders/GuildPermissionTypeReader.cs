@@ -43,7 +43,7 @@ namespace GeneralBot.Typereaders
                 case var i when i.Contains("add") || i.Contains("reaction"):
                     return Task.FromResult(TypeReaderResult.FromSuccess(GuildPermission.AddReactions));
                 case var i when i.Contains("read"):
-                    return Task.FromResult(TypeReaderResult.FromSuccess(GuildPermission.ReadMessages));
+                    return Task.FromResult(TypeReaderResult.FromSuccess(GuildPermission.ViewChannel));
                 case var i when i.Contains("history"):
                     return Task.FromResult(TypeReaderResult.FromSuccess(GuildPermission.ReadMessageHistory));
                 case var i when i.Contains("send"):

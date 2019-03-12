@@ -14,12 +14,12 @@ using GeneralBot.Extensions.Helpers;
 using GeneralBot.Models;
 using GeneralBot.Models.Config;
 using ImageMagick;
-using ImageSharp;
-using ImageSharp.Formats;
-using ImageSharp.PixelFormats;
 using Newtonsoft.Json;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats.Jpeg;
+using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.Primitives;
-using Image = ImageSharp.Image;
+using Image = SixLabors.ImageSharp.Image;
 
 namespace GeneralBot.Commands.User
 {

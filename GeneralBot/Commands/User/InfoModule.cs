@@ -29,7 +29,7 @@ namespace GeneralBot.Commands.User
         [RequireContext(ContextType.Guild)]
         public async Task<RuntimeResult> GetOrCreateInviteAsync()
         {
-            if (Context.Channel is SocketGuildChannel channel)
+            if (Context.Channel is INestedChannel channel)
             {
                 var record = await CoreRepository.GetOrCreateGuildSettingsAsync(Context.Guild).ConfigureAwait(false);
                 if (!record.IsInviteAllowed)

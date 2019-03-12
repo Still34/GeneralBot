@@ -81,7 +81,7 @@ namespace GeneralBot.Commands
                 string.Join(Environment.NewLine, typeReaderList), LogSeverity.Verbose);
 
             // Command module discovery.
-            await _commandService.AddModulesAsync(Assembly.GetEntryAssembly()).ConfigureAwait(false);
+            await _commandService.AddModulesAsync(Assembly.GetEntryAssembly(), _services).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -90,8 +90,7 @@ namespace GeneralBot.Commands
         private async Task CommandHandleAsync(SocketMessage msgArg)
         {
             // Bail when it's not an user message.
-            var msg = msgArg as SocketUserMessage;
-            if (msg == null) return;
+            if (!(msgArg is SocketUserMessage msg)) return;
             // Also bail if it's a bot message to avoid "certain" situations.
             if (msg.Author.IsBot) return;
 
@@ -112,7 +111,7 @@ namespace GeneralBot.Commands
         /// <summary>
         ///     Post-command execution handling.
         /// </summary>
-        private async Task OnCommandExecutedAsync(CommandInfo commandInfo, ICommandContext context, IResult result)
+        private async Task OnCommandExecutedAsync(Optional<CommandInfo> commandInfo, ICommandContext context, IResult result)
         {
             // Bails if the generic result doesn't have an error reason, or if it's an unknown command error.
             if (string.IsNullOrEmpty(result.ErrorReason) || result.Error == CommandError.UnknownCommand) return;
@@ -145,8 +144,9 @@ namespace GeneralBot.Commands
                     break;
             }
             await context.Channel.SendMessageAsync("", embed: embed.Build()).ConfigureAwait(false);
+            if (commandInfo.IsSpecified)
             _loggingService.Log(
-                $"{context.User} executed \"{commandInfo.Aliases.FirstOrDefault()}\" in {context.Message.GetPostedAt()}." +
+                $"{context.User} executed \"{commandInfo.Value.Aliases.FirstOrDefault()}\" in {context.Message.GetPostedAt()}." +
                 Environment.NewLine +
                 $"Result: {result.ErrorReason}" +
                 Environment.NewLine +

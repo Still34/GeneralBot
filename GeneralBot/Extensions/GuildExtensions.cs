@@ -12,7 +12,7 @@ namespace GeneralBot.Extensions
         /// <param name="channel">The channel to check the invites in.</param>
         /// <param name="createNew">Whether to create a new invite when none is found.</param>
         /// <returns></returns>
-        public static async Task<IInvite> GetLastInviteAsync(this IGuildChannel channel, bool createNew = false)
+        public static async Task<IInvite> GetLastInviteAsync(this INestedChannel channel, bool createNew = false)
         {
             var invites = await channel.GetInvitesAsync().ConfigureAwait(false);
             if (invites.Count != 0 || !createNew) return invites.OrderByDescending(x => x.CreatedAt).FirstOrDefault();

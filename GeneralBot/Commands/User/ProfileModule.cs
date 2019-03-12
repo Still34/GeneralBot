@@ -14,11 +14,12 @@ using GeneralBot.Extensions.Helpers;
 using GeneralBot.Models.Config;
 using GeneralBot.Models.Database.UserSettings;
 using GeneralBot.Services;
-using ImageSharp;
-using ImageSharp.Drawing;
+using SixLabors.ImageSharp;
 using SixLabors.Fonts;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
 using SixLabors.Primitives;
-using Image = ImageSharp.Image;
+using Image = SixLabors.ImageSharp.Image;
 
 namespace GeneralBot.Commands.User
 {

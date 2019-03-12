@@ -116,7 +116,7 @@ namespace GeneralBot.Commands.Moderator
             [Remainder] string reason = null)
         {
             if (Context.Channel is SocketTextChannel channel)
-                await channel.AddPermissionOverwriteAsync(user, new OverwritePermissions(readMessages: PermValue.Deny),
+                await channel.AddPermissionOverwriteAsync(user, new OverwritePermissions(viewChannel: PermValue.Deny),
                         new RequestOptions() {AuditLogReason = $"{Context.User} ({Context.User.Id}): {reason} (BLOCK)"})
                     .ConfigureAwait(false);
             return CommandRuntimeResult.FromSuccess($"Successfully blocked {user.Mention}.");

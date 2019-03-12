@@ -33,7 +33,7 @@ namespace GeneralBot.Services
                 var alertEmbeds = new List<EmbedBuilder>();
                 var weatherEmbeds = new List<EmbedBuilder>();
                 var response = forecast.Response;
-                var location = await GetShortLocationAsync(geocode).ConfigureAwait(false);
+                (string address, string flag) = await GetShortLocationAsync(geocode).ConfigureAwait(false);
                 var hourlyDataPoint = response.Hourly.Data.FirstOrDefault();
                 if (hourlyDataPoint != null)
                 {
@@ -42,7 +42,7 @@ namespace GeneralBot.Services
                     var embed = new EmbedBuilder
                     {
                         Color = color,
-                        Title = $"{location.Flag ?? ""}{location.Address}",
+                        Title = $"{flag ?? ""}{address}",
                         Description = $"Weather from {hourlyDataPoint.DateTime.Humanize()}",
                         Footer = new EmbedFooterBuilder
                         {
@@ -82,7 +82,7 @@ namespace GeneralBot.Services
                         var alertEmbed = new EmbedBuilder
                         {
                             Color = Color.DarkOrange,
-                            Title = $"Alert for {location.Address}, click me for more details.",
+                            Title = $"Alert for {address}, click me for more details.",
                             Url = alert.Uri.AbsoluteUri,
                             ThumbnailUrl = _config.Icons.Warning,
                             Description = sb.ToString()
